@@ -5,6 +5,7 @@ from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegress
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.neural_network import MLPRegressor, MLPClassifier
 from sklearn.cross_decomposition import PLSRegression
+import timeit
 
 from sklearn import metrics
 class Objective:
@@ -25,13 +26,19 @@ class Objective:
         self.classifier_names = classifier_names
         self.regressor_names = regressor_names
         self.classification_metrics = classification_metrics
+        self.times = {}
 
     def __call__(self, trial):
         params = self.generate_params(trial, self.x_train)
 
         if len(set(self.y_train)) < len(self.y_train) / 10:
             model = Classifier(params)
-            model.fit(self.x_train, self.y_train)
+            #model.fit(self.x_train, self.y_train)
+            seconds = timeit.timeit(lambda: model.fit(self.x_train, self.y_train), number=1)
+            if params['classifier_name'] not in self.times.keys():
+                self.times[params['classifier_name']] = []
+            self.times[params['classifier_name']].append(seconds)
+            
             if self.classification_metrics == "f1_score":
                 score = metrics.f1_score(self.y_test, model.predict(self.x_test))
             else:
@@ -46,7 +53,12 @@ class Objective:
                 self.best_models[params['classifier_name']] = model
         else:
             model = Regressor(params)
-            model.fit(self.x_train, self.y_train)
+            #model.fit(self.x_train, self.y_train)
+            seconds = timeit.timeit(lambda: model.fit(self.x_train, self.y_train), number=1)
+            if params['classifier_name'] not in self.times.keys():
+                self.times[params['classifier_name']] = []
+            self.times[params['classifier_name']].append(seconds)
+            
             score = model.model.score(self.x_test, self.y_test)
             if self.best_score < score:
                 self.best_score = score
