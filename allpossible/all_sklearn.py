@@ -147,10 +147,10 @@ class Objective:
                     regressor_params['gamma'] = 'auto'
 
             elif params['regressor_name'] == 'RandomForest':
-                regressor_params['n_estimators'] = trial.suggest_categorical(
-                    'rf_n_estimators', [5, 10, 20, 30, 50, 100])
-                regressor_params['max_features'] = trial.suggest_categorical(
-                    'rf_max_features', ['auto', 0.2, 0.4, 0.6, 0.8])
+                #regressor_params['n_estimators'] = trial.suggest_categorical(
+                #    'rf_n_estimators', [5, 10, 20, 30, 50, 100])
+                #regressor_params['max_features'] = trial.suggest_categorical(
+                #    'rf_max_features', ['auto', 0.2, 0.4, 0.6, 0.8])
                 regressor_params['max_depth'] = int(
                     trial.suggest_loguniform('rf_max_depth', 2, 32))
                 regressor_params['n_jobs'] = -1
