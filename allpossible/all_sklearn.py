@@ -90,7 +90,7 @@ class Objective:
 
 
     @on_timeout(limit=10, handler=handler_func, hint=u'長い計算')
-    def model_fit(model):
+    def model_fit(self, model):
         return timeit.timeit(lambda: model.fit(self.x_train, self.y_train), number=1)
     
     def generate_params(self, trial, x):
