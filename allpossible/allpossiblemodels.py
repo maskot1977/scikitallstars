@@ -7,7 +7,7 @@ from sklearn.neural_network import MLPRegressor, MLPClassifier
 from sklearn.cross_decomposition import PLSRegression
 
 from sklearn import metrics
-class AllPossibleModels:
+class Objective:
     def __init__(self, X_train, X_test, y_train, y_test,
                  classifier_names = ['RandomForest', 'SVC', 'MLP', 'LogisticRegression', 'GradientBoosting'],
                  regressor_names = ['RandomForest', 'SVR', 'MLP', 'LinearRegression', 'PLS', 'GradientBoosting'],
