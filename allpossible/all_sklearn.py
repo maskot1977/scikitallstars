@@ -36,6 +36,7 @@ class Objective:
         self.times = {}
         self.scores = {}
 
+    @on_timeout(limit=5, handler=handler_func, hint=u'call')
     def __call__(self, trial):
         params = self.generate_params(trial, self.x_train)
 
