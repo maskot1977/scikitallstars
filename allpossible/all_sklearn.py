@@ -1,6 +1,6 @@
 import time
 import timeit
-from timeout import on_timeout
+from allpossible.timeout import on_timeout
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
