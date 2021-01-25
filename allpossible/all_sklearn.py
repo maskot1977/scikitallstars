@@ -12,6 +12,9 @@ from sklearn.neural_network import MLPRegressor, MLPClassifier
 from sklearn.cross_decomposition import PLSRegression
 from sklearn import metrics
 
+def handler_func(msg):
+        print(msg)
+
 class Objective:
     def __init__(self, X_train, X_test, y_train, y_test,
                  classifier_names = ['RandomForest', 'SVC', 'MLP', 'LogisticRegression', 'GradientBoosting'],
@@ -86,12 +89,9 @@ class Objective:
         return score
 
 
-    @on_timeout(limit=10, handler=self.handler_func, hint=u'長い計算')
+    @on_timeout(limit=10, handler=handler_func, hint=u'長い計算')
     def model_fit(model):
         return timeit.timeit(lambda: model.fit(self.x_train, self.y_train), number=1)
-    
-    def handler_func(msg):
-        print(msg)
     
     def generate_params(self, trial, x):
         params = {}
