@@ -230,6 +230,7 @@ class Classifier:
                 return self.model.predict(x)
         return None
 
+    @on_timeout(limit=10, handler=handler_func, hint=u'model_fit')
     def fit(self, x, y):
         self._fit_and_predict_core(x, y, fitting=True)
         return self
@@ -281,6 +282,7 @@ class Regressor:
                 return self.model.predict(x)
         return None
 
+    @on_timeout(limit=10, handler=handler_func, hint=u'model_fit')
     def fit(self, x, y):
         self._fit_and_predict_core(x, y, fitting=True)
         return self
