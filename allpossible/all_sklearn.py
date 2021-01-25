@@ -56,8 +56,8 @@ class Objective:
             #model.fit(self.x_train, self.y_train)
             seconds = timeit.timeit(lambda: model.fit(self.x_train, self.y_train), number=1)
             if params['regressor_name'] not in self.times.keys():
-                self.times[params['classifier_name']] = []
-            self.times[params['classifier_name']].append(seconds)
+                self.times[params['regressor_name']] = []
+            self.times[params['regressor_name']].append(seconds)
             
             score = model.model.score(self.x_test, self.y_test)
             if self.best_score < score:
