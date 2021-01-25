@@ -55,7 +55,7 @@ class Objective:
             model = Regressor(params)
             #model.fit(self.x_train, self.y_train)
             seconds = timeit.timeit(lambda: model.fit(self.x_train, self.y_train), number=1)
-            if params['classifier_name'] not in self.times.keys():
+            if params['regressor_name'] not in self.times.keys():
                 self.times[params['classifier_name']] = []
             self.times[params['classifier_name']].append(seconds)
             
