@@ -102,7 +102,7 @@ class Objective:
         params['standardize'] = trial.suggest_categorical('standardize', ['NoScaler', 'StandardScaler', 'MinMaxScaler'])
         if len(set(self.y_train)) < len(self.y_train) / 10:
             params['classifier_name'] = trial.suggest_categorical('classifier_name', self.classifier_names)
-            print(params['classifier_name'])
+            #print(params['classifier_name'])
             classifier_params = {}
             if params['classifier_name'] == 'SVC':
                 classifier_params['kernel'] = trial.suggest_categorical('svc_kernel',
@@ -149,7 +149,7 @@ class Objective:
 
         else:
             params['regressor_name'] = trial.suggest_categorical('regressor_name', self.regressor_names)
-            print(params['regressor_name'])
+            #print(params['regressor_name'])
             regressor_params = {}
             if params['regressor_name'] == 'SVR':
                 regressor_params['kernel'] = trial.suggest_categorical('svc_kernel',
