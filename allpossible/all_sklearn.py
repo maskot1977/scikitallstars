@@ -107,7 +107,7 @@ class Objective:
                 classifier_params['n_jobs'] = -1
             elif params['classifier_name'] == 'MLP':
                 layers = []
-                n_layers = trial.suggest_int('n_layers', 1, 20)
+                n_layers = trial.suggest_int('n_layers', 1, 10)
                 for i in range(n_layers):
                     layers.append(trial.suggest_int(str(i), 10, 100))
                 classifier_params['hidden_layer_sizes'] = set(layers)
@@ -153,7 +153,7 @@ class Objective:
                 regressor_params['n_jobs'] = -1
             elif params['regressor_name'] == 'MLP':
                 layers = []
-                n_layers = trial.suggest_int('n_layers', 1, 20)
+                n_layers = trial.suggest_int('n_layers', 1, 10)
                 for i in range(n_layers):
                     layers.append(trial.suggest_int(str(i), 10, 100))
                 regressor_params['hidden_layer_sizes'] = set(layers)
