@@ -135,6 +135,7 @@ class Objective:
 
         else:
             params['regressor_name'] = trial.suggest_categorical('regressor_name', self.regressor_names)
+            print(params['regressor_name'])
             regressor_params = {}
             if params['regressor_name'] == 'SVR':
                 regressor_params['kernel'] = trial.suggest_categorical('svc_kernel',
