@@ -1,7 +1,7 @@
 import time
 import timeit
 from allpossible.timeout import on_timeout
-import allpossible.timeout_decorator
+import allpossible.timeout_decorator as timeout_decorator
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
