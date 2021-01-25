@@ -89,7 +89,7 @@ class Objective:
         return score
 
 
-    @on_timeout(limit=10, handler=handler_func, hint=u'長い計算')
+    @on_timeout(limit=10, handler=handler_func, hint=u'model_fit')
     def model_fit(self, model):
         return timeit.timeit(lambda: model.fit(self.x_train, self.y_train), number=1)
     
