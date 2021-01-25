@@ -89,7 +89,7 @@ class Objective:
         return score
 
 
-    @on_timeout(limit=10, handler=handler_func, hint=u'model_fit')
+    @on_timeout(limit=5, handler=handler_func, hint=u'model_fit')
     def model_fit(self, model):
         return timeit.timeit(lambda: model.fit(self.x_train, self.y_train), number=1)
     
@@ -230,7 +230,7 @@ class Classifier:
                 return self.model.predict(x)
         return None
 
-    @on_timeout(limit=10, handler=handler_func, hint=u'model_fit')
+    @on_timeout(limit=5, handler=handler_func, hint=u'classifier.fit')
     def fit(self, x, y):
         self._fit_and_predict_core(x, y, fitting=True)
         return self
@@ -282,7 +282,7 @@ class Regressor:
                 return self.model.predict(x)
         return None
 
-    @on_timeout(limit=10, handler=handler_func, hint=u'model_fit')
+    @on_timeout(limit=5, handler=handler_func, hint=u'regressor.fit')
     def fit(self, x, y):
         self._fit_and_predict_core(x, y, fitting=True)
         return self
