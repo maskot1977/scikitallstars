@@ -6,6 +6,7 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.neural_network import MLPRegressor, MLPClassifier
 from sklearn.cross_decomposition import PLSRegression
 import timeit
+import matplotlib.pyplot as plt
 
 from sklearn import metrics
 class Objective:
