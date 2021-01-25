@@ -1,6 +1,7 @@
 import time
 import timeit
 from allpossible.timeout import on_timeout
+import timeout_decorator
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -36,7 +37,8 @@ class Objective:
         self.times = {}
         self.scores = {}
 
-    @on_timeout(limit=5, handler=handler_func, hint=u'call')
+    #@on_timeout(limit=5, handler=handler_func, hint=u'call')
+    @timeout_decorator.timeout(5)
     def __call__(self, trial):
         params = self.generate_params(trial, self.x_train)
 
