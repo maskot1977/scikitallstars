@@ -27,6 +27,7 @@ class Objective:
         self.regressor_names = regressor_names
         self.classification_metrics = classification_metrics
         self.times = {}
+        self.scores = {}
 
     def __call__(self, trial):
         params = self.generate_params(trial, self.x_train)
@@ -43,6 +44,10 @@ class Objective:
                 score = metrics.f1_score(self.y_test, model.predict(self.x_test))
             else:
                 score = model.model.score(self.x_test, self.y_test)
+            if params['classifier_name'] not in self.scores.keys():
+                self.scores[params['classifier_name']] = []
+            self.scores[params['classifier_name']].append(score)
+            
             if self.best_score < score:
                 self.best_score = score
                 self.best_model = model
@@ -60,6 +65,10 @@ class Objective:
             self.times[params['regressor_name']].append(seconds)
             
             score = model.model.score(self.x_test, self.y_test)
+            if params['regressor_name'] not in self.scores.keys():
+                self.scores[params['regressor_name']] = []
+            self.scores[params['regressor_name']].append(score)
+            
             if self.best_score < score:
                 self.best_score = score
                 self.best_model = model
