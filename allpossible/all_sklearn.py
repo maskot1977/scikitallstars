@@ -1,5 +1,6 @@
 import time
 import timeit
+from timeout import on_timeout
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -38,7 +39,8 @@ class Objective:
         if len(set(self.y_train)) < len(self.y_train) / 10:
             model = Classifier(params)
             #model.fit(self.x_train, self.y_train)
-            seconds = timeit.timeit(lambda: model.fit(self.x_train, self.y_train), number=1)
+            #seconds = timeit.timeit(lambda: model.fit(self.x_train, self.y_train), number=1)
+            seconds = self.model_fit(model)
             if params['classifier_name'] not in self.times.keys():
                 self.times[params['classifier_name']] = []
             self.times[params['classifier_name']].append(seconds)
@@ -62,7 +64,8 @@ class Objective:
         else:
             model = Regressor(params)
             #model.fit(self.x_train, self.y_train)
-            seconds = timeit.timeit(lambda: model.fit(self.x_train, self.y_train), number=1)
+            #seconds = timeit.timeit(lambda: model.fit(self.x_train, self.y_train), number=1)
+            seconds = self.model_fit(model)
             if params['regressor_name'] not in self.times.keys():
                 self.times[params['regressor_name']] = []
             self.times[params['regressor_name']].append(seconds)
@@ -83,6 +86,10 @@ class Objective:
         return score
 
 
+    @on_timeout(limit=10, handler=handler_func, hint=u'長い計算')
+    def model_fit(model):
+        return timeit.timeit(lambda: model.fit(self.x_train, self.y_train), number=1)
+    
     def generate_params(self, trial, x):
         params = {}
 
@@ -329,3 +336,6 @@ def objective_summary(objective):
     axes[3].grid()
     axes[3].yaxis.set_visible(False)
     plt.show()
+
+def handler_func(msg):
+    print(msg)
