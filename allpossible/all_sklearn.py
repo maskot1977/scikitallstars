@@ -1,3 +1,4 @@
+import time
 import timeit
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,9 +9,8 @@ from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegress
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.neural_network import MLPRegressor, MLPClassifier
 from sklearn.cross_decomposition import PLSRegression
-
-
 from sklearn import metrics
+
 class Objective:
     def __init__(self, X_train, X_test, y_train, y_test,
                  classifier_names = ['RandomForest', 'SVC', 'MLP', 'LogisticRegression', 'GradientBoosting'],
