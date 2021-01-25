@@ -1,13 +1,8 @@
 from functools import wraps
 
 def on_timeout(limit, handler, hint=None):
-    '''                                                                                                    
-    指定した実行時間に終了しなかった場合、handlerをhint/limitを引数にして呼び出します                
-    @on_timeout(limit=3600, handler=notify_func, hint=u'長い計算')                                         
-    def long_time_function():                                                                              
-    '''
     def notify_handler(signum, frame):
-        handler("'%s' is not finished in %d second(s)." % (hint, limit))
+        handler("'%s' terminated since it did not finish in %d second(s)." % (hint, limit))
 
     def __decorator(function):
         def __wrapper(*args, **kwargs):
