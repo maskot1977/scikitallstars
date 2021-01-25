@@ -324,7 +324,7 @@ def objective_summary(objective):
     axes[2].grid()
     axes[2].yaxis.set_visible(False)
     axes[3].barh(names, sum_second)
-    axes[3].set_xlabel('sum calculation time (seconds)')
+    axes[3].set_xlabel('total calculation time (seconds)')
     axes[3].grid()
     axes[3].yaxis.set_visible(False)
     plt.show()
