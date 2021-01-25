@@ -86,9 +86,12 @@ class Objective:
         return score
 
 
-    @on_timeout(limit=10, handler=handler_func, hint=u'長い計算')
+    @on_timeout(limit=10, handler=self.handler_func, hint=u'長い計算')
     def model_fit(model):
         return timeit.timeit(lambda: model.fit(self.x_train, self.y_train), number=1)
+    
+    def handler_func(msg):
+        print(msg)
     
     def generate_params(self, trial, x):
         params = {}
@@ -337,5 +340,4 @@ def objective_summary(objective):
     axes[3].yaxis.set_visible(False)
     plt.show()
 
-def handler_func(msg):
-    print(msg)
+
