@@ -8,10 +8,10 @@ setuptools.setup(
     version="0.1.0",
     author="masaaki-kotera",
     author_email="maskot1977@gmail.com",
-    description="allpossible",
+    description="scikitallstar",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/maskot1977/allpossible/",
+    url="https://github.com/maskot1977/scikitallstar/",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
