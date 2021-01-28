@@ -185,7 +185,7 @@ class Objective:
                 regressor_params['hidden_layer_sizes'] = set(layers)
                 learning_rate_init, = trial.suggest_loguniform('learning_rate_init', 0.001, 0.1),
                 regressor_params['learning_rate_init'] = learning_rate_init
-                regressor_params['max_iter'] = 500
+                regressor_params['max_iter'] = 2000
                 regressor_params['early_stopping'] =True
             elif params['regressor_name'] == 'PLS':
                 regressor_params['n_components'] = trial.suggest_int("n_components", 2, self.x_train.shape[1])
