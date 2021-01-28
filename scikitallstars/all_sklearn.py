@@ -63,7 +63,7 @@ class Objective:
             self.times[params['classifier_name']].append(seconds)
             
             if self.classification_metrics == "f1_score":
-                score = metrics.f1_score(self.y_test, model.predict(x_test))
+                score = metrics.f1_score(y_test, model.predict(x_test))
             else:
                 score = model.model.score(x_test, y_test)
             if params['classifier_name'] not in self.scores.keys():
