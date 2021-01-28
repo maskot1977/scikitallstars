@@ -47,10 +47,6 @@ class Objective:
     def __call__(self, trial):
         if self.y_test is None:
                 x_train, x_test, y_train, y_test = train_test_split(self.x_train, self.y_train, test_size=0.2)
-                print(x_train.shape)
-                print(x_test.shape)
-                print(y_train.shape)
-                print(y_test.shape)
         else:
                 x_train = self.x_train
                 x_test = self.x_test
