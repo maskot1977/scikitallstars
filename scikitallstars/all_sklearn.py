@@ -46,7 +46,7 @@ class Objective:
     @timeout_decorator.timeout(5)
     def __call__(self, trial):
         if self.y_train is None:
-                x_train, x_test, y_train, y_test = train_test_split(self.x_train, y_train, test_size=0.2)
+                x_train, x_test, y_train, y_test = train_test_split(self.x_train, self.y_train, test_size=0.2)
         else:
                 x_train = self.x_train
                 x_test = self.x_test
