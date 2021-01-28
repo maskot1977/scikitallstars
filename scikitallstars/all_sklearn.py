@@ -1,7 +1,7 @@
 import time
 import timeit
-from scikitallstar.timeout import on_timeout
-import scikitallstar.timeout_decorator as timeout_decorator
+from scikitallstars.timeout import on_timeout
+import scikitallstars.timeout_decorator as timeout_decorator
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
