@@ -45,7 +45,7 @@ class Objective:
     #@on_timeout(limit=5, handler=handler_func, hint=u'call')
     @timeout_decorator.timeout(5)
     def __call__(self, trial):
-        if self.y_train is None:
+        if self.y_test is None:
                 x_train, x_test, y_train, y_test = train_test_split(self.x_train, self.y_train, test_size=0.2)
                 print(x_train.shape)
                 print(x_test.shape)
