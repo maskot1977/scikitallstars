@@ -12,18 +12,23 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.neural_network import MLPRegressor, MLPClassifier
 from sklearn.cross_decomposition import PLSRegression
 from sklearn import metrics
+from sklearn.model_selection import train_test_split
 
 def handler_func(msg):
         print(msg)
 
 class Objective:
-    def __init__(self, X_train, X_test, y_train, y_test,
+    def __init__(self, 
+                 x_train, 
+                 y_train,
+                 x_test = None, 
+                 y_test = None,
                  classifier_names = ['RandomForest', 'SVC', 'MLP', 'LogisticRegression', 'GradientBoosting'],
                  regressor_names = ['RandomForest', 'SVR', 'MLP', 'LinearRegression', 'PLS', 'GradientBoosting'],
                  classification_metrics = "f1_score"
                  ):
-        self.x_train = X_train
-        self.x_test = X_test
+        self.x_train = x_train
+        self.x_test = x_test
         self.y_train = y_train
         self.y_test = y_test
         self.best_scores = {}
@@ -40,21 +45,26 @@ class Objective:
     #@on_timeout(limit=5, handler=handler_func, hint=u'call')
     @timeout_decorator.timeout(5)
     def __call__(self, trial):
-        params = self.generate_params(trial, self.x_train)
+        if self.y_train is None:
+                x_train, x_test, y_train, y_test = train_test_split(self.x_train, y_train, test_size=0.2)
+        else:
+                x_train = self.x_train
+                x_test = self.x_test
+                y_train = self.y_train
+                y_test = self.y_test
+        params = self.generate_params(trial, x_train)
 
-        if len(set(self.y_train)) < len(self.y_train) / 10:
+        if len(set(y_train)) < len(y_train) / 10:
             model = Classifier(params)
-            #model.fit(self.x_train, self.y_train)
-            #seconds = timeit.timeit(lambda: model.fit(self.x_train, self.y_train), number=1)
-            seconds = self.model_fit(model)
+            seconds = self.model_fit(model, x_train, y_train)
             if params['classifier_name'] not in self.times.keys():
                 self.times[params['classifier_name']] = []
             self.times[params['classifier_name']].append(seconds)
             
             if self.classification_metrics == "f1_score":
-                score = metrics.f1_score(self.y_test, model.predict(self.x_test))
+                score = metrics.f1_score(self.y_test, model.predict(x_test))
             else:
-                score = model.model.score(self.x_test, self.y_test)
+                score = model.model.score(x_test, y_test)
             if params['classifier_name'] not in self.scores.keys():
                 self.scores[params['classifier_name']] = []
             self.scores[params['classifier_name']].append(score)
@@ -69,14 +79,12 @@ class Objective:
                 self.best_models[params['classifier_name']] = model
         else:
             model = Regressor(params)
-            #model.fit(self.x_train, self.y_train)
-            #seconds = timeit.timeit(lambda: model.fit(self.x_train, self.y_train), number=1)
-            seconds = self.model_fit(model)
+            seconds = self.model_fit(model, x_train, y_train)
             if params['regressor_name'] not in self.times.keys():
                 self.times[params['regressor_name']] = []
             self.times[params['regressor_name']].append(seconds)
             
-            score = model.model.score(self.x_test, self.y_test)
+            score = model.model.score(x_test, y_test)
             if params['regressor_name'] not in self.scores.keys():
                 self.scores[params['regressor_name']] = []
             self.scores[params['regressor_name']].append(score)
@@ -93,8 +101,8 @@ class Objective:
 
 
     @on_timeout(limit=5, handler=handler_func, hint=u'model_fit')
-    def model_fit(self, model):
-        return timeit.timeit(lambda: model.fit(self.x_train, self.y_train), number=1)
+    def model_fit(self, model, x_train, y_train):
+        return timeit.timeit(lambda: model.fit(x_train, y_train), number=1)
     
     def generate_params(self, trial, x):
         params = {}
