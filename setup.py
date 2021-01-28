@@ -4,14 +4,14 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="scikitallstar",
+    name="scikitallstars",
     version="0.1.0",
     author="masaaki-kotera",
     author_email="maskot1977@gmail.com",
-    description="scikitallstar",
+    description="scikitallstars",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/maskot1977/scikitallstar/",
+    url="https://github.com/maskot1977/scikitallstars/",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
