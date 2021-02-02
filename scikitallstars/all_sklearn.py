@@ -230,7 +230,6 @@ class Objective:
                 pass
         
             elif params['regressor_name'] == 'GradientBoosting':
-                regressor_params['loss'] = trial.suggest_categorical('loss', self.gb_loss)
                 regressor_params['learning_rate'] = trial.suggest_loguniform(
                         'learning_rate_init', self.gb_learning_rate_init[0], self.gb_learning_rate_init[1])
                 regressor_params['n_estimators'] = trial.suggest_categorical(
