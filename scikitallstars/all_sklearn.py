@@ -432,3 +432,11 @@ def y_y_plot(objective, X_test, y_test):
                 axes[i].set_ylabel('Predicted')
             i += 1
         plt.show()
+        
+def stacking_regressor(objective, final_estimator=RandomForestRegressor()):
+        estimators = [(name, model.model) for name, model in objective.best_models.items()]
+        model = StackingRegressor(
+                estimators=estimators,
+                final_estimator=final_estimator,
+        )
+        return model
