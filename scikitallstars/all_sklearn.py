@@ -63,7 +63,7 @@ class Objective:
         self.rf_n_estimators = [100]
 
         self.svm_kernel = ['linear', 'rbf']
-        self.svm_c = [1e-4, 1e4]
+        self.svm_c = [1e-5, 1e5]
         self.svm_max_iter = 53000000
 
 
