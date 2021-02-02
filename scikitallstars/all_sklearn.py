@@ -42,8 +42,21 @@ class Objective:
         self.times = {}
         self.scores = {}
         
+        self.lr_C = [0.00001, 1000]
+        self.lr_max_iter = 2000
+        self.lr_solver = ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga']
+        
+        self.mlp_max_iter = 1000
+        self.mlp_n_layers = [1, 10]
+        self.mlp_n_neurons = [10, 100]
+        
+        self.pls_max_max_iter = 2000
+
+        self.rf_max_depth = [2, 32]
+
         self.svm_kernel = ['linear', 'rbf']
         self.svm_c' = [1e-10, 1e10]
+
 
     #@on_timeout(limit=5, handler=handler_func, hint=u'call')
     @timeout_decorator.timeout(5)
@@ -199,22 +212,23 @@ class Objective:
                     layers.append(trial.suggest_int(
                             str(i), self.mlp_n_neurons[0], self.mlp_n_neurons[0]))
                 regressor_params['hidden_layer_sizes'] = set(layers)
-                learning_rate_init, = trial.suggest_loguniform('learning_rate_init', 0.001, 0.1),
-                regressor_params['learning_rate_init'] = learning_rate_init
-                regressor_params['max_iter'] = 2000
+                regressor_params['max_iter'] = self.mlp_max_iter
                 regressor_params['early_stopping'] =True
+                
             elif params['regressor_name'] == 'PLS':
                 regressor_params['n_components'] = trial.suggest_int("n_components", 2, self.x_train.shape[1])
-                regressor_params['max_iter'] = 2000
+                regressor_params['max_iter'] = self.pls_max_max_iter
+                
             elif params['regressor_name'] == 'LinearRegression':
                 pass
+        
             elif params['regressor_name'] == 'GradientBoosting':
-                #regressor_params['loss'] = trial.suggest_categorical('loss', ['deviance', 'exponential'])
-                regressor_params['learning_rate'] = trial.suggest_loguniform('learning_rate_init', 0.001, 0.1)
-                #regressor_params['n_estimators'] = trial.suggest_categorical(
-                #    'gb_n_estimators', [5, 10, 20, 30, 50, 100])
+                regressor_params['loss'] = trial.suggest_categorical('loss', self.gb_loss)
+                regressor_params['learning_rate'] = trial.suggest_loguniform('learning_rate_init', self.learning_rate_init)
+                regressor_params['n_estimators'] = trial.suggest_categorical(
+                    'gb_n_estimators', self.gb_n_estimators)
                 regressor_params['max_depth'] = int(
-                    trial.suggest_loguniform('gb_max_depth', 2, 32))
+                    trial.suggest_loguniform('gb_max_depth', self.gb_max_depth[0], self.gb_max_depth[1]))
             else:
                 raise RuntimeError('unspport regressor', params['regressor_name'])
             params['regressor_params'] = regressor_params
