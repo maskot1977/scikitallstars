@@ -221,7 +221,7 @@ class Objective:
                         'n_layers', self.mlp_n_layers[0], self.mlp_n_layers[1])
                 for i in range(n_layers):
                     layers.append(trial.suggest_int(
-                            str(i), self.mlp_n_neurons[0], self.mlp_n_neurons[0]))
+                            str(i), self.mlp_n_neurons[0], self.mlp_n_neurons[1]))
                 regressor_params['hidden_layer_sizes'] = set(layers)
                 regressor_params['max_iter'] = self.mlp_max_iter
                 regressor_params['early_stopping'] =True
@@ -283,7 +283,7 @@ class Classifier:
                 return self.model.predict(x)
         return None
 
-    @on_timeout(limit=5, handler=handler_func, hint=u'classifier.fit')
+    @on_timeout(limit=60, handler=handler_func, hint=u'classifier.fit')
     def fit(self, x, y):
         self._fit_and_predict_core(x, y, fitting=True)
         return self
@@ -336,7 +336,7 @@ class Regressor:
                 return self.model.predict(x)
         return None
 
-    @on_timeout(limit=5, handler=handler_func, hint=u'regressor.fit')
+    @on_timeout(limit=60, handler=handler_func, hint=u'regressor.fit')
     def fit(self, x, y):
         self._fit_and_predict_core(x, y, fitting=True)
         return self
