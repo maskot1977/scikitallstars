@@ -64,6 +64,7 @@ class Objective:
 
         self.svm_kernel = ['linear', 'rbf']
         self.svm_c = [1e-4, 1e4]
+        self.svm_max_iter = 2000
 
 
     #@on_timeout(limit=5, handler=handler_func, hint=u'call')
@@ -147,6 +148,7 @@ class Objective:
                             'svc_gamma',['auto', 'scale'])
                 else:
                     classifier_params['gamma'] = 'auto'
+                classifier_params['max_iter'] = self.svm_max_iter
 
             elif params['classifier_name'] == 'RandomForest':
                 classifier_params['n_estimators'] = trial.suggest_categorical(
@@ -202,6 +204,7 @@ class Objective:
                                                             ['auto', 'scale'])
                 else:
                     regressor_params['gamma'] = 'auto'
+                regressor_params['max_iter'] = self.svm_max_iter
 
             elif params['regressor_name'] == 'RandomForest':
                 regressor_params['n_estimators'] = trial.suggest_categorical(
