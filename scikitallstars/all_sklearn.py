@@ -49,14 +49,14 @@ class Objective:
         self.gb_max_depth = [2, 32]
         
         self.lr_C = [0.00001, 1000]
-        self.lr_max_iter = 2000
+        self.lr_max_iter = 530000
         self.lr_solver = ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga']
         
-        self.mlp_max_iter = 1000
+        self.mlp_max_iter = 530000
         self.mlp_n_layers = [1, 10]
         self.mlp_n_neurons = [10, 100]
         
-        self.pls_max_max_iter = 2000
+        self.pls_max_iter = 530000
 
         self.rf_max_depth = [2, 32]
         self.rf_max_features = ['auto']
@@ -228,7 +228,7 @@ class Objective:
                 
             elif params['regressor_name'] == 'PLS':
                 regressor_params['n_components'] = trial.suggest_int("n_components", 2, self.x_train.shape[1])
-                regressor_params['max_iter'] = self.pls_max_max_iter
+                regressor_params['max_iter'] = self.pls_max_iter
                 
             elif params['regressor_name'] == 'LinearRegression':
                 pass
