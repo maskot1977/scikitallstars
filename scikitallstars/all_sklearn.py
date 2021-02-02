@@ -23,8 +23,8 @@ class Objective:
                  y_train,
                  x_test = None, 
                  y_test = None,
-                 classifier_names = ['RandomForest', 'SVC', 'MLP', 'LogisticRegression', 'GradientBoosting'],
-                 regressor_names = ['RandomForest', 'SVR', 'MLP', 'LinearRegression', 'PLS', 'GradientBoosting'],
+                 classifier_names = ['RandomForest', 'SVC', 'MLP', 'GradientBoosting', 'LogisticRegression'],
+                 regressor_names = ['RandomForest', 'SVR', 'MLP', 'GradientBoosting', 'LinearRegression', 'PLS'],
                  classification_metrics = "f1_score"
                  ):
         self.x_train = x_train
