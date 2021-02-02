@@ -55,7 +55,7 @@ class Objective:
         self.rf_max_depth = [2, 32]
 
         self.svm_kernel = ['linear', 'rbf']
-        self.svm_c' = [1e-10, 1e10]
+        self.svm_c = [1e-10, 1e10]
 
 
     #@on_timeout(limit=5, handler=handler_func, hint=u'call')
