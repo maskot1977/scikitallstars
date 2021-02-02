@@ -42,6 +42,7 @@ class Objective:
         self.times = {}
         self.scores = {}
         self.debug = False
+        self.scalers = ['StandardScaler', 'MinMaxScaler']
         
         self.gb_loss = ['deviance', 'exponential']
         self.gb_learning_rate_init = [0.001, 0.1]
@@ -68,7 +69,7 @@ class Objective:
 
 
     #@on_timeout(limit=5, handler=handler_func, hint=u'call')
-    @timeout_decorator.timeout(5)
+    @timeout_decorator.timeout(10)
     def __call__(self, trial):
         if self.y_test is None:
                 x_train, x_test, y_train, y_test = train_test_split(self.x_train, self.y_train, test_size=0.2)
@@ -126,14 +127,14 @@ class Objective:
         return score
 
 
-    @on_timeout(limit=5, handler=handler_func, hint=u'model_fit')
+    @on_timeout(limit=10, handler=handler_func, hint=u'model_fit')
     def model_fit(self, model, x_train, y_train):
         return timeit.timeit(lambda: model.fit(x_train, y_train), number=1)
     
     def generate_params(self, trial, x):
         params = {}
 
-        params['standardize'] = trial.suggest_categorical('standardize', ['NoScaler', 'StandardScaler', 'MinMaxScaler'])
+        params['standardize'] = trial.suggest_categorical('standardize', self.scalers)
         if len(set(self.y_train)) < len(self.y_train) / 10:
             params['classifier_name'] = trial.suggest_categorical('classifier_name', self.classifier_names)
             classifier_params = {}
