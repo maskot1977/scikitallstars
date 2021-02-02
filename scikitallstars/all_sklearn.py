@@ -13,6 +13,8 @@ from sklearn.neural_network import MLPRegressor, MLPClassifier
 from sklearn.cross_decomposition import PLSRegression
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+from sklearn.metrics import r2_score
 
 def handler_func(msg):
         print(msg)
@@ -404,3 +406,29 @@ def objective_summary(objective):
     plt.show()
 
 
+def y_y_plot(objective, X_test, y_test):
+        fig, axes = plt.subplots(
+            nrows=1, ncols=len(objective.best_models.keys()), 
+            figsize=(4*len(regressor_names), 4)
+            )
+        i = 0
+        for name in objective.best_models.keys():
+            y_pred = objective.best_models[name].predict(X_test)
+            score = r2_score(np.array(y_pred).ravel(), np.array(y_test).ravel())
+            axes[i].set_title(name)
+            axes[i].scatter(y_test, y_pred, alpha=0.5)
+            y_min = min(y_test.min(), y_pred.min())
+            y_max = min(y_test.max(), y_pred.max())
+            axes[i].plot([y_min, y_max], [y_min, y_max])
+            axes[i].text(
+                        y_max - 0.3,
+                        y_min + 0.3,
+                        ("%.3f" % score).lstrip("0"),
+                        size=15,
+                        horizontalalignment="right",
+                    )
+            axes[i].set_xlabel('Real')
+            if i == 0:
+                axes[i].set_ylabel('Predicted')
+            i += 1
+        plt.show()
