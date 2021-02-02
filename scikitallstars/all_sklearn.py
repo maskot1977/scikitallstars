@@ -65,7 +65,7 @@ class Objective:
 
         self.svm_kernel = ['linear', 'rbf']
         self.svm_c = [1e-5, 1e5]
-        self.svm_max_iter = 53000000
+        self.svm_max_iter = 530000
 
 
     #@on_timeout(limit=5, handler=handler_func, hint=u'call')
