@@ -62,7 +62,7 @@ class Objective:
         self.rf_n_estimators = [100]
 
         self.svm_kernel = ['linear', 'rbf']
-        self.svm_c = [1e-10, 1e10]
+        self.svm_c = [1e-4, 1e4]
 
 
     #@on_timeout(limit=5, handler=handler_func, hint=u'call')
