@@ -231,7 +231,8 @@ class Objective:
         
             elif params['regressor_name'] == 'GradientBoosting':
                 regressor_params['loss'] = trial.suggest_categorical('loss', self.gb_loss)
-                regressor_params['learning_rate'] = trial.suggest_loguniform('learning_rate_init', self.gb_learning_rate_init)
+                regressor_params['learning_rate'] = trial.suggest_loguniform(
+                        'learning_rate_init', self.gb_learning_rate_initself.gb_learning_rate_init)
                 regressor_params['n_estimators'] = trial.suggest_categorical(
                     'gb_n_estimators', self.gb_n_estimators)
                 regressor_params['max_depth'] = int(
