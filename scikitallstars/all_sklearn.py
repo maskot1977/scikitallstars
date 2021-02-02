@@ -201,7 +201,7 @@ class Objective:
                 regressor_params['max_features'] = trial.suggest_categorical(
                     'rf_max_features', self.rf_max_features)
                 regressor_params['max_depth'] = trial.suggest_int(
-                        'rf_max_depth', self.rf_max_depth[0], self.rf_max_depth[1]))
+                        'rf_max_depth', self.rf_max_depth[0], self.rf_max_depth[1])
                 regressor_params['n_jobs'] = -1
                 
             elif params['regressor_name'] == 'MLP':
