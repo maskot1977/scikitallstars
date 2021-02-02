@@ -41,6 +41,11 @@ class Objective:
         self.classification_metrics = classification_metrics
         self.times = {}
         self.scores = {}
+        self.rf_n_estimators = [100]
+                        #regressor_params['n_estimators'] = trial.suggest_categorical(
+                #    'rf_n_estimators', [5, 10, 20, 30, 50, 100])
+                #regressor_params['max_features'] = trial.suggest_categorical(
+                #    'rf_max_features', ['auto', 0.2, 0.4, 0.6, 0.8])
 
     #@on_timeout(limit=5, handler=handler_func, hint=u'call')
     @timeout_decorator.timeout(5)
@@ -125,7 +130,7 @@ class Objective:
 
             elif params['classifier_name'] == 'RandomForest':
                 classifier_params['n_estimators'] = trial.suggest_categorical(
-                    'rf_n_estimators', [5, 10, 20, 30, 50, 100])
+                    'rf_n_estimators', rf_n_estimators)
                 classifier_params['max_features'] = trial.suggest_categorical(
                     'rf_max_features', ['auto', 0.2, 0.4, 0.6, 0.8])
                 classifier_params['max_depth'] = int(
@@ -151,7 +156,7 @@ class Objective:
                 classifier_params['n_estimators'] = trial.suggest_categorical(
                     'gb_n_estimators', [5, 10, 20, 30, 50, 100])
                 classifier_params['max_depth'] = int(
-                    trial.suggest_loguniform('gb_max_depth', 2, 32))
+                    trial.suggest_int('gb_max_depth', 2, 32))
             else:
                 raise RuntimeError('unspport classifier', params['classifier_name'])
             params['classifier_params'] = classifier_params
