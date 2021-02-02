@@ -42,6 +42,11 @@ class Objective:
         self.times = {}
         self.scores = {}
         
+        self.gb_loss = ['deviance', 'exponential']
+        self.gb_learning_rate_init = [0.001, 0.1]
+        self.gb_n_estimators = [100]
+        self.gb_max_depth = [2, 32]
+        
         self.lr_C = [0.00001, 1000]
         self.lr_max_iter = 2000
         self.lr_solver = ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga']
@@ -226,7 +231,7 @@ class Objective:
         
             elif params['regressor_name'] == 'GradientBoosting':
                 regressor_params['loss'] = trial.suggest_categorical('loss', self.gb_loss)
-                regressor_params['learning_rate'] = trial.suggest_loguniform('learning_rate_init', self.learning_rate_init)
+                regressor_params['learning_rate'] = trial.suggest_loguniform('learning_rate_init', self.gb_learning_rate_init)
                 regressor_params['n_estimators'] = trial.suggest_categorical(
                     'gb_n_estimators', self.gb_n_estimators)
                 regressor_params['max_depth'] = int(
