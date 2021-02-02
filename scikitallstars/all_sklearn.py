@@ -41,11 +41,9 @@ class Objective:
         self.classification_metrics = classification_metrics
         self.times = {}
         self.scores = {}
-        self.rf_n_estimators = [100]
-                        #regressor_params['n_estimators'] = trial.suggest_categorical(
-                #    'rf_n_estimators', [5, 10, 20, 30, 50, 100])
-                #regressor_params['max_features'] = trial.suggest_categorical(
-                #    'rf_max_features', ['auto', 0.2, 0.4, 0.6, 0.8])
+        
+        self.svm_kernel = ['linear', 'rbf']
+        self.svm_c' = [1e-10, 1e10]
 
     #@on_timeout(limit=5, handler=handler_func, hint=u'call')
     @timeout_decorator.timeout(5)
@@ -116,47 +114,55 @@ class Objective:
         params['standardize'] = trial.suggest_categorical('standardize', ['NoScaler', 'StandardScaler', 'MinMaxScaler'])
         if len(set(self.y_train)) < len(self.y_train) / 10:
             params['classifier_name'] = trial.suggest_categorical('classifier_name', self.classifier_names)
-            #print(params['classifier_name'])
             classifier_params = {}
+                
             if params['classifier_name'] == 'SVC':
-                classifier_params['kernel'] = trial.suggest_categorical('svc_kernel',
-                                                                ['linear', 'rbf'])
-                classifier_params['C'] = trial.suggest_loguniform('svc_c', 1e-10, 1e10)
+                classifier_params['kernel'] = trial.suggest_categorical(
+                        'svc_kernel', ['linear', 'rbf'])
+                classifier_params['C'] = trial.suggest_loguniform(
+                        'svm_c', self.svm_c[0], self.svm_c[1])
                 if classifier_params['kernel'] == 'rbf':
-                    classifier_params['gamma'] = trial.suggest_categorical('svc_gamma',
-                                                            ['auto', 'scale'])
+                    classifier_params['gamma'] = trial.suggest_categorical(
+                            'svc_gamma',['auto', 'scale'])
                 else:
                     classifier_params['gamma'] = 'auto'
 
             elif params['classifier_name'] == 'RandomForest':
                 classifier_params['n_estimators'] = trial.suggest_categorical(
-                    'rf_n_estimators', rf_n_estimators)
+                    'rf_n_estimators', self.rf_n_estimators)
                 classifier_params['max_features'] = trial.suggest_categorical(
-                    'rf_max_features', ['auto', 0.2, 0.4, 0.6, 0.8])
-                classifier_params['max_depth'] = int(
-                    trial.suggest_loguniform('rf_max_depth', 2, 32))
+                    'rf_max_features', self.rf_max_features)
                 classifier_params['n_jobs'] = -1
+                classifier_params['max_depth'] = int(
+                    trial.suggest_int('rf_max_depth', self.rf_max_depth[0], self.rf_max_depth[1]))
+                
             elif params['classifier_name'] == 'MLP':
                 layers = []
-                n_layers = trial.suggest_int('n_layers', 1, 10)
+                n_layers = trial.suggest_int(
+                        'n_layers', self.mlp_n_layers[0], self.mlp_n_layers[1])
                 for i in range(n_layers):
-                    layers.append(trial.suggest_int(str(i), 10, 100))
+                    layers.append(trial.suggest_int(
+                            str(i), self.mlp_n_neurons[0], self.mlp_n_neurons[1]))
                 classifier_params['hidden_layer_sizes'] = set(layers)
-                learning_rate_init, = trial.suggest_loguniform('learning_rate_init', 0.001, 0.1),
-                classifier_params['learning_rate_init'] = learning_rate_init
-                classifier_params['max_iter'] = 2000
-                classifier_params['early_stopping'] =True
+                classifier_params['max_iter'] = self.mlp_max_iter
+                classifier_params['early_stopping'] = True
+                
             elif params['classifier_name'] == 'LogisticRegression':
-                classifier_params['C'] = trial.suggest_loguniform('lr_C', 0.00001, 1000)
-                classifier_params['solver'] = trial.suggest_categorical('lr_solver', ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga'])
-                classifier_params['max_iter'] = 2000
+                classifier_params['C'] = trial.suggest_loguniform(
+                        'lr_C', self.lr_C[0], self.lr_C[0])
+                classifier_params['solver'] = trial.suggest_categorical(
+                        'lr_solver', self.lr_solver)
+                classifier_params['max_iter'] = self.lr_max_iter
+                
             elif params['classifier_name'] == 'GradientBoosting':
-                classifier_params['loss'] = trial.suggest_categorical('loss', ['deviance', 'exponential'])
-                classifier_params['learning_rate'] = trial.suggest_loguniform('learning_rate_init', 0.001, 0.1)
+                classifier_params['loss'] = trial.suggest_categorical('loss', self.gb_loss)
+                classifier_params['learning_rate'] = trial.suggest_loguniform(
+                        'learning_rate_init', self.learning_rate_init[0], self.learning_rate_init[1])
                 classifier_params['n_estimators'] = trial.suggest_categorical(
-                    'gb_n_estimators', [5, 10, 20, 30, 50, 100])
+                    'gb_n_estimators', self.gb_n_estimators)
                 classifier_params['max_depth'] = int(
-                    trial.suggest_int('gb_max_depth', 2, 32))
+                    trial.suggest_int('gb_max_depth', self.gb_max_depth[0], self.gb_max_depth[1]))
+                
             else:
                 raise RuntimeError('unspport classifier', params['classifier_name'])
             params['classifier_params'] = classifier_params
@@ -166,9 +172,10 @@ class Objective:
             #print(params['regressor_name'])
             regressor_params = {}
             if params['regressor_name'] == 'SVR':
-                regressor_params['kernel'] = trial.suggest_categorical('svc_kernel',
-                                                                ['linear', 'rbf'])
-                regressor_params['C'] = trial.suggest_loguniform('svc_c', 1e-10, 1e10)
+                regressor_params['kernel'] = trial.suggest_categorical(
+                        'svm_kernel', self.svm_kernel)
+                regressor_params['C'] = trial.suggest_loguniform(
+                        'svm_c', self.svm_c[0], self.svm_c[1])
                 if regressor_params['kernel'] == 'rbf':
                     regressor_params['gamma'] = trial.suggest_categorical('svc_gamma',
                                                             ['auto', 'scale'])
@@ -176,18 +183,21 @@ class Objective:
                     regressor_params['gamma'] = 'auto'
 
             elif params['regressor_name'] == 'RandomForest':
-                #regressor_params['n_estimators'] = trial.suggest_categorical(
-                #    'rf_n_estimators', [5, 10, 20, 30, 50, 100])
-                #regressor_params['max_features'] = trial.suggest_categorical(
-                #    'rf_max_features', ['auto', 0.2, 0.4, 0.6, 0.8])
-                regressor_params['max_depth'] = int(
-                    trial.suggest_loguniform('rf_max_depth', 2, 32))
+                regressor_params['n_estimators'] = trial.suggest_categorical(
+                    'rf_n_estimators', self.rf_n_estimators)
+                regressor_params['max_features'] = trial.suggest_categorical(
+                    'rf_max_features', self.rf_max_features)
+                regressor_params['max_depth'] = trial.suggest_int(
+                        'rf_max_depth', self.rf_max_depth[0], self.rf_max_depth[1]))
                 regressor_params['n_jobs'] = -1
+                
             elif params['regressor_name'] == 'MLP':
                 layers = []
-                n_layers = trial.suggest_int('n_layers', 1, 10)
+                n_layers = trial.suggest_int(
+                        'n_layers', self.mlp_n_layers[0], self.mlp_n_layers[1])
                 for i in range(n_layers):
-                    layers.append(trial.suggest_int(str(i), 10, 100))
+                    layers.append(trial.suggest_int(
+                            str(i), self.mlp_n_neurons[0], self.mlp_n_neurons[0]))
                 regressor_params['hidden_layer_sizes'] = set(layers)
                 learning_rate_init, = trial.suggest_loguniform('learning_rate_init', 0.001, 0.1),
                 regressor_params['learning_rate_init'] = learning_rate_init
