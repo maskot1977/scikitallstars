@@ -316,6 +316,7 @@ class Regressor:
             self.model = PLSRegression(**params['regressor_params'])
         elif params['regressor_name'] == 'GradientBoosting':
             self.model = GradientBoostingRegressor(**params['regressor_params'])
+        print(self.model)
 
     def _fit_and_predict_core(self, x, y=None, fitting=False, proba=False):
         if fitting == True:
