@@ -81,7 +81,7 @@ class Objective:
         params = self.generate_params(trial, x_train)
 
         if len(set(y_train)) < len(y_train) / 10:
-            model = Classifier(params)
+            model = Classifier(params, debug=self.debug)
             seconds = self.model_fit(model, x_train, y_train)
             if params['classifier_name'] not in self.times.keys():
                 self.times[params['classifier_name']] = []
@@ -104,7 +104,7 @@ class Objective:
                 self.best_scores[params['classifier_name']] = score
                 self.best_models[params['classifier_name']] = model
         else:
-            model = Regressor(params)
+            model = Regressor(params, debug=self.debug)
             seconds = self.model_fit(model, x_train, y_train)
             if params['regressor_name'] not in self.times.keys():
                 self.times[params['regressor_name']] = []
@@ -249,8 +249,9 @@ class Objective:
 #from sklearn.model_selection import KFold, StratifiedKFold
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 class Classifier:
-    def __init__(self, params):
+    def __init__(self, params, debug=False):
         self.params = params
+        self.debug = debug
         if params['standardize'] == 'StandardScaler':
             self.standardizer = StandardScaler()
         elif params['standardize'] == 'MinMaxScaler':
@@ -268,7 +269,9 @@ class Classifier:
             self.model = LogisticRegression(**params['classifier_params'])
         elif params['classifier_name'] == 'GradientBoosting':
             self.model = GradientBoostingClassifier(**params['classifier_params'])
-
+        if self.debug:
+            print(self.model)
+        
     def _fit_and_predict_core(self, x, y=None, fitting=False, proba=False):
         if fitting == True:
             self.standardizer.fit(x)
@@ -299,8 +302,9 @@ class Classifier:
 #from sklearn.model_selection import KFold, StratifiedKFold
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 class Regressor:
-    def __init__(self, params):
+    def __init__(self, params, debug=False):
         self.params = params
+        self.debug = debug
         if params['standardize'] == 'StandardScaler':
             self.standardizer = StandardScaler()
         elif params['standardize'] == 'MinMaxScaler':
@@ -320,7 +324,8 @@ class Regressor:
             self.model = PLSRegression(**params['regressor_params'])
         elif params['regressor_name'] == 'GradientBoosting':
             self.model = GradientBoostingRegressor(**params['regressor_params'])
-        print(self.model)
+        if self.debug:
+            print(self.model)
 
     def _fit_and_predict_core(self, x, y=None, fitting=False, proba=False):
         if fitting == True:
