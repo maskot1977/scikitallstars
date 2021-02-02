@@ -53,6 +53,7 @@ class Objective:
         self.pls_max_max_iter = 2000
 
         self.rf_max_depth = [2, 32]
+        self.rf_n_estimators = [100]
 
         self.svm_kernel = ['linear', 'rbf']
         self.svm_c = [1e-10, 1e10]
