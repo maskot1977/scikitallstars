@@ -41,6 +41,7 @@ class Objective:
         self.classification_metrics = classification_metrics
         self.times = {}
         self.scores = {}
+        self.debug = False
         
         self.gb_loss = ['deviance', 'exponential']
         self.gb_learning_rate_init = [0.001, 0.1]
