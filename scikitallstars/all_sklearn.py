@@ -386,6 +386,7 @@ def objective_summary(objective):
 
     axes[0].barh(names, score_means, xerr=score_stds)
     axes[0].set_xlabel('score')
+    axes[0].set_xlim([0.0, 1.0])
     axes[0].grid()
     axes[1].barh(names, selected)
     axes[1].set_xlabel('selected (times)')
