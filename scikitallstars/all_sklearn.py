@@ -409,7 +409,7 @@ def objective_summary(objective):
 def y_y_plot(objective, X_test, y_test):
         fig, axes = plt.subplots(
             nrows=1, ncols=len(objective.best_models.keys()), 
-            figsize=(4*len(regressor_names), 4)
+            figsize=(4*len(objective.regressor_names), 4)
             )
         i = 0
         for name in objective.best_models.keys():
