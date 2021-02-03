@@ -26,7 +26,7 @@ class Objective:
                  x_test = None, 
                  y_test = None,
                  classifier_names = ['RandomForest', 'SVC', 'MLP', 'GradientBoosting', 'LogisticRegression'],
-                 regressor_names = ['RandomForest', 'SVR', 'MLP', 'GradientBoosting', 'LinearRegression', 'PLS'],
+                 regressor_names = ['RandomForest', 'SVR', 'MLP', 'GradientBoosting', 'PLS', 'LinearRegression'],
                  classification_metrics = "f1_score"
                  ):
         self.x_train = x_train
