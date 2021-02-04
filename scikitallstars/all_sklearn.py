@@ -7,7 +7,7 @@ import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.svm import SVR, SVC
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
-from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor, StackingRegressor
+from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor, StackingRegressor, StackingClassifier
 from sklearn.linear_model import LinearRegression, LogisticRegression, Ridge, Lasso, RidgeClassifier
 from sklearn.neural_network import MLPRegressor, MLPClassifier
 from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
@@ -48,6 +48,7 @@ class Objective:
         self.scores = {}
         self.debug = False
         self.scalers = ['StandardScaler', 'MinMaxScaler']
+        self.is_regressor = True
         
         self.gb_loss = ['deviance', 'exponential']
         self.gb_learning_rate_init = [0.001, 0.1]
@@ -97,6 +98,7 @@ class Objective:
         params = self.generate_params(trial, x_train)
 
         if len(set(y_train)) < len(y_train) / 10:
+            self.is_regressor = False
             model = Classifier(params, debug=self.debug)
             seconds = self.model_fit(model, x_train, y_train)
             if params['classifier_name'] not in self.times.keys():
@@ -489,12 +491,30 @@ def y_y_plot(objective, X_test, y_test):
             i += 1
         plt.show()
         
-def stacking_regressor(objective, final_estimator=RandomForestRegressor()):
+def stacking_regressor(objective, final_estimator=None):
+        return stacking(objective, final_estimator=final_estimator)
+
+def stacking_classifier(objective, final_estimator=None):
+        return stacking(objective, final_estimator=final_estimator)
+
+def stacking(objective, final_estimator=None):
         estimators = [(name, model.model) for name, model in objective.best_models.items()]
-        model = StackingRegressor(
-                estimators=estimators,
-                final_estimator=final_estimator,
-        )
+        if objective.is_regressor:
+                if final_estimator is None:
+                        RandomForestRegressor()
+                        
+                model = StackingRegressor(
+                        estimators=estimators,
+                        final_estimator=final_estimator,
+                )
+        else:
+                if final_estimator is None:
+                        RandomForestClassifier()
+                        
+                model = StackingClassifier(
+                        estimators=estimators,
+                        final_estimator=final_estimator,
+                )
         return model
 
 
