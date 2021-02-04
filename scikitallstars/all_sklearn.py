@@ -11,6 +11,7 @@ from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegress
 from sklearn.linear_model import LinearRegression, LogisticRegression, Ridge, Lasso, RidgeClassifier
 from sklearn.neural_network import MLPRegressor, MLPClassifier
 from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
 from sklearn.cross_decomposition import PLSRegression
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
@@ -26,7 +27,7 @@ class Objective:
                  y_train,
                  x_test = None, 
                  y_test = None,
-                 classifier_names = ['GradientBoosting', 'RandomForest', 'MLP', 'SVC', 'kNN', 'Ridge', 'LogisticRegression'],
+                 classifier_names = ['GradientBoosting', 'RandomForest', 'MLP', 'SVC', 'kNN', 'Ridge', 'QDA', 'LDA', 'LogisticRegression'],
                  regressor_names =  ['GradientBoosting', 'RandomForest', 'MLP', 'SVR', 'kNN', 'Ridge', 'Lasso', 'PLS', 'LinearRegression'],
                  classification_metrics = "f1_score"
                  ):
@@ -208,7 +209,11 @@ class Objective:
                 classifier_params['alpha'] = trial.suggest_loguniform(
                         'ridge_alpha', self.ridge_alpha[0], self.ridge_alpha[1])
                 classifier_params['max_iter'] = self.ridge_max_iter
-
+                
+            elif params['classifier_name'] == 'QDA':
+                pass
+            elif params['classifier_name'] == 'LDA':
+                pass
             else:
                 raise RuntimeError('unspport classifier', params['classifier_name'])
             params['classifier_params'] = classifier_params
@@ -312,6 +317,10 @@ class Classifier:
             self.model = KNeighborsClassifier(**params['classifier_params'])
         elif params['classifier_name'] == 'Ridge':
             self.model = RidgeClassifier(**params['classifier_params'])
+        elif params['classifier_name'] == 'LDA':
+            self.model = LinearDiscriminantAnalysis(**params['classifier_params'])
+        elif params['classifier_name'] == 'QDA':
+            self.model = QuadraticDiscriminantAnalysis(**params['classifier_params'])
         if self.debug:
             print(self.model)
         
