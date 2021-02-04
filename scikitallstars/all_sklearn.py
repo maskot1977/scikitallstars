@@ -8,7 +8,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.svm import SVR, SVC
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor, StackingRegressor
-from sklearn.linear_model import LinearRegression, LogisticRegression, Ridge
+from sklearn.linear_model import LinearRegression, LogisticRegression, Ridge, Lasso
 from sklearn.neural_network import MLPRegressor, MLPClassifier
 from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
 from sklearn.cross_decomposition import PLSRegression
@@ -27,7 +27,7 @@ class Objective:
                  x_test = None, 
                  y_test = None,
                  classifier_names = ['GradientBoosting', 'RandomForest', 'MLP', 'SVC', 'LogisticRegression'],
-                 regressor_names =  ['GradientBoosting', 'RandomForest', 'MLP', 'SVR', 'kNN', 'Ridge', 'PLS', 'LinearRegression'],
+                 regressor_names =  ['GradientBoosting', 'RandomForest', 'MLP', 'SVR', 'kNN', 'Lasso', 'Ridge', 'PLS', 'LinearRegression'],
                  classification_metrics = "f1_score"
                  ):
         self.x_train = x_train
@@ -65,6 +65,9 @@ class Objective:
         self.mlp_n_neurons = [10, 100]
         
         self.pls_max_iter = 530000
+        
+        self.lasso_alpha = [1e-5, 1e5]
+        self.lasso_max_iter = 530000
         
         self.ridge_alpha = [1e-5, 1e5]
         self.ridge_max_iter = 530000
@@ -261,7 +264,12 @@ class Objective:
                 regressor_params['alpha'] = trial.suggest_loguniform(
                         'ridge_alpha', self.ridge_alpha[0], self.ridge_alpha[1])
                 regressor_params['max_iter'] = self.ridge_max_iter
-                
+
+            elif params['regressor_name'] == 'Lasso':
+                regressor_params['alpha'] = trial.suggest_loguniform(
+                        'lasso_alpha', self.lasso_alpha[0], self.lasso_alpha[1])
+                regressor_params['max_iter'] = self.lasso_max_iter
+
             else:
                 raise RuntimeError('unspport regressor', params['regressor_name'])
             params['regressor_params'] = regressor_params
@@ -350,6 +358,8 @@ class Regressor:
             self.model = KNeighborsRegressor(**params['regressor_params'])
         elif params['regressor_name'] == 'Ridge':
             self.model = Ridge(**params['regressor_params'])
+        elif params['regressor_name'] == 'Lasso':
+            self.model = Lasso(**params['regressor_params'])
         if self.debug:
             print(self.model)
 
