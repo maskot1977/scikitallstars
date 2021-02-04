@@ -8,7 +8,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.svm import SVR, SVC
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor, StackingRegressor
-from sklearn.linear_model import LinearRegression, LogisticRegression, Ridge, Lasso
+from sklearn.linear_model import LinearRegression, LogisticRegression, Ridge, Lasso, RidgeClassifier
 from sklearn.neural_network import MLPRegressor, MLPClassifier
 from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
 from sklearn.cross_decomposition import PLSRegression
@@ -26,8 +26,8 @@ class Objective:
                  y_train,
                  x_test = None, 
                  y_test = None,
-                 classifier_names = ['GradientBoosting', 'RandomForest', 'MLP', 'SVC', 'LogisticRegression'],
-                 regressor_names =  ['GradientBoosting', 'RandomForest', 'MLP', 'SVR', 'kNN', 'Lasso', 'Ridge', 'PLS', 'LinearRegression'],
+                 classifier_names = ['GradientBoosting', 'RandomForest', 'MLP', 'SVC', 'kNN', 'Ridge', 'LogisticRegression'],
+                 regressor_names =  ['GradientBoosting', 'RandomForest', 'MLP', 'SVR', 'kNN', 'Ridge', 'Lasso', 'PLS', 'LinearRegression'],
                  classification_metrics = "f1_score"
                  ):
         self.x_train = x_train
@@ -199,6 +199,16 @@ class Objective:
                 classifier_params['max_depth'] = int(
                     trial.suggest_int('gb_max_depth', self.gb_max_depth[0], self.gb_max_depth[1]))
                 
+            elif params['regressor_name'] == 'kNN':
+                classifier_params['n_neighbors'] = trial.suggest_int("knn_n_neighbors", self.knn_n_neighbors[0], self.knn_n_neighbors[1])
+                classifier_params['weights'] = trial.suggest_categorical("knn_weights", self.knn_weights)
+                classifier_params['algorithm'] = trial.suggest_categorical("knn_algorithm", self.knn_algorithm)
+                
+            elif params['regressor_name'] == 'Ridge':
+                classifier_params['alpha'] = trial.suggest_loguniform(
+                        'ridge_alpha', self.ridge_alpha[0], self.ridge_alpha[1])
+                classifier_params['max_iter'] = self.ridge_max_iter
+
             else:
                 raise RuntimeError('unspport classifier', params['classifier_name'])
             params['classifier_params'] = classifier_params
@@ -298,6 +308,10 @@ class Classifier:
             self.model = LogisticRegression(**params['classifier_params'])
         elif params['classifier_name'] == 'GradientBoosting':
             self.model = GradientBoostingClassifier(**params['classifier_params'])
+        elif params['regressor_name'] == 'kNN':
+            self.model = KNeighborsClassifier(**params['regressor_params'])
+        elif params['regressor_name'] == 'Ridge':
+            self.model = RidgeClassifier(**params['regressor_params'])
         if self.debug:
             print(self.model)
         
