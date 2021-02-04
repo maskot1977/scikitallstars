@@ -309,9 +309,9 @@ class Classifier:
         elif params['classifier_name'] == 'GradientBoosting':
             self.model = GradientBoostingClassifier(**params['classifier_params'])
         elif params['classifier_name'] == 'kNN':
-            self.model = KNeighborsClassifier(**params['regressor_params'])
+            self.model = KNeighborsClassifier(**params['classifier_params'])
         elif params['classifier_name'] == 'Ridge':
-            self.model = RidgeClassifier(**params['regressor_params'])
+            self.model = RidgeClassifier(**params['classifier_params'])
         if self.debug:
             print(self.model)
         
