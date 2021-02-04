@@ -308,9 +308,9 @@ class Classifier:
             self.model = LogisticRegression(**params['classifier_params'])
         elif params['classifier_name'] == 'GradientBoosting':
             self.model = GradientBoostingClassifier(**params['classifier_params'])
-        elif params['regressor_name'] == 'kNN':
+        elif params['classifier_name'] == 'kNN':
             self.model = KNeighborsClassifier(**params['regressor_params'])
-        elif params['regressor_name'] == 'Ridge':
+        elif params['classifier_name'] == 'Ridge':
             self.model = RidgeClassifier(**params['regressor_params'])
         if self.debug:
             print(self.model)
