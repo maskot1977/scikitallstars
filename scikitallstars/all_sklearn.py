@@ -17,6 +17,7 @@ from sklearn import metrics
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
+from sklearn.metrics import roc_curve, precision_recall_curve, auc, classification_report, confusion_matrix
 
 def handler_func(msg):
         print(msg)
@@ -495,3 +496,76 @@ def stacking_regressor(objective, final_estimator=RandomForestRegressor()):
                 final_estimator=final_estimator,
         )
         return model
+
+
+def classification_metrics(objective, X_test, y_test):
+        fig, axes = plt.subplots(
+                nrows=3, ncols=len(objective.best_models.keys()), 
+                figsize=(4*len(objective.classifier_names), 4*3)
+        )
+        i = 0
+        for name in objective.best_models.keys():
+                model = objective.best_models[name]
+                if hasattr(model.model, "predict_proba"):
+                        probas = model.predict_proba(X_test)
+                else:
+                        probas = np.array([[x, x] for x in model.model.decision_function(X_tes1)])
+                        
+                fpr, tpr, thresholds = roc_curve(y_test, probas[:, 1])
+                roc_auc = auc(fpr, tpr)
+                precision, recall, thresholds = precision_recall_curve(y_test, probas[:, 1])
+                area = auc(recall, precision)
+                matrix = confusion_matrix(model.predict(X_test), y_test)
+                TN = matrix[0][0]
+                FP = matrix[1][0]
+                FN = matrix[0][1]
+                TP = matrix[1][1]
+                data = [TP, FN, FP, TN]
+                axes[0][i].set_title(name)
+                axes[0][i].pie(
+                        data, 
+                        counterclock=False, 
+                        startangle=90, 
+                        autopct=lambda x: "{}".format(int(x * sum(data)/100)),
+                        labels=["TP", "FN", "FP", "TN"], 
+                        wedgeprops=dict(width=1, edgecolor='w'),
+                        colors = ["skyblue", "orange", "tan", "lime"]
+                )
+                axes[0][i].text(
+                        1.0 - 0.5,
+                        0.0 + 0.7,
+                        ("%.3f" % ((TN+TP)/(TN+TP+FN+FP))).lstrip("0"),
+                        size=20,
+                        horizontalalignment="right",
+                )
+                axes[1][i].plot([0, 1], [0, 1])
+                axes[1][i].plot(fpr, tpr, label='ROC curve (area = %0.2f)' % roc_auc)
+                axes[1][i].fill_between(fpr, tpr, alpha=0.5)
+                axes[1][i].set_xlim([0.0, 1.0])
+                axes[1][i].set_ylim([0.0, 1.0])
+                axes[1][i].set_xlabel('False Positive Rate')
+                if i == 0:
+                        axes[1][i].set_ylabel('True Positive Rate')
+                axes[1][i].text(
+                        1.0  - 0.3,
+                        0.0 + 0.3,
+                        ("%.3f" % roc_auc).lstrip("0"),
+                        size=20,
+                        horizontalalignment="right",
+                )
+                axes[2][i].plot(recall, precision, label='Precision-Recall curve')
+                axes[2][i].fill_between(recall, precision, alpha=0.5)
+                axes[2][i].set_xlabel('Recall')
+                if i == 0:
+                        axes[2][i].set_ylabel('Precision')
+                axes[2][i].set_xlim([0.0, 1.0])
+                axes[2][i].set_ylim([0.0, 1.0])
+                axes[2][i].text(
+                        1.0  - 0.3,
+                        0.0 + 0.3,
+                        ("%.3f" % area).lstrip("0"),
+                        size=20,
+                        horizontalalignment="right",
+                )
+                i += 1
+        plt.show()
