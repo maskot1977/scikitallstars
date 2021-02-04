@@ -509,7 +509,7 @@ def classification_metrics(objective, X_test, y_test):
                 if hasattr(model.model, "predict_proba"):
                         probas = model.predict_proba(X_test)
                 else:
-                        probas = np.array([[x, x] for x in model.model.decision_function(X_tes1)])
+                        probas = np.array([[x, x] for x in model.model.decision_function(X_test)])
                         
                 fpr, tpr, thresholds = roc_curve(y_test, probas[:, 1])
                 roc_auc = auc(fpr, tpr)
