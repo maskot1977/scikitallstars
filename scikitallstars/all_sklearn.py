@@ -163,6 +163,7 @@ class Objective:
                 else:
                     classifier_params['gamma'] = 'auto'
                 classifier_params['max_iter'] = self.svm_max_iter
+                classifier_params['probability'] = True
 
             elif params['classifier_name'] == 'RandomForest':
                 classifier_params['n_estimators'] = trial.suggest_categorical(
