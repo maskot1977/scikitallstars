@@ -193,8 +193,6 @@ class Objective:
                 
             elif params['classifier_name'] == 'GradientBoosting':
                 classifier_params['loss'] = trial.suggest_categorical('loss', self.gb_loss)
-                classifier_params['learning_rate'] = trial.suggest_loguniform(
-                        'learning_rate_init', self.learning_rate_init[0], self.learning_rate_init[1])
                 classifier_params['n_estimators'] = trial.suggest_categorical(
                     'gb_n_estimators', self.gb_n_estimators)
                 classifier_params['max_depth'] = int(
