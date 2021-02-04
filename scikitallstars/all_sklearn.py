@@ -199,12 +199,12 @@ class Objective:
                 classifier_params['max_depth'] = int(
                     trial.suggest_int('gb_max_depth', self.gb_max_depth[0], self.gb_max_depth[1]))
                 
-            elif params['regressor_name'] == 'kNN':
+            elif params['classifier_name'] == 'kNN':
                 classifier_params['n_neighbors'] = trial.suggest_int("knn_n_neighbors", self.knn_n_neighbors[0], self.knn_n_neighbors[1])
                 classifier_params['weights'] = trial.suggest_categorical("knn_weights", self.knn_weights)
                 classifier_params['algorithm'] = trial.suggest_categorical("knn_algorithm", self.knn_algorithm)
                 
-            elif params['regressor_name'] == 'Ridge':
+            elif params['classifier_name'] == 'Ridge':
                 classifier_params['alpha'] = trial.suggest_loguniform(
                         'ridge_alpha', self.ridge_alpha[0], self.ridge_alpha[1])
                 classifier_params['max_iter'] = self.ridge_max_iter
