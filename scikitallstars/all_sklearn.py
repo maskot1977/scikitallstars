@@ -8,7 +8,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.svm import SVR, SVC
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor, StackingRegressor
-from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.linear_model import LinearRegression, LogisticRegression, Ridge
 from sklearn.neural_network import MLPRegressor, MLPClassifier
 from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
 from sklearn.cross_decomposition import PLSRegression
@@ -27,7 +27,7 @@ class Objective:
                  x_test = None, 
                  y_test = None,
                  classifier_names = ['GradientBoosting', 'RandomForest', 'MLP', 'SVC', 'LogisticRegression'],
-                 regressor_names =  ['GradientBoosting', 'RandomForest', 'MLP', 'SVR', 'kNN', 'PLS', 'LinearRegression'],
+                 regressor_names =  ['GradientBoosting', 'RandomForest', 'MLP', 'SVR', 'kNN', 'Ridge', 'PLS', 'LinearRegression'],
                  classification_metrics = "f1_score"
                  ):
         self.x_train = x_train
@@ -56,7 +56,7 @@ class Objective:
         self.knn_weights = ['uniform', 'distance']
         self.knn_algorithm = ['auto', 'ball_tree', 'kd_tree', 'brute']
         
-        self.lr_C = [0.00001, 1000]
+        self.lr_C = [1e-5, 1e5]
         self.lr_max_iter = 530000
         self.lr_solver = ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga']
         
@@ -65,6 +65,9 @@ class Objective:
         self.mlp_n_neurons = [10, 100]
         
         self.pls_max_iter = 530000
+        
+        self.ridge_alpha = [1e-5, 1e5]
+        self.ridge_max_iter = 530000
 
         self.rf_max_depth = [2, 32]
         self.rf_max_features = ['auto']
@@ -254,6 +257,11 @@ class Objective:
                 regressor_params['weights'] = trial.suggest_categorical("knn_weights", self.knn_weights)
                 regressor_params['algorithm'] = trial.suggest_categorical("knn_algorithm", self.knn_algorithm)
                 
+            elif params['regressor_name'] == 'Ridge':
+                regressor_params['alpha'] = trial.suggest_loguniform(
+                        'ridge_alpha', self.ridge_alpha[0], self.ridge_alpha[1])
+                regressor_params['max_iter'] = self.ridge_max_iter
+                
             else:
                 raise RuntimeError('unspport regressor', params['regressor_name'])
             params['regressor_params'] = regressor_params
@@ -340,6 +348,8 @@ class Regressor:
             self.model = GradientBoostingRegressor(**params['regressor_params'])
         elif params['regressor_name'] == 'kNN':
             self.model = KNeighborsRegressor(**params['regressor_params'])
+        elif params['regressor_name'] == 'Ridge':
+            self.model = Ridge(**params['regressor_params'])
         if self.debug:
             print(self.model)
 
