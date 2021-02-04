@@ -10,6 +10,7 @@ from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor, StackingRegressor
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.neural_network import MLPRegressor, MLPClassifier
+from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
 from sklearn.cross_decomposition import PLSRegression
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
@@ -26,7 +27,7 @@ class Objective:
                  x_test = None, 
                  y_test = None,
                  classifier_names = ['GradientBoosting', 'RandomForest', 'MLP', 'SVC', 'LogisticRegression'],
-                 regressor_names =  ['GradientBoosting', 'RandomForest', 'MLP', 'SVR', 'PLS', 'LinearRegression'],
+                 regressor_names =  ['GradientBoosting', 'RandomForest', 'MLP', 'SVR', 'kNN', 'PLS', 'LinearRegression'],
                  classification_metrics = "f1_score"
                  ):
         self.x_train = x_train
@@ -50,6 +51,10 @@ class Objective:
         self.gb_learning_rate_init = [0.001, 0.1]
         self.gb_n_estimators = [100]
         self.gb_max_depth = [2, 32]
+        
+        self.knn_n_neighbors = [2, 10]
+        self.knn_weights = ['uniform', 'distance']
+        self.knn_algorithm = ['auto', 'ball_tree', 'kd_tree', 'brute']
         
         self.lr_C = [0.00001, 1000]
         self.lr_max_iter = 530000
@@ -243,6 +248,12 @@ class Objective:
                     'gb_n_estimators', self.gb_n_estimators)
                 regressor_params['max_depth'] = int(
                     trial.suggest_loguniform('gb_max_depth', self.gb_max_depth[0], self.gb_max_depth[1]))
+                
+            elif params['regressor_name'] == 'kNN':
+                regressor_params['n_neighbors'] = trial.suggest_int("knn_n_neighbors", self.knn_n_neighbors[0], self.knn_n_neighbors[1])
+                regressor_params['weights'] = trial.suggest_categorical("knn_weights", self.knn_weights)
+                regressor_params['algorithm'] = trial.suggest_categorical("knn_algorithm", self.knn_algorithm)
+                
             else:
                 raise RuntimeError('unspport regressor', params['regressor_name'])
             params['regressor_params'] = regressor_params
@@ -327,6 +338,8 @@ class Regressor:
             self.model = PLSRegression(**params['regressor_params'])
         elif params['regressor_name'] == 'GradientBoosting':
             self.model = GradientBoostingRegressor(**params['regressor_params'])
+        elif params['regressor_name'] == 'kNN':
+            self.model = KNeighborsRegressor(**params['regressor_params'])
         if self.debug:
             print(self.model)
 
