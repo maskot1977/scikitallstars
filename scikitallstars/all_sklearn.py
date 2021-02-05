@@ -475,33 +475,6 @@ def objective_summary(objective):
     axes[3].yaxis.set_visible(False)
     plt.show()
 
-
-def y_y_plot(objective, X_test, y_test):
-        fig, axes = plt.subplots(
-            nrows=1, ncols=len(objective.best_models.keys()), 
-            figsize=(4*len(objective.regressor_names), 4)
-            )
-        i = 0
-        for name in objective.best_models.keys():
-            y_pred = objective.best_models[name].predict(X_test)
-            score = r2_score(np.array(y_pred).ravel(), np.array(y_test).ravel())
-            axes[i].set_title(name)
-            axes[i].scatter(y_test, y_pred, alpha=0.5)
-            y_min = min(y_test.min(), y_pred.min())
-            y_max = min(y_test.max(), y_pred.max())
-            axes[i].plot([y_min, y_max], [y_min, y_max])
-            axes[i].text(
-                        y_max - 0.3,
-                        y_min + 0.3,
-                        ("%.3f" % score).lstrip("0"),
-                        size=15,
-                        horizontalalignment="right",
-                    )
-            axes[i].set_xlabel('Real')
-            if i == 0:
-                axes[i].set_ylabel('Predicted')
-            i += 1
-        plt.show()
         
 def stacking_regressor(objective, final_estimator=None):
         return stacking(objective, final_estimator=final_estimator)
@@ -528,7 +501,6 @@ def stacking(objective, final_estimator=None):
                         final_estimator=final_estimator,
                 )
         return model
-
 
 def classification_metrics(objective, X_test, y_test):
         fig, axes = plt.subplots(
@@ -602,6 +574,33 @@ def classification_metrics(objective, X_test, y_test):
                 i += 1
         plt.show()
 
+def y_y_plot(objective, X_test, y_test):
+        fig, axes = plt.subplots(
+            nrows=1, ncols=len(objective.best_models.keys()), 
+            figsize=(4*len(objective.regressor_names), 4)
+            )
+        i = 0
+        for name in objective.best_models.keys():
+            y_pred = objective.best_models[name].predict(X_test)
+            score = r2_score(np.array(y_pred).ravel(), np.array(y_test).ravel())
+            axes[i].set_title(name)
+            axes[i].scatter(y_test, y_pred, alpha=0.5)
+            y_min = min(y_test.min(), y_pred.min())
+            y_max = min(y_test.max(), y_pred.max())
+            axes[i].plot([y_min, y_max], [y_min, y_max])
+            axes[i].text(
+                        y_max - 0.3,
+                        y_min + 0.3,
+                        ("%.3f" % score).lstrip("0"),
+                        size=15,
+                        horizontalalignment="right",
+                    )
+            axes[i].set_xlabel('Real')
+            if i == 0:
+                axes[i].set_ylabel('Predicted')
+            i += 1
+        plt.show()
+        
 def show_metrics(objective, X_test, y_test):
         if objective.is_regressor:
                 y_y_plot(objective, X_test, y_test)
