@@ -84,13 +84,13 @@ class Objective:
         self.svm_c = [1e-5, 1e5]
         self.svm_max_iter = 530000
 
-    def get_model_names():
+    def get_model_names(self):
         if self.is_regressor:
                 return self.regressor_names
         else:
                 return self.classifier_names
         
-    def set_model_names(model_names):
+    def set_model_names(self, model_names):
         if self.is_regressor:
                 self.regressor_names = model_names
         else:
