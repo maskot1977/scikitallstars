@@ -49,7 +49,7 @@ class Objective:
         self.debug = False
         self.scalers = ['StandardScaler', 'MinMaxScaler']
         self.is_regressor = True
-        if len(set(y_train)) < len(y_train) / 10:
+        if len(set(y_train)) < 3:
             self.is_regressor = False        
         self.gb_loss = ['deviance', 'exponential']
         self.gb_learning_rate_init = [0.001, 0.1]
@@ -109,7 +109,7 @@ class Objective:
                 
         params = self.generate_params(trial, x_train)
 
-        if len(set(y_train)) < len(y_train) / 10:
+        if len(set(y_train)) < 3:
             self.is_regressor = False
             model = Classifier(params, debug=self.debug)
             seconds = self.model_fit(model, x_train, y_train)
@@ -610,7 +610,7 @@ def show_allsklearn_metrics(objective, X_test, y_test):
                 
                 
 def show_metrics(model, X_train, y_train, X_test, y_test):
-        if len(set(y_train)) < len(y_train) / 10:
+        if len(set(y_train)) < 3:
                 classification_metrics(model, X_train, y_train, X_test, y_test)
         else:
                 y_y_plot(model, X_train, y_train, X_test, y_test)
