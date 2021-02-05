@@ -610,7 +610,7 @@ def show_allsklearn_metrics(objective, X_test, y_test):
                 
                 
 def show_metrics(model, X_train, y_train, X_test, y_test):
-        if len(set(y_train)) < 3:
+        if hasattr(model, "predict_proba") or hasattr(model, "decision_function"):
                 classification_metrics(model, X_train, y_train, X_test, y_test)
         else:
                 y_y_plot(model, X_train, y_train, X_test, y_test)
