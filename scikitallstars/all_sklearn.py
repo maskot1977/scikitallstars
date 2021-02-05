@@ -602,7 +602,7 @@ def classification_metrics(objective, X_test, y_test):
                 i += 1
         plt.show()
 
-    def show_metrics(objective, X_test, y_test):
+def show_metrics(objective, X_test, y_test):
         if objective.is_regressor:
                 y_y_plot(objective, X_test, y_test)
         else:
