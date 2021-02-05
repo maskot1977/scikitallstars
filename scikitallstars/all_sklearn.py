@@ -49,7 +49,8 @@ class Objective:
         self.debug = False
         self.scalers = ['StandardScaler', 'MinMaxScaler']
         self.is_regressor = True
-        
+        if len(set(y_train)) < len(y_train) / 10:
+            self.is_regressor = False        
         self.gb_loss = ['deviance', 'exponential']
         self.gb_learning_rate_init = [0.001, 0.1]
         self.gb_n_estimators = [100]
@@ -83,6 +84,17 @@ class Objective:
         self.svm_c = [1e-5, 1e5]
         self.svm_max_iter = 530000
 
+    def get_model_names():
+        if self.is_regressor:
+                return self.regressor_names
+        else:
+                return self.classifier_names
+        
+    def set_model_names(model_names):
+        if self.is_regressor:
+                self.regressor_names = model_names
+        else:
+                self.classifier_names = model_names
 
     #@on_timeout(limit=5, handler=handler_func, hint=u'call')
     @timeout_decorator.timeout(10)
