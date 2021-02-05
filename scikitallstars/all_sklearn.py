@@ -601,17 +601,20 @@ def allsklearn_y_y_plot(objective, X_test, y_test):
             i += 1
         plt.show()
         
+        
 def show_allsklearn_metrics(objective, X_test, y_test):
         if objective.is_regressor:
                 allsklearn_y_y_plot(objective, X_test, y_test)
         else:
                 allsklearn_classification_metrics(objective, X_test, y_test)
                 
+                
 def show_metrics(model, X_train, y_train, X_test, y_test):
         if len(set(y_train)) < len(y_train) / 10:
                 classification_metrics(model, X_train, y_train, X_test, y_test)
         else:
                 y_y_plot(model, X_train, y_train, X_test, y_test)
+                
                 
 def classification_metrics(model, X_train, X_test, y_train, y_test):
         fig, axes = plt.subplots(
@@ -687,9 +690,7 @@ def classification_metrics(model, X_train, X_test, y_train, y_test):
             i += 1
         plt.show()
 
-        import matplotlib.pyplot as plt
-import numpy as np
-
+        
 def y_y_plot(model, X_train, X_test, y_train, y_test):
 
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8,4))
