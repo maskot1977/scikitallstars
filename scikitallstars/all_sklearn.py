@@ -828,10 +828,11 @@ def y_y_plot(model, X_train, X_test, y_train, y_test):
     plt.show()
 
 class PCAUmap:
-    def __init__(self, use_pca=1.0):
+    def __init__(self, use_pca=1.0, random_state=53):
         self.pca = PCA()
-        self.umap = UMAP()
+        self.umap = UMAP(random_state=random_state)
         self.use_pca = use_pca
+        self.random_state = random_state
     
     def fit(self, data):
         if self.use_pca is not None:
