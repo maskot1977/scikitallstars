@@ -439,8 +439,7 @@ class Classifier:
         if fitting == True:
             self.model.fit(x, y)
         if y is None:
-            #if proba:
-            if hasattr(self.model, "predict_proba"):
+            if proba and hasattr(self.model, "predict_proba"):
                 return self.model.predict_proba(x)
             else:
                 return self.model.predict(x)
