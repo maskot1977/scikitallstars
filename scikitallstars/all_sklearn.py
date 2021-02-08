@@ -934,7 +934,7 @@ def allsklearn_pcaumap(objective, pcaumap, X_train, y_train=None, X_test=None, y
     i = 0
     for model_name in objective.best_models.keys():
         axes[i].set_title(model_name)
-        model = objective.best_models[model_name]
+        model = objective.best_models[model_name].model
         if hasattr(model, "predict_proba"):
             Z = model.predict_proba(pcaumap.inverse_transform(np.c_[xx.ravel(), yy.ravel()]))[:, 1]
         elif hasattr(model, "decision_function"):
