@@ -27,10 +27,11 @@ from sklearn.svm import SVC, SVR
 import scikitallstars.timeout_decorator as timeout_decorator
 from scikitallstars.timeout import on_timeout
 
+from umap import UMAP
+from sklearn.decomposition import PCA
 
 def handler_func(msg):
     print(msg)
-
 
 class Objective:
     def __init__(
@@ -438,7 +439,8 @@ class Classifier:
         if fitting == True:
             self.model.fit(x, y)
         if y is None:
-            if proba:
+            #if proba:
+            if hasattr(model, "predict_proba"):
                 return self.model.predict_proba(x)
             else:
                 return self.model.predict(x)
@@ -824,4 +826,128 @@ def y_y_plot(model, X_train, X_test, y_train, y_test):
     )
     axes[1].set_xlabel("Real")
     axes[1].set_ylabel("Predicted")
+    plt.show()
+
+class PCAUmap:
+    def __init__(self, use_pca=1.0):
+        self.pca = PCA()
+        self.umap = UMAP()
+        self.use_pca = use_pca
+    
+    def fit(self, data):
+        if self.use_pca is not None:
+            self.pca.fit(data)
+            pca_feature = self.pca.transform(data)
+            self.umap.fit(pca_feature)
+        else:
+            self.umap.fit(data)
+
+    def transform(self, data):
+        if self.pca is not None:
+            pca_feature = self.pca.transform(data)
+            return self.umap.transform(pca_feature)
+        else:
+            return self.umap.transform(data)
+
+    def fit_transform(self, data):
+        self.fit(data)
+        return self.transform(data)
+
+    def inverse_transform(self, embedded):
+        if self.pca is not None:
+            return self.pca.inverse_transform(self.umap.inverse_transform(embedded))
+        else:
+            return self.umap.inverse_transform(embedded)
+          
+def show_pcaumap(pcaumap, X_train, y_train=None, X_test=None, y_test=None, pca=None, model=None, h=0.5, cm=plt.cm.jet):
+    embedding_train = pcaumap.transform(X_train)
+    if X_test is not None:
+        embedding_test = pcaumap.transform(X_test)
+
+    if X_test is not None:
+        x_min = min(embedding_train[:, 0].min() - 0.5, embedding_test[:, 0].min() - 0.5)
+        x_max = max(embedding_train[:, 0].max() + 0.5, embedding_test[:, 0].max() + 0.5)
+        y_min = min(embedding_train[:, 1].min() - 0.5, embedding_test[:, 1].min() - 0.5)
+        y_max = max(embedding_train[:, 1].max() + 0.5, embedding_test[:, 1].max() + 0.5)
+    else:
+        x_min = embedding_train[:, 0].min() - 0.5
+        x_max = embedding_train[:, 0].max() + 0.5
+        y_min = embedding_train[:, 1].min() - 0.5
+        y_max = embedding_train[:, 1].max() + 0.5
+
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+
+    plt.figure(figsize=(8,6))
+
+    if model is not None:
+        if hasattr(model, "predict_proba"):
+            Z = model.predict_proba(pcaumap.inverse_transform(np.c_[xx.ravel(), yy.ravel()]))[:, 1]
+        elif hasattr(model, "decision_function"):
+            Z = model.decision_function(pcaumap.inverse_transform(np.c_[xx.ravel(), yy.ravel()]))
+        else:
+            Z = model.predict(pcaumap.inverse_transform(np.c_[xx.ravel(), yy.ravel()]))
+        Z = Z.reshape(xx.shape)
+        plt.contourf(xx, yy, Z, alpha=0.8, cmap=cm)
+        plt.colorbar()
+
+        plt.scatter(embedding_train[:, 0], embedding_train[:, 1], label="train", facecolors='none', edgecolors='k', alpha=0.5)
+        if X_test is not None:
+            plt.scatter(embedding_test[:, 0], embedding_test[:, 1], label="test", facecolors='none', edgecolors='r', alpha=0.5)
+    else:
+        if y_train is not None:
+            plt.scatter(embedding_train[:,0], embedding_train[:,1], edgecolors="k", c=y_train, alpha=0.5)
+        else:
+            plt.scatter(embedding_train[:,0], embedding_train[:,1], edgecolors="k", alpha=0.5)
+        if X_test is not None:
+            if y_train is not None:
+                plt.scatter(embedding_test[:,0], embedding_test[:,1], edgecolors="r", c=y_test, alpha=0.5)
+            else:
+                plt.scatter(embedding_test[:,0], embedding_test[:,1], edgecolors="r", alpha=0.5)
+        if y_train is not None:
+            plt.colorbar()
+
+    plt.show()
+    
+def allsklearn_pcaumap(objective, pcaumap, X_train, y_train=None, X_test=None, y_test=None, h=1.0, cm=plt.cm.jet):
+
+    embedding_train = pcaumap.transform(X_train)
+    if X_test is not None:
+            embedding_test = pcaumap.transform(X_test)
+
+    if X_test is not None:
+        x_min = min(embedding_train[:, 0].min() - 0.5, embedding_test[:, 0].min() - 0.5)
+        x_max = max(embedding_train[:, 0].max() + 0.5, embedding_test[:, 0].max() + 0.5)
+        y_min = min(embedding_train[:, 1].min() - 0.5, embedding_test[:, 1].min() - 0.5)
+        y_max = max(embedding_train[:, 1].max() + 0.5, embedding_test[:, 1].max() + 0.5)
+    else:
+        x_min = embedding_train[:, 0].min() - 0.5
+        x_max = embedding_train[:, 0].max() + 0.5
+        y_min = embedding_train[:, 1].min() - 0.5
+        y_max = embedding_train[:, 1].max() + 0.5
+
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+
+    fig, axes = plt.subplots(
+            nrows=1,
+            ncols=len(objective.best_models.keys()),
+            figsize=(4 * len(objective.regressor_names), 4),
+        )
+    i = 0
+    for model_name in objective.best_models.keys():
+        axes[i].set_title(model_name)
+        model = objective.best_models[model_name]
+        if hasattr(model, "predict_proba"):
+            Z = model.predict_proba(pcaumap.inverse_transform(np.c_[xx.ravel(), yy.ravel()]))[:, 1]
+        elif hasattr(model, "decision_function"):
+            Z = model.decision_function(pcaumap.inverse_transform(np.c_[xx.ravel(), yy.ravel()]))
+        else:
+            Z = model.predict(pcaumap.inverse_transform(np.c_[xx.ravel(), yy.ravel()]))
+        Z = Z.reshape(xx.shape)
+        axes[i].contourf(xx, yy, Z, alpha=0.8, cmap=cm)
+
+        axes[i].scatter(embedding_train[:, 0], embedding_train[:, 1], label="train", facecolors='none', edgecolors='k', alpha=0.5)
+        if X_test is not None:
+            axes[i].scatter(embedding_test[:, 0], embedding_test[:, 1], label="test", facecolors='none', edgecolors='r', alpha=0.5)
+        i += 1
+
     plt.show()
