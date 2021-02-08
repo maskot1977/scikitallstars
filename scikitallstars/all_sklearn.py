@@ -908,7 +908,7 @@ def show_pcaumap(pcaumap, X_train, y_train=None, X_test=None, y_test=None, pca=N
 
     plt.show()
     
-def allsklearn_pcaumap(objective, pcaumap, X_train, y_train=None, X_test=None, y_test=None, h=1.0, cm=plt.cm.jet):
+def show_allsklearn_pcaumap(objective, pcaumap, X_train, y_train=None, X_test=None, y_test=None, h=1.0, cm=plt.cm.jet):
 
     embedding_train = pcaumap.transform(X_train)
     if X_test is not None:
