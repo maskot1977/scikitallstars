@@ -950,3 +950,40 @@ def allsklearn_pcaumap(objective, pcaumap, X_train, y_train=None, X_test=None, y
         i += 1
 
     plt.show()
+
+def pca_summary(pca, X_train, y_train=None, X_test=None, y_test=None):
+    fig, axes = plt.subplots(
+            nrows=1,
+            ncols=3,
+            figsize=(6*3, 6),
+        )
+    
+    pca_feature_train = pca.transform(X_train)
+    if y_train is not None:
+        axes[0].scatter(pca_feature_train[:, 0], pca_feature_train[:, 1], alpha=0.8, edgecolors="k", c=y_train)
+    else:
+        axes[0].scatter(pca_feature_train[:, 0], pca_feature_train[:, 1], alpha=0.8, edgecolors="k")
+
+    if X_test is not None:
+        pca_feature_test = pca.transform(X_test)
+        if y_test is not None:
+            axes[0].scatter(pca_feature_test[:, 0], pca_feature_test[:, 1], alpha=0.8, edgecolors="r", c=y_test)
+        else:
+            axes[0].scatter(pca_feature_test[:, 0], pca_feature_test[:, 1], alpha=0.8)
+
+    axes[0].set_xlabel('PC1')
+    axes[0].set_ylabel('PC2')
+    axes[0].grid()
+
+    axes[1].scatter(pca.components_[0], pca.components_[1])
+    for x, y, name in zip(pca.components_[0], pca.components_[1], X_train.columns):
+        axes[1].text(x, y, name)
+    axes[1].set_xlabel('PC1 loading')
+    axes[1].set_ylabel('PC2 loading')
+    axes[1].grid()
+
+    axes[2].plot([0] + list(np.cumsum(pca.explained_variance_ratio_)), "-o")
+    axes[2].set_xlabel("Number of principal components")
+    axes[2].set_ylabel("Cumulative contribution ratio")
+    axes[2].grid()
+    plt.show()
