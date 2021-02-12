@@ -828,9 +828,12 @@ def y_y_plot(model, X_train, X_test, y_train, y_test):
     plt.show()
 
 class PCAUmap:
-    def __init__(self, use_pca=1.0, random_state=53):
+    def __init__(self, use_pca=1.0, random_state=53, transform_seed=53):
         self.pca = PCA()
-        self.umap = UMAP(random_state=random_state)
+        self.umap = UMAP(
+          random_state=random_state, 
+          transform_seed=transform_seed
+        )
         self.use_pca = use_pca
         self.random_state = random_state
     
