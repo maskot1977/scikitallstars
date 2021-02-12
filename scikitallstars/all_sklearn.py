@@ -859,7 +859,7 @@ class PCAUmap:
         else:
             return self.umap.inverse_transform(embedded)
           
-def show_pcaumap(pcaumap, X_train, y_train=None, X_test=None, y_test=None, pca=None, model=None, h=0.5, cm=plt.cm.jet):
+def show_pcaumap(pcaumap, X_train, y_train=None, X_test=None, y_test=None, pca=None, model=None, h=0.5, cm=plt.cm.jet, title=None):
     embedding_train = pcaumap.transform(X_train)
     if X_test is not None:
         embedding_test = pcaumap.transform(X_test)
@@ -878,6 +878,8 @@ def show_pcaumap(pcaumap, X_train, y_train=None, X_test=None, y_test=None, pca=N
     xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
 
     plt.figure(figsize=(8,6))
+    if title is not None:
+        plt.title(title)
 
     if model is not None:
         if hasattr(model, "predict_proba"):
