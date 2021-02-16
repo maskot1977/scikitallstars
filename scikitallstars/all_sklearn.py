@@ -957,7 +957,7 @@ def show_allsklearn_pcaumap(objective, pcaumap, X_train, y_train=None, X_test=No
 
     plt.show()
 
-def pca_summary(pca, X_train, y_train=None, X_test=None, y_test=None):
+def pca_summary(pca, X_train, y_train=None, X_test=None, y_test=None, text_limit=100):
     fig, axes = plt.subplots(
             nrows=1,
             ncols=3,
@@ -982,8 +982,11 @@ def pca_summary(pca, X_train, y_train=None, X_test=None, y_test=None):
     axes[0].grid()
 
     axes[1].scatter(pca.components_[0], pca.components_[1])
-    for x, y, name in zip(pca.components_[0], pca.components_[1], X_train.columns):
-        axes[1].text(x, y, name)
+    
+    if len(pca.components_[0]) > text_limit:
+      for x, y, name in zip(pca.components_[0], pca.components_[1], X_train.columns):
+          axes[1].text(x, y, name)
+          
     axes[1].set_xlabel('PC1 loading')
     axes[1].set_ylabel('PC2 loading')
     axes[1].grid()
