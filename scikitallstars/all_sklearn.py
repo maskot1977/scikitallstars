@@ -3,35 +3,53 @@ import timeit
 
 import matplotlib.pyplot as plt
 import numpy as np
+import scikitallstars.timeout_decorator as timeout_decorator
+from scikitallstars.timeout import on_timeout
 from sklearn import metrics
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.cross_decomposition import PLSRegression
-from sklearn.discriminant_analysis import (LinearDiscriminantAnalysis,
-                                           QuadraticDiscriminantAnalysis)
-from sklearn.ensemble import (GradientBoostingClassifier,
-                              GradientBoostingRegressor,
-                              RandomForestClassifier, RandomForestRegressor,
-                              StackingClassifier, StackingRegressor)
-from sklearn.linear_model import (Lasso, LinearRegression, LogisticRegression,
-                                  Ridge, RidgeClassifier)
-from sklearn.metrics import (auc, classification_report, confusion_matrix,
-                             precision_recall_curve, r2_score, roc_curve)
+from sklearn.decomposition import PCA
+from sklearn.discriminant_analysis import (
+    LinearDiscriminantAnalysis,
+    QuadraticDiscriminantAnalysis,
+)
+from sklearn.ensemble import (
+    GradientBoostingClassifier,
+    GradientBoostingRegressor,
+    RandomForestClassifier,
+    RandomForestRegressor,
+    StackingClassifier,
+    StackingRegressor,
+)
+from sklearn.linear_model import (
+    Lasso,
+    LinearRegression,
+    LogisticRegression,
+    Ridge,
+    RidgeClassifier,
+)
+from sklearn.metrics import (
+    auc,
+    classification_report,
+    confusion_matrix,
+    precision_recall_curve,
+    r2_score,
+    roc_curve,
+)
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.neural_network import MLPClassifier, MLPRegressor
+
 # from sklearn.model_selection import KFold, StratifiedKFold
 # from sklearn.model_selection import KFold, StratifiedKFold
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.svm import SVC, SVR
-
-import scikitallstars.timeout_decorator as timeout_decorator
-from scikitallstars.timeout import on_timeout
-
 from umap import UMAP
-from sklearn.decomposition import PCA
+
 
 def handler_func(msg):
     print(msg)
+
 
 class Objective:
     def __init__(
@@ -397,8 +415,6 @@ class Objective:
         return params
 
 
-
-
 class Classifier:
     def __init__(self, params, debug=False):
         self.params = params
@@ -457,8 +473,6 @@ class Classifier:
     def predict_proba(self, x):
         pred_y = self._fit_and_predict_core(x, proba=True)
         return pred_y
-
-
 
 
 class Regressor:
@@ -578,18 +592,34 @@ def stacking_classifier(objective, final_estimator=None):
     return stacking(objective, final_estimator=final_estimator)
 
 
-def stacking(objective, final_estimator=None):
-    estimators = [(name, model.model) for name, model in objective.best_models.items()]
+def stacking(objective, final_estimator=None, use_all=False):
+    if use_all:
+        estimators = [
+            (name, model.model) for name, model in objective.best_models.items()
+        ]
+
+    else:
+        threshold = sum(
+            [
+                objective1.best_scores[name]
+                for name, model in objective1.best_models.items()
+            ]
+        ) / len(objective1.best_models.items())
+        estimators = []
+        for name, model in objective1.best_models.items():
+            if objective1.best_scores[name] >= threshold:
+                estimators.append((name, model.model))
+
     if objective.is_regressor:
         if final_estimator is None:
-            RandomForestRegressor()
+            final_estimator = RandomForestRegressor()
 
         model = StackingRegressor(
             estimators=estimators, final_estimator=final_estimator,
         )
     else:
         if final_estimator is None:
-            RandomForestClassifier()
+            final_estimator = RandomForestClassifier()
 
         model = StackingClassifier(
             estimators=estimators, final_estimator=final_estimator,
@@ -827,16 +857,14 @@ def y_y_plot(model, X_train, X_test, y_train, y_test):
     axes[1].set_ylabel("Predicted")
     plt.show()
 
+
 class PCAUmap:
     def __init__(self, use_pca=1.0, random_state=53, transform_seed=53):
         self.pca = PCA()
-        self.umap = UMAP(
-          random_state=random_state, 
-          transform_seed=transform_seed
-        )
+        self.umap = UMAP(random_state=random_state, transform_seed=transform_seed)
         self.use_pca = use_pca
         self.random_state = random_state
-    
+
     def fit(self, data):
         if self.use_pca is not None:
             self.pca.fit(data)
@@ -861,8 +889,20 @@ class PCAUmap:
             return self.pca.inverse_transform(self.umap.inverse_transform(embedded))
         else:
             return self.umap.inverse_transform(embedded)
-          
-def show_pcaumap(pcaumap, X_train, y_train=None, X_test=None, y_test=None, pca=None, model=None, h=0.5, cm=plt.cm.jet, title=None):
+
+
+def show_pcaumap(
+    pcaumap,
+    X_train,
+    y_train=None,
+    X_test=None,
+    y_test=None,
+    pca=None,
+    model=None,
+    h=0.5,
+    cm=plt.cm.jet,
+    title=None,
+):
     embedding_train = pcaumap.transform(X_train)
     if X_test is not None:
         embedding_test = pcaumap.transform(X_test)
@@ -880,44 +920,91 @@ def show_pcaumap(pcaumap, X_train, y_train=None, X_test=None, y_test=None, pca=N
 
     xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
 
-    plt.figure(figsize=(8,6))
+    plt.figure(figsize=(8, 6))
     if title is not None:
         plt.title(title)
 
     if model is not None:
         if hasattr(model, "predict_proba"):
-            Z = model.predict_proba(pcaumap.inverse_transform(np.c_[xx.ravel(), yy.ravel()]))[:, 1]
+            Z = model.predict_proba(
+                pcaumap.inverse_transform(np.c_[xx.ravel(), yy.ravel()])
+            )[:, 1]
         elif hasattr(model, "decision_function"):
-            Z = model.decision_function(pcaumap.inverse_transform(np.c_[xx.ravel(), yy.ravel()]))
+            Z = model.decision_function(
+                pcaumap.inverse_transform(np.c_[xx.ravel(), yy.ravel()])
+            )
         else:
             Z = model.predict(pcaumap.inverse_transform(np.c_[xx.ravel(), yy.ravel()]))
         Z = Z.reshape(xx.shape)
         plt.contourf(xx, yy, Z, alpha=0.8, cmap=cm)
         plt.colorbar()
 
-        plt.scatter(embedding_train[:, 0], embedding_train[:, 1], label="train", facecolors='none', edgecolors='k', alpha=0.5)
+        plt.scatter(
+            embedding_train[:, 0],
+            embedding_train[:, 1],
+            label="train",
+            facecolors="none",
+            edgecolors="k",
+            alpha=0.5,
+        )
         if X_test is not None:
-            plt.scatter(embedding_test[:, 0], embedding_test[:, 1], label="test", facecolors='none', edgecolors='r', alpha=0.5)
+            plt.scatter(
+                embedding_test[:, 0],
+                embedding_test[:, 1],
+                label="test",
+                facecolors="none",
+                edgecolors="r",
+                alpha=0.5,
+            )
     else:
         if y_train is not None:
-            plt.scatter(embedding_train[:,0], embedding_train[:,1], edgecolors="k", c=y_train, alpha=0.5)
+            plt.scatter(
+                embedding_train[:, 0],
+                embedding_train[:, 1],
+                edgecolors="k",
+                c=y_train,
+                alpha=0.5,
+            )
         else:
-            plt.scatter(embedding_train[:,0], embedding_train[:,1], edgecolors="k", alpha=0.5)
+            plt.scatter(
+                embedding_train[:, 0], embedding_train[:, 1], edgecolors="k", alpha=0.5
+            )
         if X_test is not None:
             if y_train is not None:
-                plt.scatter(embedding_test[:,0], embedding_test[:,1], edgecolors="r", c=y_test, alpha=0.5)
+                plt.scatter(
+                    embedding_test[:, 0],
+                    embedding_test[:, 1],
+                    edgecolors="r",
+                    c=y_test,
+                    alpha=0.5,
+                )
             else:
-                plt.scatter(embedding_test[:,0], embedding_test[:,1], edgecolors="r", alpha=0.5)
+                plt.scatter(
+                    embedding_test[:, 0],
+                    embedding_test[:, 1],
+                    edgecolors="r",
+                    alpha=0.5,
+                )
         if y_train is not None:
             plt.colorbar()
 
     plt.show()
-    
-def show_allsklearn_pcaumap(objective, pcaumap, X_train, y_train=None, X_test=None, y_test=None, h=0.5, cm=plt.cm.jet):
+
+
+def show_allsklearn_pcaumap(
+    objective,
+    pcaumap,
+    X_train,
+    y_train=None,
+    X_test=None,
+    y_test=None,
+    h=0.5,
+    cm=plt.cm.jet,
+):
 
     embedding_train = pcaumap.transform(X_train)
     if X_test is not None:
-            embedding_test = pcaumap.transform(X_test)
+        embedding_test = pcaumap.transform(X_test)
 
     if X_test is not None:
         x_min = min(embedding_train[:, 0].min() - 0.5, embedding_test[:, 0].min() - 0.5)
@@ -933,65 +1020,102 @@ def show_allsklearn_pcaumap(objective, pcaumap, X_train, y_train=None, X_test=No
     xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
 
     fig, axes = plt.subplots(
-            nrows=1,
-            ncols=len(objective.best_models.keys()),
-            figsize=(4 * len(objective.regressor_names), 4),
-        )
+        nrows=1,
+        ncols=len(objective.best_models.keys()),
+        figsize=(4 * len(objective.regressor_names), 4),
+    )
     i = 0
     for model_name in objective.best_models.keys():
         axes[i].set_title(model_name)
         model = objective.best_models[model_name].model
         if hasattr(model, "predict_proba"):
-            Z = model.predict_proba(pcaumap.inverse_transform(np.c_[xx.ravel(), yy.ravel()]))[:, 1]
+            Z = model.predict_proba(
+                pcaumap.inverse_transform(np.c_[xx.ravel(), yy.ravel()])
+            )[:, 1]
         elif hasattr(model, "decision_function"):
-            Z = model.decision_function(pcaumap.inverse_transform(np.c_[xx.ravel(), yy.ravel()]))
+            Z = model.decision_function(
+                pcaumap.inverse_transform(np.c_[xx.ravel(), yy.ravel()])
+            )
         else:
             Z = model.predict(pcaumap.inverse_transform(np.c_[xx.ravel(), yy.ravel()]))
         Z = Z.reshape(xx.shape)
         axes[i].contourf(xx, yy, Z, alpha=0.8, cmap=cm)
 
-        axes[i].scatter(embedding_train[:, 0], embedding_train[:, 1], label="train", facecolors='none', edgecolors='k', alpha=0.5)
+        axes[i].scatter(
+            embedding_train[:, 0],
+            embedding_train[:, 1],
+            label="train",
+            facecolors="none",
+            edgecolors="k",
+            alpha=0.5,
+        )
         if X_test is not None:
-            axes[i].scatter(embedding_test[:, 0], embedding_test[:, 1], label="test", facecolors='none', edgecolors='r', alpha=0.5)
+            axes[i].scatter(
+                embedding_test[:, 0],
+                embedding_test[:, 1],
+                label="test",
+                facecolors="none",
+                edgecolors="r",
+                alpha=0.5,
+            )
         i += 1
 
     plt.show()
 
-def pca_summary(pca, X_train, y_train=None, X_test=None, y_test=None, loading_color=None, text_limit=100):
-    fig, axes = plt.subplots(
-            nrows=1,
-            ncols=3,
-            figsize=(6*3, 6),
-        )
-    
+
+def pca_summary(
+    pca,
+    X_train,
+    y_train=None,
+    X_test=None,
+    y_test=None,
+    loading_color=None,
+    text_limit=100,
+):
+    fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(6 * 3, 6),)
+
     pca_feature_train = pca.transform(X_train)
     if y_train is not None:
-        axes[0].scatter(pca_feature_train[:, 0], pca_feature_train[:, 1], alpha=0.8, edgecolors="k", c=y_train)
+        axes[0].scatter(
+            pca_feature_train[:, 0],
+            pca_feature_train[:, 1],
+            alpha=0.8,
+            edgecolors="k",
+            c=y_train,
+        )
     else:
-        axes[0].scatter(pca_feature_train[:, 0], pca_feature_train[:, 1], alpha=0.8, edgecolors="k")
+        axes[0].scatter(
+            pca_feature_train[:, 0], pca_feature_train[:, 1], alpha=0.8, edgecolors="k"
+        )
 
     if X_test is not None:
         pca_feature_test = pca.transform(X_test)
         if y_test is not None:
-            axes[0].scatter(pca_feature_test[:, 0], pca_feature_test[:, 1], alpha=0.8, edgecolors="r", c=y_test)
+            axes[0].scatter(
+                pca_feature_test[:, 0],
+                pca_feature_test[:, 1],
+                alpha=0.8,
+                edgecolors="r",
+                c=y_test,
+            )
         else:
             axes[0].scatter(pca_feature_test[:, 0], pca_feature_test[:, 1], alpha=0.8)
 
-    axes[0].set_xlabel('PC1')
-    axes[0].set_ylabel('PC2')
+    axes[0].set_xlabel("PC1")
+    axes[0].set_ylabel("PC2")
     axes[0].grid()
 
     if loading_color is None:
-      axes[1].scatter(pca.components_[0], pca.components_[1])
+        axes[1].scatter(pca.components_[0], pca.components_[1])
     else:
-      axes[1].scatter(pca.components_[0], pca.components_[1], c=loading_color)
-    
+        axes[1].scatter(pca.components_[0], pca.components_[1], c=loading_color)
+
     if len(pca.components_[0]) > text_limit:
-      for x, y, name in zip(pca.components_[0], pca.components_[1], X_train.columns):
-          axes[1].text(x, y, name)
-          
-    axes[1].set_xlabel('PC1 loading')
-    axes[1].set_ylabel('PC2 loading')
+        for x, y, name in zip(pca.components_[0], pca.components_[1], X_train.columns):
+            axes[1].text(x, y, name)
+
+    axes[1].set_xlabel("PC1 loading")
+    axes[1].set_ylabel("PC2 loading")
     axes[1].grid()
 
     axes[2].plot([0] + list(np.cumsum(pca.explained_variance_ratio_)), "-o")
