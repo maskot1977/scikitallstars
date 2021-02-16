@@ -1106,9 +1106,9 @@ def pca_summary(
     axes[0].grid()
 
     if loading_color is None:
-        axes[1].scatter(pca.components_[0], pca.components_[1])
+        axes[1].scatter(pca.components_[0], pca.components_[1], edgecolors="k")
     else:
-        axes[1].scatter(pca.components_[0], pca.components_[1], c=loading_color)
+        axes[1].scatter(pca.components_[0], pca.components_[1], edgecolors="k", c=loading_color)
 
     if len(pca.components_[0]) < text_limit:
         for x, y, name in zip(pca.components_[0], pca.components_[1], X_train.columns):
