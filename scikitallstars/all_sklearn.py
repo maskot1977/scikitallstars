@@ -601,13 +601,13 @@ def stacking(objective, final_estimator=None, use_all=False):
     else:
         threshold = sum(
             [
-                objective1.best_scores[name]
-                for name, model in objective1.best_models.items()
+                objective.best_scores[name]
+                for name, model in objective.best_models.items()
             ]
-        ) / len(objective1.best_models.items())
+        ) / len(objective.best_models.items())
         estimators = []
-        for name, model in objective1.best_models.items():
-            if objective1.best_scores[name] >= threshold:
+        for name, model in objective.best_models.items():
+            if objective.best_scores[name] >= threshold:
                 estimators.append((name, model.model))
 
     if objective.is_regressor:
