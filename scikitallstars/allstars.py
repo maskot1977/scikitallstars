@@ -655,7 +655,7 @@ def stacking(objective, final_estimator=None, use_all=False, verbose=True):
                 estimators.append((name, model.model))
                 
     if verbose:
-        print(estimators)
+        print([name for name, model in estimators])
 
     if objective.is_regressor:
         if final_estimator is None:
