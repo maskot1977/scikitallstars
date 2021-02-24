@@ -1219,7 +1219,7 @@ def remove_high_correlation_features(df, threshold=0.95):
     return df.iloc[:, [i for i, array in enumerate(corrcoef) if selected_or_not[i]]]
 
 
-def training_allstars(X_train, y_train, feature_selection=True, verbose=True, timeout=100, n_trials=100, show_progress_bar=True):
+def fit(X_train, y_train, feature_selection=True, verbose=True, timeout=100, n_trials=100, show_progress_bar=True):
     if feature_selection:
         support = random_forest_feature_selector(X_train, y_train)
         X_train_selected = X_train.iloc[:, support]
