@@ -1217,3 +1217,33 @@ def remove_high_correlation_features(df, threshold=0.95):
                         selected_or_not[j] = False
 
     return df.iloc[:, [i for i, array in enumerate(corrcoef) if selected_or_not[i]]]
+
+
+def training_allstars(X_train, y_train, feature_selection=True, verbose=True, timeout=100, n_trials=100, show_progress_bar=True):
+    if feature_selection:
+        support = random_forest_feature_selector(X_train, y_train)
+        X_train_selected = X_train.iloc[:, support]
+        if verbose:
+            print("feature selection: X_train", X_train.shape, "->", X_train_selected.shape)
+        X_train = X_train_selected
+    else:
+        support = np.array([True] * X_train.shape[1])
+        if verbose:
+            print("X_train", X_train.shape)
+
+    objective = Objective(X_train, y_train)
+    optuna.logging.set_verbosity(optuna.logging.WARN)
+    model_names = objective.get_model_names()
+    for model_name in model_names:
+        if verbose:
+            print(model_name)
+
+        objective.set_model_names([model_name])
+        study = optuna.create_study(direction='maximize')
+        study.optimize(objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
+
+    objective.set_model_names(model_names)
+    study = optuna.create_study(direction='maximize')
+    study.optimize(objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
+
+    return objective, support
