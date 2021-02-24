@@ -22,6 +22,8 @@ from sklearn.ensemble import (
     StackingRegressor,
     ExtraTreesRegressor,
     ExtraTreesClassifier,
+    AdaBoostRegressor,
+    AdaBoostClassifier,
 )
 from sklearn.linear_model import (
     Lasso,
@@ -64,6 +66,7 @@ class Objective:
             "GradientBoosting",
             "ExtraTrees",
             "RandomForest",
+            "AdaBoost",
             "MLP",
             "SVC",
             "kNN",
@@ -76,6 +79,7 @@ class Objective:
             "GradientBoosting",
             "ExtraTrees",
             "RandomForest",
+            "AdaBoost",
             "MLP",
             "SVR",
             "kNN",
@@ -107,11 +111,14 @@ class Objective:
             self.is_regressor = False
         self.gb_loss = ["deviance", "exponential"]
         self.gb_learning_rate_init = [0.001, 0.1]
-        self.gb_n_estimators = [100, 200]
+        self.gb_n_estimators = [50, 100, 150, 200]
         self.gb_max_depth = [2, 32]
 
-        self.et_n_estimators = [100, 200]
+        self.et_n_estimators = [50, 100, 150, 200]
         self.et_max_depth = [2, 32]
+        
+        self.ab_n_estimators = [50, 100, 150, 200]
+        self.ab_max_depth = [2, 32]
         
         self.knn_n_neighbors = [2, 10]
         self.knn_weights = ["uniform", "distance"]
@@ -305,6 +312,16 @@ class Objective:
                     )
                 )
                 
+            elif params["classifier_name"] == "AdaBoost":
+                classifier_params["n_estimators"] = trial.suggest_categorical(
+                    "ab_n_estimators", self.ab_n_estimators
+                )
+                classifier_params["max_depth"] = int(
+                    trial.suggest_int(
+                        "ab_max_depth", self.ab_max_depth[0], self.ab_max_depth[1]
+                    )
+                )
+                
             elif params["classifier_name"] == "kNN":
                 classifier_params["n_neighbors"] = trial.suggest_int(
                     "knn_n_neighbors", self.knn_n_neighbors[0], self.knn_n_neighbors[1]
@@ -412,6 +429,16 @@ class Objective:
                     )
                 )
                 
+            elif params["regressor_name"] == "AdaBoost":
+                regressor_params["n_estimators"] = trial.suggest_categorical(
+                    "ab_n_estimators", self.ab_n_estimators
+                )
+                regressor_params["max_depth"] = int(
+                    trial.suggest_loguniform(
+                        "ab_max_depth", self.ab_max_depth[0], self.ab_max_depth[1]
+                    )
+                )
+                
             elif params["regressor_name"] == "kNN":
                 regressor_params["n_neighbors"] = trial.suggest_int(
                     "knn_n_neighbors", self.knn_n_neighbors[0], self.knn_n_neighbors[1]
@@ -473,6 +500,8 @@ class Classifier:
             self.model = QuadraticDiscriminantAnalysis(**params["classifier_params"])
         elif params["classifier_name"] == "ExtraTrees":
             self.model = ExtraTreesClassifier(**params["classifier_params"])
+        elif params["classifier_name"] == "AdaBoost":
+            self.model = AdaBoostClassifier(**params["classifier_params"])
         if self.debug:
             print(self.model)
 
@@ -535,6 +564,8 @@ class Regressor:
             self.model = Lasso(**params["regressor_params"])
         elif params["regressor_name"] == "ExtraTrees":
             self.model = ExtraTreesRegressor(**params["regressor_params"])
+        elif params["regressor_name"] == "AdaBoost":
+            self.model = AdaBoostRegressor(**params["regressor_params"])
         if self.debug:
             print(self.model)
 
