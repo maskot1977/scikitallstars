@@ -1,6 +1,8 @@
 import time
 import timeit
 
+import optuna
+
 import matplotlib.pyplot as plt
 import numpy as np
 import scikitallstars.timeout_decorator as timeout_decorator
