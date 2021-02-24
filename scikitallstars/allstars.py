@@ -1190,3 +1190,14 @@ def random_forest_feature_selector(X_train, y_train, timeout=20, n_trials=20, sh
         support = np.where(objective.best_model.model.feature_importances_ == 0, False, True)
 
     return support
+
+def remove_low_variance_features(df, threshold=0.0):
+    ok_id = []
+    for colid, col in enumerate(df.values.T):
+        try:
+            if np.var(col) > threshold:
+                ok_id.append(colid)
+        except:
+            pass
+    
+    return df.iloc[:, ok_id]
