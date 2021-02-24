@@ -1237,7 +1237,7 @@ def fit(X_train, y_train, feature_selection=True, verbose=True, timeout=100, n_t
         study = optuna.create_study(direction='maximize')
         study.optimize(objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
         if verbose:
-            print(objective.best_score, objective.best_model.model)
+            print(objective.best_scores[model_name], objective.best_models[model_name].model)
 
     objective.set_model_names(model_names)
     study = optuna.create_study(direction='maximize')
