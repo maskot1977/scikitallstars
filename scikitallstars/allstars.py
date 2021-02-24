@@ -636,15 +636,7 @@ def objective_summary(objective):
     plt.show()
 
 
-def stacking_regressor(objective, final_estimator=None):
-    return stacking(objective, final_estimator=final_estimator)
-
-
-def stacking_classifier(objective, final_estimator=None):
-    return stacking(objective, final_estimator=final_estimator)
-
-
-def stacking(objective, final_estimator=None, use_all=False):
+def stacking(objective, final_estimator=None, use_all=False, verbose=True):
     if use_all:
         estimators = [
             (name, model.model) for name, model in objective.best_models.items()
@@ -661,6 +653,9 @@ def stacking(objective, final_estimator=None, use_all=False):
         for name, model in objective.best_models.items():
             if objective.best_scores[name] >= threshold:
                 estimators.append((name, model.model))
+                
+    if verbose:
+        print(estimators)
 
     if objective.is_regressor:
         if final_estimator is None:
@@ -1245,5 +1240,8 @@ def fit(X_train, y_train, feature_selection=True, verbose=True, timeout=100, n_t
     objective.set_model_names(model_names)
     study = optuna.create_study(direction='maximize')
     study.optimize(objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
+    
+    if verbose:
+        print(objective.best_scores)
 
     return objective, support
