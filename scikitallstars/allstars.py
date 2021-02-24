@@ -147,6 +147,8 @@ class Objective:
         self.svm_kernel = ["linear", "rbf"]
         self.svm_c = [1e-5, 1e5]
         self.svm_max_iter = 530000
+        
+        self.history = {}
 
     def get_model_names(self):
         if self.is_regressor:
@@ -199,6 +201,9 @@ class Objective:
             if self.best_scores[params["classifier_name"]] < score:
                 self.best_scores[params["classifier_name"]] = score
                 self.best_models[params["classifier_name"]] = model
+            if params["classifier_name"] not in self.history.keys():
+                self.history[params["classifier_name"]] = []
+            self.history[params["classifier_name"]].append(score)
         else:
             model = Regressor(params, debug=self.debug)
             seconds = self.model_fit(model, x_train, y_train)
@@ -219,6 +224,9 @@ class Objective:
             if self.best_scores[params["regressor_name"]] < score:
                 self.best_scores[params["regressor_name"]] = score
                 self.best_models[params["regressor_name"]] = model
+            if params["regressor_name"] not in self.history.keys():
+                self.history[params["regressor_name"]] = []
+            self.history[params["regressor_name"]].append(score)
         return score
 
     @on_timeout(limit=10, handler=handler_func, hint=u"model_fit")
