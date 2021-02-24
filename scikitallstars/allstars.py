@@ -603,7 +603,7 @@ class NullScaler(BaseEstimator, TransformerMixin):
 def objective_summary(objective):
     fig, axes = plt.subplots(nrows=1, ncols=4, figsize=(16, 8))
 
-    names = [n for n in reversed(list(objective.scores.keys()))]
+    names = [n for n in reversed(list(objective.get_model_names()))]
 
     score_means = []
     score_stds = []
