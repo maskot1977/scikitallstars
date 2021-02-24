@@ -117,8 +117,7 @@ class Objective:
         self.et_n_estimators = [50, 100, 150, 200]
         self.et_max_depth = [2, 32]
         
-        self.ab_n_estimators = [50, 100, 150, 200]
-        self.ab_max_depth = [2, 32]
+        self.ab_n_estimators = [50, 200]
         
         self.knn_n_neighbors = [2, 10]
         self.knn_weights = ["uniform", "distance"]
@@ -313,13 +312,8 @@ class Objective:
                 )
                 
             elif params["classifier_name"] == "AdaBoost":
-                classifier_params["n_estimators"] = trial.suggest_categorical(
-                    "ab_n_estimators", self.ab_n_estimators
-                )
-                classifier_params["max_depth"] = int(
-                    trial.suggest_int(
-                        "ab_max_depth", self.ab_max_depth[0], self.ab_max_depth[1]
-                    )
+                classifier_params["n_estimators"] = trial.suggest_int(
+                    "ab_n_estimators", self.ab_n_estimators[0], self.ab_n_estimators[1]
                 )
                 
             elif params["classifier_name"] == "kNN":
@@ -430,13 +424,8 @@ class Objective:
                 )
                 
             elif params["regressor_name"] == "AdaBoost":
-                regressor_params["n_estimators"] = trial.suggest_categorical(
-                    "ab_n_estimators", self.ab_n_estimators
-                )
-                regressor_params["max_depth"] = int(
-                    trial.suggest_loguniform(
-                        "ab_max_depth", self.ab_max_depth[0], self.ab_max_depth[1]
-                    )
+                regressor_params["n_estimators"] = trial.suggest_int(
+                    "ab_n_estimators", self.ab_n_estimators[0], self.ab_n_estimators[1]
                 )
                 
             elif params["regressor_name"] == "kNN":
