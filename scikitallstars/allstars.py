@@ -1176,7 +1176,7 @@ def pca_summary(
 
     
 def random_forest_feature_selector(X_train, y_train, timeout=20, n_trials=20, show_progress_bar=False):
-    objective = all_sklearn.Objective(X_train, y_train)
+    objective = Objective(X_train, y_train)
     objective.set_model_names(['RandomForest'])
 
     optuna.logging.set_verbosity(optuna.logging.WARN)
