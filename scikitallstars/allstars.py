@@ -44,11 +44,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 
-# from sklearn.model_selection import KFold, StratifiedKFold
-# from sklearn.model_selection import KFold, StratifiedKFold
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.svm import SVC, SVR
 from umap import UMAP
+from sklearn.feature_selection import SelectFromModel
 
 
 def handler_func(msg):
@@ -1174,3 +1173,20 @@ def pca_summary(
     axes[2].set_ylabel("Cumulative contribution ratio")
     axes[2].grid()
     plt.show()
+
+    
+def random_forest_feature_selector(X_train, y_train, timeout=20, n_trials=20, show_progress_bar=False):
+    objective = all_sklearn.Objective(X_train, y_train)
+    objective.set_model_names(['RandomForest'])
+
+    optuna.logging.set_verbosity(optuna.logging.WARN)
+    study = optuna.create_study(direction='maximize')
+    study.optimize(objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
+
+    selector = SelectFromModel(estimator=objective.best_model.model).fit(X_train, y_train)
+    support =  selector.get_support()
+
+    if sum([1 if x else 0 for x in support]) == len(support):
+        support = np.where(objective.best_model.model.feature_importances_ == 0, False, True)
+
+    return support
