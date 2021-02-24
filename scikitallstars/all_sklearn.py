@@ -20,6 +20,8 @@ from sklearn.ensemble import (
     RandomForestRegressor,
     StackingClassifier,
     StackingRegressor,
+    ExtraTreesRegressor,
+    ExtraTreesClassifier,
 )
 from sklearn.linear_model import (
     Lasso,
@@ -60,6 +62,7 @@ class Objective:
         y_test=None,
         classifier_names=[
             "GradientBoosting",
+            "ExtraTrees",
             "RandomForest",
             "MLP",
             "SVC",
@@ -71,6 +74,7 @@ class Objective:
         ],
         regressor_names=[
             "GradientBoosting",
+            "ExtraTrees",
             "RandomForest",
             "MLP",
             "SVR",
@@ -103,9 +107,12 @@ class Objective:
             self.is_regressor = False
         self.gb_loss = ["deviance", "exponential"]
         self.gb_learning_rate_init = [0.001, 0.1]
-        self.gb_n_estimators = [100]
+        self.gb_n_estimators = [100, 200]
         self.gb_max_depth = [2, 32]
 
+        self.et_n_estimators = [100, 200]
+        self.et_max_depth = [2, 32]
+        
         self.knn_n_neighbors = [2, 10]
         self.knn_weights = ["uniform", "distance"]
         self.knn_algorithm = ["auto", "ball_tree", "kd_tree", "brute"]
@@ -128,7 +135,7 @@ class Objective:
 
         self.rf_max_depth = [2, 32]
         self.rf_max_features = ["auto"]
-        self.rf_n_estimators = [100]
+        self.rf_n_estimators = [100, 200]
 
         self.svm_kernel = ["linear", "rbf"]
         self.svm_c = [1e-5, 1e5]
@@ -288,6 +295,16 @@ class Objective:
                     )
                 )
 
+            elif params["classifier_name"] == "ExtraTrees":
+                classifier_params["n_estimators"] = trial.suggest_categorical(
+                    "et_n_estimators", self.et_n_estimators
+                )
+                classifier_params["max_depth"] = int(
+                    trial.suggest_int(
+                        "et_max_depth", self.et_max_depth[0], self.et_max_depth[1]
+                    )
+                )
+                
             elif params["classifier_name"] == "kNN":
                 classifier_params["n_neighbors"] = trial.suggest_int(
                     "knn_n_neighbors", self.knn_n_neighbors[0], self.knn_n_neighbors[1]
@@ -384,7 +401,17 @@ class Objective:
                         "gb_max_depth", self.gb_max_depth[0], self.gb_max_depth[1]
                     )
                 )
-
+                
+            elif params["regressor_name"] == "ExtraTrees":
+                regressor_params["n_estimators"] = trial.suggest_categorical(
+                    "et_n_estimators", self.et_n_estimators
+                )
+                regressor_params["max_depth"] = int(
+                    trial.suggest_loguniform(
+                        "et_max_depth", self.et_max_depth[0], self.et_max_depth[1]
+                    )
+                )
+                
             elif params["regressor_name"] == "kNN":
                 regressor_params["n_neighbors"] = trial.suggest_int(
                     "knn_n_neighbors", self.knn_n_neighbors[0], self.knn_n_neighbors[1]
@@ -444,6 +471,8 @@ class Classifier:
             self.model = LinearDiscriminantAnalysis(**params["classifier_params"])
         elif params["classifier_name"] == "QDA":
             self.model = QuadraticDiscriminantAnalysis(**params["classifier_params"])
+        elif params["classifier_name"] == "ExtraTrees":
+            self.model = ExtraTreesClassifier(**params["classifier_params"])
         if self.debug:
             print(self.model)
 
@@ -504,6 +533,8 @@ class Regressor:
             self.model = Ridge(**params["regressor_params"])
         elif params["regressor_name"] == "Lasso":
             self.model = Lasso(**params["regressor_params"])
+        elif params["regressor_name"] == "ExtraTrees":
+            self.model = ExtraTreesRegressor(**params["regressor_params"])
         if self.debug:
             print(self.model)
 
