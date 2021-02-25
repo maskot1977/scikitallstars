@@ -1279,7 +1279,7 @@ class StackingObjective:
         if len(estimators) == 0:
             return 0 - 530000
 
-        stacking_model1 = allstars.stacking(self.objective, estimators=estimators, verbose=self.verbose)
+        stacking_model1 = stacking(self.objective, estimators=estimators, verbose=self.verbose)
         stacking_model1.fit(self.X_train, self.y_train)
         score = stacking_model1.score(self.X_train, self.y_train)
         if self.verbose:
