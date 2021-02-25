@@ -143,8 +143,9 @@ class Objective:
         self.ridge_max_iter = 530000
 
         self.rf_max_depth = [2, 32]
-        self.rf_max_features = ["auto"]
+        self.rf_max_features = ["auto", "sqrt", "log2"]
         self.rf_n_estimators = [100, 200]
+        self.rf_warm_start = [True, False]
 
         self.svm_kernel = ["linear", "rbf"]
         self.svm_c = [1e-5, 1e5]
@@ -263,10 +264,11 @@ class Objective:
                     "rf_max_features", self.rf_max_features
                 )
                 classifier_params["n_jobs"] = -1
-                classifier_params["max_depth"] = int(
-                    trial.suggest_int(
+                classifier_params["max_depth"] = trial.suggest_int(
                         "rf_max_depth", self.rf_max_depth[0], self.rf_max_depth[1]
-                    )
+                )
+                classifier_params["warm_start"] = trial.suggest_categorical(
+                    "rf_warm_start", self.rf_warm_start
                 )
 
             elif params["classifier_name"] == "MLP":
@@ -379,7 +381,9 @@ class Objective:
                 regressor_params["max_depth"] = trial.suggest_int(
                     "rf_max_depth", self.rf_max_depth[0], self.rf_max_depth[1]
                 )
-                # regressor_params['n_jobs'] = -1
+                regressor_params["warm_start"] = trial.suggest_categorical(
+                    "rf_warm_start", self.rf_warm_start
+                )
 
             elif params["regressor_name"] == "MLP":
                 layers = []
