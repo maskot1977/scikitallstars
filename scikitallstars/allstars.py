@@ -142,6 +142,9 @@ class Objective:
 
         self.lasso_alpha = [1e-5, 1e5]
         self.lasso_max_iter = 530000
+        self.lasso_warm_start = [True, False]
+        self.lasso_normalize = [True, False]
+        self.lasso_selection = ["cyclic", "random"]
 
         self.ridge_alpha = [1e-5, 1e5]
         self.ridge_max_iter = 530000
@@ -509,6 +512,15 @@ class Objective:
                     "lasso_alpha", self.lasso_alpha[0], self.lasso_alpha[1]
                 )
                 regressor_params["max_iter"] = self.lasso_max_iter
+                regressor_params["warm_start"] = trial.suggest_categorical(
+                    "lasso_warm_start", self.lasso_warm_start
+                )
+                regressor_params["normalize"] = trial.suggest_categorical(
+                    "lasso_normalize", self.lasso_normalize
+                )
+                regressor_params["selection"] = trial.suggest_categorical(
+                    "lasso_selection", self.lasso_selection
+                )
 
             else:
                 raise RuntimeError("unspport regressor", params["regressor_name"])
