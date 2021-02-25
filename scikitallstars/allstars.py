@@ -164,6 +164,9 @@ class Objective:
         self.svm_epsilon = [1e-5, 1e5]
         self.svm_max_iter = 530000
         
+        self.linear_regression_fit_intercept = [True, False]
+        self.linear_regression_normalize = [True, False]
+        
     def get_model_names(self):
         if self.is_regressor:
             return self.regressor_names
@@ -461,7 +464,12 @@ class Objective:
                 )
 
             elif params["regressor_name"] == "LinearRegression":
-                pass
+                regressor_params["fit_intercept"] = trial.suggest_categorical(
+                    "linear_regression_fit_intercept", self.linear_regression_fit_intercept
+                )
+                regressor_params["normalize"] = trial.suggest_categorical(
+                    "linear_regression_normalize", self.linear_regression_normalize
+                )
 
             elif params["regressor_name"] == "GradientBoosting":
                 regressor_params["learning_rate"] = trial.suggest_loguniform(
