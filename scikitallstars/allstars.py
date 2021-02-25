@@ -264,9 +264,9 @@ class Objective:
                 classifier_params["C"] = trial.suggest_loguniform(
                     "svm_c", self.svm_c[0], self.svm_c[1]
                 )
-                classifier_params["epsilon"] = trial.suggest_loguniform(
-                    "svm_epsilon", self.svm_epsilon[0], self.svm_epsilon[1]
-                )
+                #classifier_params["epsilon"] = trial.suggest_loguniform(
+                #    "svm_epsilon", self.svm_epsilon[0], self.svm_epsilon[1]
+                #)
                 if classifier_params["kernel"] == "rbf":
                     classifier_params["gamma"] = trial.suggest_categorical(
                         "svc_gamma", ["auto", "scale"]
