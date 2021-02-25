@@ -141,7 +141,7 @@ class Objective:
         self.pls_max_iter = 530000
         self.pls_scale = [True, False]
         self.pls_algorithm = ["nipals", "svd"]
-        self.pls_tol = [1e-05, 1e-07]
+        self.pls_tol = [1e-7, 1e-5]
 
         self.lasso_alpha = [1e-5, 1e5]
         self.lasso_max_iter = 530000
