@@ -1408,8 +1408,10 @@ class StackingObjective:
         self.rf_warm_start = [True, False]
         self.rf_criterion = ["mse", "mae"]
         self.rf_oob_score = [True, False]
+        self.n_trial = 0
         
     def __call__(self, trial):
+        self.n_trial += 1
         estimators = []
         key = ""
         for model_name in self.objective.get_model_names():
@@ -1453,6 +1455,7 @@ class StackingObjective:
         stacking_model1.fit(x_train, y_train)
         score = stacking_model1.score(x_test, y_test)
         if self.verbose:
+            print("Trial ", self.n_trial)
             print(score)
             print(stacking_model1.final_estimator_)
 
