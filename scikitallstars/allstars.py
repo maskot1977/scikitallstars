@@ -442,6 +442,26 @@ class Objective:
                     "et_warm_start", self.et_warm_start
                 )
                 
+            elif params["regressor_name"] == "RandomForest":
+                regressor_params["n_estimators"] = trial.suggest_int(
+                    "rf_n_estimators", self.rf_n_estimators[0], self.rf_n_estimators[1]
+                )
+                regressor_params["criterion"] = trial.suggest_categorical(
+                    "rf_criterion", ["mse", "mae"]
+                )
+                regressor_params["max_depth"] = trial.suggest_int(
+                    "rf_max_depth", self.rf_max_depth[0], self.rf_max_depth[1]
+                )
+                regressor_params["max_features"] = trial.suggest_categorical(
+                    "rf_max_features", self.rf_max_features
+                )
+                regressor_params["oob_score"] = trial.suggest_categorical(
+                    "rf_oob_score", [True, False]
+                )
+                regressor_params["warm_start"] = trial.suggest_categorical(
+                    "rf_warm_start", self.rf_warm_start
+                )
+            
             elif params["regressor_name"] == "SVR":
                 regressor_params["kernel"] = trial.suggest_categorical(
                     "svm_kernel", self.svm_kernel
@@ -458,20 +478,6 @@ class Objective:
                 regressor_params["max_iter"] = self.svm_max_iter
                 regressor_params["epsilon"] = trial.suggest_loguniform(
                     "svm_epsilon", self.svm_epsilon[0], self.svm_epsilon[1]
-                )
-
-            elif params["regressor_name"] == "RandomForest":
-                regressor_params["n_estimators"] = trial.suggest_int(
-                    "rf_n_estimators", self.rf_n_estimators[0], self.rf_n_estimators[1]
-                )
-                regressor_params["max_features"] = trial.suggest_categorical(
-                    "rf_max_features", self.rf_max_features
-                )
-                regressor_params["max_depth"] = trial.suggest_int(
-                    "rf_max_depth", self.rf_max_depth[0], self.rf_max_depth[1]
-                )
-                regressor_params["warm_start"] = trial.suggest_categorical(
-                    "rf_warm_start", self.rf_warm_start
                 )
 
             elif params["regressor_name"] == "MLP":
