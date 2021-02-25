@@ -1264,8 +1264,9 @@ class StackingObjective:
         self.best_model = None
         self.already_tried = {}
         self.rf_max_depth = [2, 32]
-        self.rf_max_features = ["auto"]
-        self.rf_n_estimators = [100, 200]
+        self.rf_max_features = ["auto", "sqrt", "log2"]
+        self.rf_n_estimators = [50, 300]
+        self.rf_warm_start = [True, False]
         
     def __call__(self, trial):
         estimators = []
@@ -1277,13 +1278,16 @@ class StackingObjective:
                 estimators.append((model_name, self.objective.best_models[model_name].model))
                 
         params = {}
-        params["n_estimators"] = trial.suggest_categorical(
-                    "rf_n_estimators", self.rf_n_estimators
+        params["n_estimators"] = trial.suggest_int(
+                    "rf_n_estimators", self.rf_n_estimators[0], self.rf_n_estimators[1]
                 )
         params["max_features"] = trial.suggest_categorical(
                     "rf_max_features", self.rf_max_features
                 )
         params["n_jobs"] = -1
+        params["warm_start"] = trial.suggest_categorical(
+                    "rf_warm_start", self.rf_warm_start
+                )
         params["max_depth"] = int(
                     trial.suggest_int(
                         "rf_max_depth", self.rf_max_depth[0], self.rf_max_depth[1]
