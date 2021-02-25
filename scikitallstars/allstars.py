@@ -113,7 +113,7 @@ class Objective:
             
         self.gb_loss = ["deviance", "exponential"]
         self.gb_learning_rate_init = [0.001, 0.1]
-        self.gb_n_estimators = [50, 300]
+        self.gb_n_estimators = [50, 200]
         self.gb_max_depth = [2, 32]
         self.gb_warm_start = [True, False]
 
@@ -135,9 +135,9 @@ class Objective:
 
         self.mlp_max_iter = 530000
         self.mlp_n_layers = [1, 10]
-        self.mlp_n_neurons = [10, 100]
+        self.mlp_n_neurons = [5, 100]
         self.mlp_warm_start = [True, False]
-        self.mlp_activation = ["identity", "logistic", "logistic", "logistic"]
+        self.mlp_activation = ["identity", "logistic", "tanh", "relu"]
 
         self.pls_max_iter = 530000
         self.pls_scale = [True, False]
@@ -491,7 +491,7 @@ class Objective:
                     "mlp_activation", self.mlp_activation
                 )
                 regressor_params["solver"] = trial.suggest_categorical(
-                    "mlp_solver", ["lbfgs", "sgd", "adam"]
+                    "mlp_solver", ["sgd", "adam"]
                 )
                 regressor_params["learning_rate"] = trial.suggest_categorical(
                     "mlp_learning_rate", ["constant", "invscaling", "adaptive"]
@@ -1406,7 +1406,7 @@ class StackingObjective:
         self.rf_n_estimators = [50, 300]
         self.rf_warm_start = [True, False]
         self.rf_criterion = ["mse", "mae"]
-        self.oob_score = [True, False]
+        self.rf_oob_score = [True, False]
         
     def __call__(self, trial):
         estimators = []
