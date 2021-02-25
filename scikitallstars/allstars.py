@@ -135,7 +135,7 @@ class Objective:
 
         self.mlp_max_iter = 530000
         self.mlp_n_layers = [1, 10]
-        self.mlp_n_neurons = [5, 32]
+        self.mlp_n_neurons = [4, 64]
         self.mlp_warm_start = [True, False]
         self.mlp_activation = ["identity", "logistic", "tanh", "relu"]
 
