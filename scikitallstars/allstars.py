@@ -578,9 +578,14 @@ class Objective:
                 )
                 
             elif params["regressor_name"] == "PLS":
-                regressor_params["n_components"] = trial.suggest_int(
-                    "n_components", 2, self.x_train.shape[1]
-                )
+                if self.support is None:
+                    regressor_params["n_components"] = trial.suggest_int(
+                        "n_components", 2, self.x_train.shape[1]
+                    )
+                else:
+                    regressor_params["n_components"] = trial.suggest_int(
+                        "n_components", 2, self.x_train.iloc[:, self.support].shape[1]
+                    )
                 regressor_params["max_iter"] = self.pls_max_iter
                 regressor_params["scale"] = trial.suggest_categorical(
                     "pls_scale", self.pls_scale
