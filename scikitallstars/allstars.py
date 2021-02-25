@@ -1361,6 +1361,8 @@ class StackingObjective:
         self.rf_max_features = ["auto", "sqrt", "log2"]
         self.rf_n_estimators = [50, 300]
         self.rf_warm_start = [True, False]
+        self.rf_criterion = ["mse", "mae"]
+        self.oob_score = [True, False]
         
     def __call__(self, trial):
         estimators = []
@@ -1382,10 +1384,14 @@ class StackingObjective:
         params["warm_start"] = trial.suggest_categorical(
                     "rf_warm_start", self.rf_warm_start
                 )
-        params["max_depth"] = int(
-                    trial.suggest_int(
+        params["max_depth"] = trial.suggest_int(
                         "rf_max_depth", self.rf_max_depth[0], self.rf_max_depth[1]
-                    )
+                )
+        params["criterion"] = trial.suggest_categorical(
+                    "rf_criterion", self.rf_criterion
+                )
+        params["oob_score"] = trial.suggest_categorical(
+                    "rf_oob_score", self.rf_oob_score
                 )
 
         if key in self.already_tried.keys():
