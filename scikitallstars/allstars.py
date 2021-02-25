@@ -473,6 +473,38 @@ class Objective:
                     "ab_loss", self.ab_loss
                 )
                 
+            elif params["regressor_name"] == "MLP":
+                layers = []
+                n_layers = trial.suggest_int(
+                    "n_layers", self.mlp_n_layers[0], self.mlp_n_layers[1]
+                )
+                for i in range(n_layers):
+                    layers.append(
+                        trial.suggest_int(
+                            str(i), self.mlp_n_neurons[0], self.mlp_n_neurons[1]
+                        )
+                    )
+                regressor_params["hidden_layer_sizes"] = set(layers)
+                regressor_params["activation"] = trial.suggest_categorical(
+                    "mlp_activation", self.mlp_activation
+                )
+                regressor_params["solver"] = trial.suggest_categorical(
+                    "mlp_solver", ["lbfgs", "sgd", "adam"]
+                )
+                regressor_params["learning_rate"] = trial.suggest_categorical(
+                    "mlp_learning_rate", ["constant", "invscaling", "adaptive"]
+                )
+                if regressor_params["solver"] in ["sgd", "adam"]:
+                    regressor_params["learning_rate_init"] = trial.suggest_loguniform(
+                        "mlp_learning_rate_init", 1e-4, 1e-2
+                    )
+                regressor_params["max_iter"] = self.mlp_max_iter
+                regressor_params["early_stopping"] = True
+                regressor_params["warm_start"] = trial.suggest_categorical(
+                    "mlp_warm_start", self.mlp_warm_start
+                )
+
+
             elif params["regressor_name"] == "SVR":
                 regressor_params["kernel"] = trial.suggest_categorical(
                     "svm_kernel", self.svm_kernel
@@ -489,27 +521,6 @@ class Objective:
                 regressor_params["max_iter"] = self.svm_max_iter
                 regressor_params["epsilon"] = trial.suggest_loguniform(
                     "svm_epsilon", self.svm_epsilon[0], self.svm_epsilon[1]
-                )
-
-            elif params["regressor_name"] == "MLP":
-                layers = []
-                n_layers = trial.suggest_int(
-                    "n_layers", self.mlp_n_layers[0], self.mlp_n_layers[1]
-                )
-                for i in range(n_layers):
-                    layers.append(
-                        trial.suggest_int(
-                            str(i), self.mlp_n_neurons[0], self.mlp_n_neurons[1]
-                        )
-                    )
-                regressor_params["hidden_layer_sizes"] = set(layers)
-                regressor_params["max_iter"] = self.mlp_max_iter
-                regressor_params["early_stopping"] = True
-                regressor_params["warm_start"] = trial.suggest_categorical(
-                    "mlp_warm_start", self.mlp_warm_start
-                )
-                regressor_params["activation"] = trial.suggest_categorical(
-                    "mlp_activation", self.mlp_activation
                 )
 
             elif params["regressor_name"] == "PLS":
