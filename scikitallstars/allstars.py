@@ -112,10 +112,10 @@ class Objective:
             self.is_regressor = False
         self.gb_loss = ["deviance", "exponential"]
         self.gb_learning_rate_init = [0.001, 0.1]
-        self.gb_n_estimators = [50, 100, 150, 200]
+        self.gb_n_estimators = [50, 200]
         self.gb_max_depth = [2, 32]
 
-        self.et_n_estimators = [50, 100, 150, 200]
+        self.et_n_estimators = [50, 200]
         self.et_max_depth = [2, 32]
         
         self.ab_n_estimators = [50, 200]
@@ -254,8 +254,8 @@ class Objective:
                 classifier_params["probability"] = True
 
             elif params["classifier_name"] == "RandomForest":
-                classifier_params["n_estimators"] = trial.suggest_categorical(
-                    "rf_n_estimators", self.rf_n_estimators
+                classifier_params["n_estimators"] = trial.suggest_int(
+                    "rf_n_estimators", self.rf_n_estimators[0], self.rf_n_estimators[1]
                 )
                 classifier_params["max_features"] = trial.suggest_categorical(
                     "rf_max_features", self.rf_max_features
@@ -295,8 +295,8 @@ class Objective:
                 classifier_params["loss"] = trial.suggest_categorical(
                     "loss", self.gb_loss
                 )
-                classifier_params["n_estimators"] = trial.suggest_categorical(
-                    "gb_n_estimators", self.gb_n_estimators
+                classifier_params["n_estimators"] = trial.suggest_int(
+                    "gb_n_estimators", self.gb_n_estimators[0], self.gb_n_estimators[1]
                 )
                 classifier_params["max_depth"] = int(
                     trial.suggest_int(
@@ -305,8 +305,8 @@ class Objective:
                 )
 
             elif params["classifier_name"] == "ExtraTrees":
-                classifier_params["n_estimators"] = trial.suggest_categorical(
-                    "et_n_estimators", self.et_n_estimators
+                classifier_params["n_estimators"] = trial.suggest_int(
+                    "et_n_estimators", self.et_n_estimators[0], self.et_n_estimators[1]
                 )
                 classifier_params["max_depth"] = int(
                     trial.suggest_int(
@@ -366,8 +366,8 @@ class Objective:
                 regressor_params["max_iter"] = self.svm_max_iter
 
             elif params["regressor_name"] == "RandomForest":
-                regressor_params["n_estimators"] = trial.suggest_categorical(
-                    "rf_n_estimators", self.rf_n_estimators
+                regressor_params["n_estimators"] = trial.suggest_int(
+                    "rf_n_estimators", self.rf_n_estimators[0], self.rf_n_estimators[1]
                 )
                 regressor_params["max_features"] = trial.suggest_categorical(
                     "rf_max_features", self.rf_max_features
@@ -410,20 +410,16 @@ class Objective:
                 regressor_params["n_estimators"] = trial.suggest_categorical(
                     "gb_n_estimators", self.gb_n_estimators
                 )
-                regressor_params["max_depth"] = int(
-                    trial.suggest_loguniform(
+                regressor_params["max_depth"] = trial.suggest_int(
                         "gb_max_depth", self.gb_max_depth[0], self.gb_max_depth[1]
-                    )
                 )
                 
             elif params["regressor_name"] == "ExtraTrees":
-                regressor_params["n_estimators"] = trial.suggest_categorical(
-                    "et_n_estimators", self.et_n_estimators
+                regressor_params["n_estimators"] = trial.suggest_int(
+                    "et_n_estimators", self.et_n_estimators[0], self.et_n_estimators[1]
                 )
-                regressor_params["max_depth"] = int(
-                    trial.suggest_loguniform(
+                regressor_params["max_depth"] = trial.suggest_int(
                         "et_max_depth", self.et_max_depth[0], self.et_max_depth[1]
-                    )
                 )
                 
             elif params["regressor_name"] == "AdaBoost":
