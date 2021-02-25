@@ -392,8 +392,8 @@ class Objective:
             params["regressor_name"] = trial.suggest_categorical(
                 "regressor_name", self.regressor_names
             )
-            # print(params['regressor_name'])
             regressor_params = {}
+            
             if params["regressor_name"] == "GradientBoosting":
                 regressor_params["loss"] = trial.suggest_categorical(
                     "gb_loss", ["ls", "lad", "huber", "quantile"]
@@ -420,6 +420,26 @@ class Objective:
                 )
                 regressor_params["tol"] = trial.suggest_loguniform(
                     "gb_tol", 1e-5, 1e-3
+                )
+                
+            elif params["regressor_name"] == "ExtraTrees":
+                regressor_params["n_estimators"] = trial.suggest_int(
+                    "et_n_estimators", self.et_n_estimators[0], self.et_n_estimators[1]
+                )
+                regressor_params["criterion"] = trial.suggest_categorical(
+                    "et_criterion", ["mse", "mae"]
+                )
+                regressor_params["max_depth"] = trial.suggest_int(
+                        "et_max_depth", self.et_max_depth[0], self.et_max_depth[1]
+                )
+                regressor_params["max_features"] = trial.suggest_categorical(
+                    "et_max_features", ["auto", "sqrt", "log2"]
+                )
+                regressor_params["oob_score"] = trial.suggest_categorical(
+                    "et_oob_score", [True, False]
+                )
+                regressor_params["warm_start"] = trial.suggest_categorical(
+                    "et_warm_start", self.et_warm_start
                 )
                 
             elif params["regressor_name"] == "SVR":
@@ -498,17 +518,6 @@ class Objective:
                 )
                 regressor_params["normalize"] = trial.suggest_categorical(
                     "linear_regression_normalize", self.linear_regression_normalize
-                )
-                
-            elif params["regressor_name"] == "ExtraTrees":
-                regressor_params["n_estimators"] = trial.suggest_int(
-                    "et_n_estimators", self.et_n_estimators[0], self.et_n_estimators[1]
-                )
-                regressor_params["max_depth"] = trial.suggest_int(
-                        "et_max_depth", self.et_max_depth[0], self.et_max_depth[1]
-                )
-                regressor_params["warm_start"] = trial.suggest_categorical(
-                    "et_warm_start", self.et_warm_start
                 )
                 
             elif params["regressor_name"] == "AdaBoost":
