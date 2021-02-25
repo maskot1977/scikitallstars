@@ -1427,6 +1427,7 @@ class StackingObjective:
         self.rf_criterion = ["mse", "mae"]
         self.rf_oob_score = [True, False]
         self.n_trial = 0
+        self.support = objective.support
         
     def __call__(self, trial):
         self.n_trial += 1
@@ -1466,8 +1467,13 @@ class StackingObjective:
         if len(estimators) == 0:
             return 0 - 530000
 
-        x_train, x_test, y_train, y_test = train_test_split(
+        if self.support is None:
+            x_train, x_test, y_train, y_test = train_test_split(
                 self.X_train, self.y_train, test_size=0.2
+            )
+        else:
+            x_train, x_test, y_train, y_test = train_test_split(
+                self.X_train.iloc[:, support], self.y_train, test_size=0.2
             )
         stacking_model1 = stacking(self.objective, estimators=estimators, verbose=self.verbose, params=params)
         stacking_model1.fit(x_train, y_train)
