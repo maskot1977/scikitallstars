@@ -126,6 +126,7 @@ class Objective:
         self.knn_n_neighbors = [2, 10]
         self.knn_weights = ["uniform", "distance"]
         self.knn_algorithm = ["auto", "ball_tree", "kd_tree", "brute"]
+        self.knn_leaf_size = [20, 40]
 
         self.lr_C = [1e-5, 1e5]
         self.lr_max_iter = 530000
@@ -350,6 +351,9 @@ class Objective:
                 )
                 classifier_params["algorithm"] = trial.suggest_categorical(
                     "knn_algorithm", self.knn_algorithm
+                )
+                classifier_params["leaf_size"] = trial.suggest_int(
+                    "knn_leaf_size", self.knn_leaf_size[0], self.knn_leaf_size[1]
                 )
 
             elif params["classifier_name"] == "Ridge":
