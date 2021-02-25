@@ -135,7 +135,7 @@ class Objective:
 
         self.mlp_max_iter = 530000
         self.mlp_n_layers = [1, 10]
-        self.mlp_n_neurons = [5, 100]
+        self.mlp_n_neurons = [5, 32]
         self.mlp_warm_start = [True, False]
         self.mlp_activation = ["identity", "logistic", "tanh", "relu"]
 
@@ -395,9 +395,9 @@ class Objective:
             regressor_params = {}
             
             if params["regressor_name"] == "GradientBoosting":
-                regressor_params["loss"] = trial.suggest_categorical(
-                    "gb_loss", ["ls", "lad", "huber", "quantile"]
-                )
+                #regressor_params["loss"] = trial.suggest_categorical(
+                #    "gb_loss", ["ls", "lad", "huber", "quantile"]
+                #)
                 regressor_params["learning_rate"] = trial.suggest_loguniform(
                     "learning_rate_init",
                     self.gb_learning_rate_init[0],
