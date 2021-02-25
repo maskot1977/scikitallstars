@@ -112,14 +112,15 @@ class Objective:
             self.is_regressor = False
         self.gb_loss = ["deviance", "exponential"]
         self.gb_learning_rate_init = [0.001, 0.1]
-        self.gb_n_estimators = [50, 200]
+        self.gb_n_estimators = [50, 300]
         self.gb_max_depth = [2, 32]
         self.gb_warm_start = [True, False]
 
-        self.et_n_estimators = [50, 200]
+        self.et_n_estimators = [50, 300]
         self.et_max_depth = [2, 32]
+        self.et_warm_start = [True, False]
         
-        self.ab_n_estimators = [50, 200]
+        self.ab_n_estimators = [50, 300]
         
         self.knn_n_neighbors = [2, 10]
         self.knn_weights = ["uniform", "distance"]
@@ -310,10 +311,11 @@ class Objective:
                 classifier_params["n_estimators"] = trial.suggest_int(
                     "et_n_estimators", self.et_n_estimators[0], self.et_n_estimators[1]
                 )
-                classifier_params["max_depth"] = int(
-                    trial.suggest_int(
+                classifier_params["max_depth"] = trial.suggest_int(
                         "et_max_depth", self.et_max_depth[0], self.et_max_depth[1]
-                    )
+                )
+                classifier_params["warm_start"] = trial.suggest_categorical(
+                    "et_warm_start", self.et_warm_start
                 )
                 
             elif params["classifier_name"] == "AdaBoost":
@@ -425,6 +427,9 @@ class Objective:
                 )
                 regressor_params["max_depth"] = trial.suggest_int(
                         "et_max_depth", self.et_max_depth[0], self.et_max_depth[1]
+                )
+                regressor_params["warm_start"] = trial.suggest_categorical(
+                    "et_warm_start", self.et_warm_start
                 )
                 
             elif params["regressor_name"] == "AdaBoost":
