@@ -406,21 +406,21 @@ class Objective:
                 regressor_params["n_estimators"] = trial.suggest_int(
                     "gb_n_estimators", self.gb_n_estimators[0], self.gb_n_estimators[1]
                 )
-                regressor_params["criterion"] = trial.suggest_categorical(
-                    "gb_criterion", ["friedman_mse", "mse", "mae"]
-                )
+                #regressor_params["criterion"] = trial.suggest_categorical(
+                #    "gb_criterion", ["friedman_mse", "mse", "mae"]
+                #)
                 regressor_params["max_depth"] = trial.suggest_int(
                     "gb_max_depth", self.gb_max_depth[0], self.gb_max_depth[1]
                 )
                 regressor_params["warm_start"] = trial.suggest_categorical(
                     "gb_warm_start", self.gb_warm_start
                 )
-                regressor_params["max_features"] = trial.suggest_categorical(
-                    "gb_max_features", ["auto", "sqrt", "log2"]
-                )
-                regressor_params["tol"] = trial.suggest_loguniform(
-                    "gb_tol", 1e-5, 1e-3
-                )
+                #regressor_params["max_features"] = trial.suggest_categorical(
+                #    "gb_max_features", ["auto", "sqrt", "log2"]
+                #)
+                #regressor_params["tol"] = trial.suggest_loguniform(
+                #    "gb_tol", 1e-5, 1e-3
+                #)
                 
             elif params["regressor_name"] == "ExtraTrees":
                 regressor_params["n_estimators"] = trial.suggest_int(
@@ -487,12 +487,12 @@ class Objective:
                         )
                     )
                 regressor_params["hidden_layer_sizes"] = set(layers)
-                regressor_params["activation"] = trial.suggest_categorical(
-                    "mlp_activation", self.mlp_activation
-                )
-                regressor_params["solver"] = trial.suggest_categorical(
-                    "mlp_solver", ["sgd", "adam"]
-                )
+                #regressor_params["activation"] = trial.suggest_categorical(
+                #    "mlp_activation", self.mlp_activation
+                #)
+                #regressor_params["solver"] = trial.suggest_categorical(
+                #    "mlp_solver", ["sgd", "adam"]
+                #)
                 regressor_params["learning_rate"] = trial.suggest_categorical(
                     "mlp_learning_rate", ["constant", "invscaling", "adaptive"]
                 )
