@@ -493,6 +493,7 @@ class Objective:
                 #regressor_params["solver"] = trial.suggest_categorical(
                 #    "mlp_solver", ["sgd", "adam"]
                 #)
+                regressor_params["solver"] = "adam"
                 regressor_params["learning_rate"] = trial.suggest_categorical(
                     "mlp_learning_rate", ["constant", "invscaling", "adaptive"]
                 )
