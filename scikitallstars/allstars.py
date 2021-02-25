@@ -462,6 +462,17 @@ class Objective:
                     "rf_warm_start", self.rf_warm_start
                 )
             
+            elif params["regressor_name"] == "AdaBoost":
+                regressor_params["n_estimators"] = trial.suggest_int(
+                    "ab_n_estimators", self.ab_n_estimators[0], self.ab_n_estimators[1]
+                )
+                regressor_params["learning_rate"] = trial.suggest_loguniform(
+                    "ab_learning_rate", 0.1, 1.0
+                )
+                regressor_params["loss"] = trial.suggest_categorical(
+                    "ab_loss", self.ab_loss
+                )
+                
             elif params["regressor_name"] == "SVR":
                 regressor_params["kernel"] = trial.suggest_categorical(
                     "svm_kernel", self.svm_kernel
@@ -524,14 +535,6 @@ class Objective:
                 )
                 regressor_params["normalize"] = trial.suggest_categorical(
                     "linear_regression_normalize", self.linear_regression_normalize
-                )
-                
-            elif params["regressor_name"] == "AdaBoost":
-                regressor_params["n_estimators"] = trial.suggest_int(
-                    "ab_n_estimators", self.ab_n_estimators[0], self.ab_n_estimators[1]
-                )
-                regressor_params["loss"] = trial.suggest_categorical(
-                    "ab_loss", self.ab_loss
                 )
                 
             elif params["regressor_name"] == "kNN":
