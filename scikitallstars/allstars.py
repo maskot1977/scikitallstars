@@ -1464,7 +1464,7 @@ class StackingObjective:
 
         return score
     
-def get_best_stacking(objective, X_train, y_train, verbose=True, timeout=1000, n_trials=100, show_progress_bar=True):
+def get_best_stacking(objective, X_train, y_train, verbose=True, timeout=1000, n_trials=50, show_progress_bar=True):
     stacking_objective = StackingObjective(objective, X_train, y_train)
     study = optuna.create_study(direction='maximize')
     study.optimize(stacking_objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
