@@ -435,6 +435,7 @@ class Objective:
                 regressor_params["max_features"] = trial.suggest_categorical(
                     "et_max_features", ["auto", "sqrt", "log2"]
                 )
+                regressor_params["bootstrap"] = True
                 regressor_params["oob_score"] = trial.suggest_categorical(
                     "et_oob_score", [True, False]
                 )
@@ -455,6 +456,7 @@ class Objective:
                 regressor_params["max_features"] = trial.suggest_categorical(
                     "rf_max_features", self.rf_max_features
                 )
+                regressor_params["bootstrap"] = True
                 regressor_params["oob_score"] = trial.suggest_categorical(
                     "rf_oob_score", [True, False]
                 )
