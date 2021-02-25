@@ -350,9 +350,9 @@ class Objective:
                 classifier_params["n_estimators"] = trial.suggest_int(
                     "ab_n_estimators", self.ab_n_estimators[0], self.ab_n_estimators[1]
                 )
-                classifier_params["loss"] = trial.suggest_categorical(
-                    "ab_loss", self.ab_loss
-                )
+                #classifier_params["loss"] = trial.suggest_categorical(
+                #    "ab_loss", self.ab_loss
+                #)
                 
             elif params["classifier_name"] == "kNN":
                 classifier_params["n_neighbors"] = trial.suggest_int(
