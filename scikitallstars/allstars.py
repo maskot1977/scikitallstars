@@ -1473,7 +1473,7 @@ class StackingObjective:
             )
         else:
             x_train, x_test, y_train, y_test = train_test_split(
-                self.X_train.iloc[:, support], self.y_train, test_size=0.2
+                self.X_train.iloc[:, self.support], self.y_train, test_size=0.2
             )
         stacking_model1 = stacking(self.objective, estimators=estimators, verbose=self.verbose, params=params)
         stacking_model1.fit(x_train, y_train)
