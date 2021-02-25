@@ -110,6 +110,7 @@ class Objective:
         self.is_regressor = True
         if len(set(y_train)) < 3:
             self.is_regressor = False
+            
         self.gb_loss = ["deviance", "exponential"]
         self.gb_learning_rate_init = [0.001, 0.1]
         self.gb_n_estimators = [50, 300]
@@ -393,7 +394,35 @@ class Objective:
             )
             # print(params['regressor_name'])
             regressor_params = {}
-            if params["regressor_name"] == "SVR":
+            if params["regressor_name"] == "GradientBoosting":
+                regressor_params["loss"] = trial.suggest_categorical(
+                    "gb_loss", ["ls", "lad", "huber", "quantile"]
+                )
+                regressor_params["learning_rate"] = trial.suggest_loguniform(
+                    "learning_rate_init",
+                    self.gb_learning_rate_init[0],
+                    self.gb_learning_rate_init[1],
+                )
+                regressor_params["n_estimators"] = trial.suggest_int(
+                    "gb_n_estimators", self.gb_n_estimators[0], self.gb_n_estimators[1]
+                )
+                regressor_params["criterion"] = trial.suggest_categorical(
+                    "gb_criterion", ["friedman_mse", "mse", "mae"]
+                )
+                regressor_params["max_depth"] = trial.suggest_int(
+                    "gb_max_depth", self.gb_max_depth[0], self.gb_max_depth[1]
+                )
+                regressor_params["warm_start"] = trial.suggest_categorical(
+                    "gb_warm_start", self.gb_warm_start
+                )
+                regressor_params["max_features"] = trial.suggest_categorical(
+                    "gb_max_features", ["auto", "sqrt", "log2"]
+                )
+                regressor_params["tol"] = trial.suggest_loguniform(
+                    "gb_tol", 1e-5, 1e-3
+                )
+                
+            elif params["regressor_name"] == "SVR":
                 regressor_params["kernel"] = trial.suggest_categorical(
                     "svm_kernel", self.svm_kernel
                 )
@@ -469,22 +498,6 @@ class Objective:
                 )
                 regressor_params["normalize"] = trial.suggest_categorical(
                     "linear_regression_normalize", self.linear_regression_normalize
-                )
-
-            elif params["regressor_name"] == "GradientBoosting":
-                regressor_params["learning_rate"] = trial.suggest_loguniform(
-                    "learning_rate_init",
-                    self.gb_learning_rate_init[0],
-                    self.gb_learning_rate_init[1],
-                )
-                regressor_params["n_estimators"] = trial.suggest_categorical(
-                    "gb_n_estimators", self.gb_n_estimators
-                )
-                regressor_params["max_depth"] = trial.suggest_int(
-                        "gb_max_depth", self.gb_max_depth[0], self.gb_max_depth[1]
-                )
-                regressor_params["warm_start"] = trial.suggest_categorical(
-                    "gb_warm_start", self.gb_warm_start
                 )
                 
             elif params["regressor_name"] == "ExtraTrees":
