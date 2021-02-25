@@ -1251,3 +1251,51 @@ def fit(X_train, y_train, feature_selection=True, verbose=True, timeout=100, n_t
         print(objective.best_scores)
 
     return objective, support
+
+class StackingObjective:
+    def __init__(self, objective, X_train, y_train, verbose=True):
+        self.X_train = X_train
+        self.y_train = y_train
+        self.verbose = verbose
+        self.objective = objective
+        self.best_score = None
+        self.best_model = None
+        self.already_tried = []
+        
+    def __call__(self, trial):
+        estimators = []
+        key = ""
+        for model_name in self.objective.get_model_names():
+            in_out = trial.suggest_int(model_name, 0, 1)
+            key += str(in_out)
+            if in_out == 1:
+                estimators.append((model_name, objective.best_models[model_name].model))
+
+        if key in self.already_tried:
+            return 0 - 530000
+        else:
+            self.already_tried.append(key)
+        
+        if len(estimators) == 0:
+            return 0 - 530000
+
+        stacking_model1 = allstars.stacking(objective, estimators=estimators, verbose=self.verbose)
+        stacking_model1.fit(self.X_train, self.y_train)
+        score = stacking_model1.score(self.X_train, self.y_train)
+        if self.verbose:
+            print(score)
+
+        if self.best_score is None:
+            self.best_score = score
+            self.best_model = stacking_model1
+        elif self.best_score < score:
+            self.best_score = score
+            self.best_model = stacking_model1
+
+        return score
+    
+def get_best_stacking(objective, X_train, y_train, verbose=True, timeout=1000, n_trials=100, show_progress_bar=True):
+    stacking_objective = StackingObjective(objective, X_train, y_train)
+    study = optuna.create_study(direction='maximize')
+    study.optimize(stacking_objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
+    return stacking_objective.best_model
