@@ -638,23 +638,24 @@ def objective_summary(objective):
     plt.show()
 
 
-def stacking(objective, final_estimator=None, use_all=False, verbose=True):
-    if use_all:
-        estimators = [
-            (name, model.model) for name, model in objective.best_models.items()
-        ]
-
-    else:
-        threshold = sum(
-            [
-                objective.best_scores[name]
-                for name, model in objective.best_models.items()
+def stacking(objective, final_estimator=None, use_all=False, verbose=True, estimators=None):
+    if estimators is None:
+        if use_all:
+            estimators = [
+                (name, model.model) for name, model in objective.best_models.items()
             ]
-        ) / len(objective.best_models.items())
-        estimators = []
-        for name, model in objective.best_models.items():
-            if objective.best_scores[name] >= threshold:
-                estimators.append((name, model.model))
+
+        else:
+            threshold = sum(
+                [
+                    objective.best_scores[name]
+                    for name, model in objective.best_models.items()
+                ]
+            ) / len(objective.best_models.items())
+            estimators = []
+            for name, model in objective.best_models.items():
+                if objective.best_scores[name] >= threshold:
+                    estimators.append((name, model.model))
                 
     if verbose:
         print([name for name, model in estimators])
