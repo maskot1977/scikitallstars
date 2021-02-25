@@ -1446,9 +1446,12 @@ class StackingObjective:
         if len(estimators) == 0:
             return 0 - 530000
 
+        x_train, x_test, y_train, y_test = train_test_split(
+                self.X_train, self.y_train, test_size=0.2
+            )
         stacking_model1 = stacking(self.objective, estimators=estimators, verbose=self.verbose, params=params)
-        stacking_model1.fit(self.X_train, self.y_train)
-        score = stacking_model1.score(self.X_train, self.y_train)
+        stacking_model1.fit(x_train, y_train)
+        score = stacking_model1.score(x_test, y_test)
         if self.verbose:
             print(score)
             print(stacking_model1.final_estimator_)
