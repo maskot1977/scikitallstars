@@ -63,6 +63,7 @@ class Objective:
         y_train,
         x_test=None,
         y_test=None,
+        support=None,
         classifier_names=[
             "GradientBoosting",
             "ExtraTrees",
@@ -95,6 +96,7 @@ class Objective:
         self.x_test = x_test
         self.y_train = y_train
         self.y_test = y_test
+        self.support = support
         self.best_scores = {}
         self.best_params = {}
         self.best_models = {}
@@ -183,16 +185,27 @@ class Objective:
     # @on_timeout(limit=5, handler=handler_func, hint=u'call')
     @timeout_decorator.timeout(10)
     def __call__(self, trial):
-        if self.y_test is None:
-            x_train, x_test, y_train, y_test = train_test_split(
-                self.x_train, self.y_train, test_size=0.2
-            )
+        if self.support is None:
+            if self.y_test is None:
+                x_train, x_test, y_train, y_test = train_test_split(
+                    self.x_train, self.y_train, test_size=0.2
+                )
+            else:
+                x_train = self.x_train
+                x_test = self.x_test
+                y_train = self.y_train
+                y_test = self.y_test
         else:
-            x_train = self.x_train
-            x_test = self.x_test
-            y_train = self.y_train
-            y_test = self.y_test
-
+            if self.y_test is None:
+                x_train, x_test, y_train, y_test = train_test_split(
+                    self.x_train.iloc[:, support], self.y_train, test_size=0.2
+                )
+            else:
+                x_train = self.x_train.iloc[:, support]
+                x_test = self.x_test.iloc[:, support]
+                y_train = self.y_train
+                y_test = self.y_test
+                
         params = self.generate_params(trial, x_train)
 
         if len(set(y_train)) < 3:
@@ -1364,13 +1377,13 @@ def fit(X_train, y_train, feature_selection=True, verbose=True, timeout=100, n_t
         X_train_selected = X_train.iloc[:, support]
         if verbose:
             print("feature selection: X_train", X_train.shape, "->", X_train_selected.shape)
-        X_train = X_train_selected
+        #X_train = X_train_selected
     else:
         support = np.array([True] * X_train.shape[1])
         if verbose:
             print("X_train", X_train.shape)
 
-    objective = Objective(X_train, y_train)
+    objective = Objective(X_train, y_train, support=support)
     optuna.logging.set_verbosity(optuna.logging.WARN)
     study = optuna.create_study(direction='maximize')
     study.optimize(objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
@@ -1391,7 +1404,7 @@ def fit(X_train, y_train, feature_selection=True, verbose=True, timeout=100, n_t
     if verbose:
         print(objective.best_scores)
 
-    return objective, support
+    return objective
 
 class StackingObjective:
     def __init__(self, objective, X_train, y_train, verbose=True):
