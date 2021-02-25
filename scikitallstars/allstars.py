@@ -1260,7 +1260,7 @@ class StackingObjective:
         self.objective = objective
         self.best_score = None
         self.best_model = None
-        self.already_tried = []
+        self.already_tried = {}
         
     def __call__(self, trial):
         estimators = []
@@ -1271,10 +1271,8 @@ class StackingObjective:
             if in_out == 1:
                 estimators.append((model_name, self.objective.best_models[model_name].model))
 
-        if key in self.already_tried:
-            return 0 - 530000
-        else:
-            self.already_tried.append(key)
+        if key in self.already_tried.keys():
+            return self.already_tried[key]
         
         if len(estimators) == 0:
             return 0 - 530000
@@ -1291,6 +1289,8 @@ class StackingObjective:
         elif self.best_score < score:
             self.best_score = score
             self.best_model = stacking_model1
+            
+        self.already_tried[key] = score
 
         return score
     
