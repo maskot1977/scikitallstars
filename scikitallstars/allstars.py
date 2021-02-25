@@ -522,9 +522,9 @@ class Objective:
                 else:
                     regressor_params["gamma"] = "auto"
                 regressor_params["max_iter"] = self.svm_max_iter
-                regressor_params["epsilon"] = trial.suggest_loguniform(
-                    "svm_epsilon", self.svm_epsilon[0], self.svm_epsilon[1]
-                )
+                #regressor_params["epsilon"] = trial.suggest_loguniform(
+                #    "svm_epsilon", self.svm_epsilon[0], self.svm_epsilon[1]
+                #)
 
             elif params["regressor_name"] == "kNN":
                 regressor_params["n_neighbors"] = trial.suggest_int(
