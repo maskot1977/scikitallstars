@@ -121,6 +121,7 @@ class Objective:
         self.et_warm_start = [True, False]
         
         self.ab_n_estimators = [50, 300]
+        self.ab_loss = ["linear", "square", "exponential"]
         
         self.knn_n_neighbors = [2, 10]
         self.knn_weights = ["uniform", "distance"]
@@ -324,6 +325,9 @@ class Objective:
                 classifier_params["n_estimators"] = trial.suggest_int(
                     "ab_n_estimators", self.ab_n_estimators[0], self.ab_n_estimators[1]
                 )
+                classifier_params["loss"] = trial.suggest_categorical(
+                    "ab_loss", self.ab_loss
+                )
                 
             elif params["classifier_name"] == "kNN":
                 classifier_params["n_neighbors"] = trial.suggest_int(
@@ -439,6 +443,9 @@ class Objective:
             elif params["regressor_name"] == "AdaBoost":
                 regressor_params["n_estimators"] = trial.suggest_int(
                     "ab_n_estimators", self.ab_n_estimators[0], self.ab_n_estimators[1]
+                )
+                regressor_params["loss"] = trial.suggest_categorical(
+                    "ab_loss", self.ab_loss
                 )
                 
             elif params["regressor_name"] == "kNN":
