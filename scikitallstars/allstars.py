@@ -1269,7 +1269,7 @@ class StackingObjective:
             in_out = trial.suggest_int(model_name, 0, 1)
             key += str(in_out)
             if in_out == 1:
-                estimators.append((model_name, objective.best_models[model_name].model))
+                estimators.append((model_name, self.objective.best_models[model_name].model))
 
         if key in self.already_tried:
             return 0 - 530000
@@ -1279,7 +1279,7 @@ class StackingObjective:
         if len(estimators) == 0:
             return 0 - 530000
 
-        stacking_model1 = allstars.stacking(objective, estimators=estimators, verbose=self.verbose)
+        stacking_model1 = allstars.stacking(self.objective, estimators=estimators, verbose=self.verbose)
         stacking_model1.fit(self.X_train, self.y_train)
         score = stacking_model1.score(self.X_train, self.y_train)
         if self.verbose:
