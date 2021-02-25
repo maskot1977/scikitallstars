@@ -134,6 +134,8 @@ class Objective:
         self.mlp_max_iter = 530000
         self.mlp_n_layers = [1, 10]
         self.mlp_n_neurons = [10, 100]
+        self.mlp_warm_start = [True, False]
+        self.mlp_activation = ["identity", "logistic", "logistic", "logistic"]
 
         self.pls_max_iter = 530000
 
@@ -286,6 +288,12 @@ class Objective:
                 classifier_params["hidden_layer_sizes"] = set(layers)
                 classifier_params["max_iter"] = self.mlp_max_iter
                 classifier_params["early_stopping"] = True
+                classifier_params["warm_start"] = trial.suggest_categorical(
+                    "mlp_warm_start", self.mlp_warm_start
+                )
+                classifier_params["activation"] = trial.suggest_categorical(
+                    "mlp_activation", self.mlp_activation
+                )
 
             elif params["classifier_name"] == "LogisticRegression":
                 classifier_params["C"] = trial.suggest_loguniform(
@@ -403,6 +411,12 @@ class Objective:
                 regressor_params["hidden_layer_sizes"] = set(layers)
                 regressor_params["max_iter"] = self.mlp_max_iter
                 regressor_params["early_stopping"] = True
+                regressor_params["warm_start"] = trial.suggest_categorical(
+                    "mlp_warm_start", self.mlp_warm_start
+                )
+                regressor_params["activation"] = trial.suggest_categorical(
+                    "mlp_activation", self.mlp_activation
+                )
 
             elif params["regressor_name"] == "PLS":
                 regressor_params["n_components"] = trial.suggest_int(
