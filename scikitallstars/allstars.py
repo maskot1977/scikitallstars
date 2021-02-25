@@ -638,7 +638,7 @@ def objective_summary(objective):
     plt.show()
 
 
-def stacking(objective, final_estimator=None, use_all=False, verbose=True, estimators=None):
+def stacking(objective, final_estimator=None, use_all=False, verbose=True, estimators=None, params=None):
     if estimators is None:
         if use_all:
             estimators = [
@@ -662,14 +662,20 @@ def stacking(objective, final_estimator=None, use_all=False, verbose=True, estim
 
     if objective.is_regressor:
         if final_estimator is None:
-            final_estimator = RandomForestRegressor()
+            if params is None:
+                final_estimator = RandomForestRegressor()
+            else:
+                final_estimator = RandomForestRegressor(**params)
 
         model = StackingRegressor(
             estimators=estimators, final_estimator=final_estimator,
         )
     else:
         if final_estimator is None:
-            final_estimator = RandomForestClassifier()
+            if params is None:
+                final_estimator = RandomForestClassifier()
+            else:
+                final_estimator = RandomForestClassifier(**params)
 
         model = StackingClassifier(
             estimators=estimators, final_estimator=final_estimator,
