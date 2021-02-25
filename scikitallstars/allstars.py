@@ -1267,6 +1267,9 @@ class StackingObjective:
         self.best_score = None
         self.best_model = None
         self.already_tried = {}
+        self.rf_max_depth = [2, 32]
+        self.rf_max_features = ["auto"]
+        self.rf_n_estimators = [100, 200]
         
     def __call__(self, trial):
         estimators = []
@@ -1276,18 +1279,34 @@ class StackingObjective:
             key += str(in_out)
             if in_out == 1:
                 estimators.append((model_name, self.objective.best_models[model_name].model))
+                
+        params = {}
+        params["n_estimators"] = trial.suggest_categorical(
+                    "rf_n_estimators", self.rf_n_estimators
+                )
+        params["max_features"] = trial.suggest_categorical(
+                    "rf_max_features", self.rf_max_features
+                )
+        params["n_jobs"] = -1
+        params["max_depth"] = int(
+                    trial.suggest_int(
+                        "rf_max_depth", self.rf_max_depth[0], self.rf_max_depth[1]
+                    )
+                )
 
         if key in self.already_tried.keys():
-            return self.already_tried[key]
+            pass
+            #return self.already_tried[key]
         
         if len(estimators) == 0:
             return 0 - 530000
 
-        stacking_model1 = stacking(self.objective, estimators=estimators, verbose=self.verbose)
+        stacking_model1 = stacking(self.objective, estimators=estimators, verbose=self.verbose, params=params)
         stacking_model1.fit(self.X_train, self.y_train)
         score = stacking_model1.score(self.X_train, self.y_train)
         if self.verbose:
             print(score)
+            print(stacking_model1.final_estimator_)
 
         if self.best_score is None:
             self.best_score = score
