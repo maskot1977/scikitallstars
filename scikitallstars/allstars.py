@@ -454,9 +454,9 @@ class Objective:
                 regressor_params["scale"] = trial.suggest_categorical(
                     "pls_scale", self.pls_scale
                 )
-                regressor_params["algorithm"] = trial.suggest_categorical(
-                    "pls_algorithm", self.pls_algorithm
-                )
+                #regressor_params["algorithm"] = trial.suggest_categorical(
+                #    "pls_algorithm", self.pls_algorithm
+                #)
                 regressor_params["tol"] = trial.suggest_loguniform(
                     "pls_tol",
                     self.pls_tol[0],
