@@ -145,6 +145,8 @@ class Objective:
 
         self.ridge_alpha = [1e-5, 1e5]
         self.ridge_max_iter = 530000
+        self.ridge_solver = ["auto", "svd", "cholesky", "lsqr", "sparse_cg", "sag", "saga"]
+        self.ridge_normalize = [True, False]
 
         self.rf_max_depth = [2, 32]
         self.rf_max_features = ["auto", "sqrt", "log2"]
@@ -361,6 +363,12 @@ class Objective:
                     "ridge_alpha", self.ridge_alpha[0], self.ridge_alpha[1]
                 )
                 classifier_params["max_iter"] = self.ridge_max_iter
+                classifier_params["normalize"] = trial.suggest_categorical(
+                "ridge_normalize", self.ridge_normalize
+                )
+                classifier_params["solver"] = trial.suggest_categorical(
+                "ridge_solver", self.ridge_solver
+                )
 
             elif params["classifier_name"] == "QDA":
                 pass
@@ -489,6 +497,12 @@ class Objective:
                     "ridge_alpha", self.ridge_alpha[0], self.ridge_alpha[1]
                 )
                 regressor_params["max_iter"] = self.ridge_max_iter
+                regressor_params["normalize"] = trial.suggest_categorical(
+                "ridge_normalize", self.ridge_normalize
+                )
+                regressor_params["solver"] = trial.suggest_categorical(
+                "ridge_solver", self.ridge_solver
+                )
 
             elif params["regressor_name"] == "Lasso":
                 regressor_params["alpha"] = trial.suggest_loguniform(
