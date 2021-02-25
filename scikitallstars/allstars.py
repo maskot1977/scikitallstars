@@ -139,6 +139,9 @@ class Objective:
         self.mlp_activation = ["identity", "logistic", "logistic", "logistic"]
 
         self.pls_max_iter = 530000
+        self.pls_scale = [True, False]
+        self.pls_algorithm = ["nipals", "svd"]
+        self.pls_tol = [1e-05, 1e-07]
 
         self.lasso_alpha = [1e-5, 1e5]
         self.lasso_max_iter = 530000
@@ -445,6 +448,17 @@ class Objective:
                     "n_components", 2, self.x_train.shape[1]
                 )
                 regressor_params["max_iter"] = self.pls_max_iter
+                regressor_params["scale"] = trial.suggest_categorical(
+                    "pls_scale", self.pls_scale
+                )
+                regressor_params["algorithm"] = trial.suggest_categorical(
+                    "pls_algorithm", self.pls_algorithm
+                )
+                regressor_params["tol"] = trial.suggest_loguniform(
+                    "pls_tol",
+                    self.pls_tol[0],
+                    self.pls_tol[1],
+                )
 
             elif params["regressor_name"] == "LinearRegression":
                 pass
