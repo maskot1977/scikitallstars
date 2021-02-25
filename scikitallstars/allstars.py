@@ -523,6 +523,44 @@ class Objective:
                     "svm_epsilon", self.svm_epsilon[0], self.svm_epsilon[1]
                 )
 
+            elif params["regressor_name"] == "kNN":
+                regressor_params["n_neighbors"] = trial.suggest_int(
+                    "knn_n_neighbors", self.knn_n_neighbors[0], self.knn_n_neighbors[1]
+                )
+                regressor_params["weights"] = trial.suggest_categorical(
+                    "knn_weights", self.knn_weights
+                )
+                regressor_params["algorithm"] = trial.suggest_categorical(
+                    "knn_algorithm", self.knn_algorithm
+                )
+                
+            elif params["regressor_name"] == "Ridge":
+                regressor_params["alpha"] = trial.suggest_loguniform(
+                    "ridge_alpha", self.ridge_alpha[0], self.ridge_alpha[1]
+                )
+                regressor_params["max_iter"] = self.ridge_max_iter
+                regressor_params["normalize"] = trial.suggest_categorical(
+                "ridge_normalize", self.ridge_normalize
+                )
+                regressor_params["solver"] = trial.suggest_categorical(
+                "ridge_solver", self.ridge_solver
+                )
+                
+            elif params["regressor_name"] == "Lasso":
+                regressor_params["alpha"] = trial.suggest_loguniform(
+                    "lasso_alpha", self.lasso_alpha[0], self.lasso_alpha[1]
+                )
+                regressor_params["max_iter"] = self.lasso_max_iter
+                regressor_params["warm_start"] = trial.suggest_categorical(
+                    "lasso_warm_start", self.lasso_warm_start
+                )
+                regressor_params["normalize"] = trial.suggest_categorical(
+                    "lasso_normalize", self.lasso_normalize
+                )
+                regressor_params["selection"] = trial.suggest_categorical(
+                    "lasso_selection", self.lasso_selection
+                )
+                
             elif params["regressor_name"] == "PLS":
                 regressor_params["n_components"] = trial.suggest_int(
                     "n_components", 2, self.x_train.shape[1]
@@ -546,44 +584,6 @@ class Objective:
                 )
                 regressor_params["normalize"] = trial.suggest_categorical(
                     "linear_regression_normalize", self.linear_regression_normalize
-                )
-                
-            elif params["regressor_name"] == "kNN":
-                regressor_params["n_neighbors"] = trial.suggest_int(
-                    "knn_n_neighbors", self.knn_n_neighbors[0], self.knn_n_neighbors[1]
-                )
-                regressor_params["weights"] = trial.suggest_categorical(
-                    "knn_weights", self.knn_weights
-                )
-                regressor_params["algorithm"] = trial.suggest_categorical(
-                    "knn_algorithm", self.knn_algorithm
-                )
-
-            elif params["regressor_name"] == "Ridge":
-                regressor_params["alpha"] = trial.suggest_loguniform(
-                    "ridge_alpha", self.ridge_alpha[0], self.ridge_alpha[1]
-                )
-                regressor_params["max_iter"] = self.ridge_max_iter
-                regressor_params["normalize"] = trial.suggest_categorical(
-                "ridge_normalize", self.ridge_normalize
-                )
-                regressor_params["solver"] = trial.suggest_categorical(
-                "ridge_solver", self.ridge_solver
-                )
-
-            elif params["regressor_name"] == "Lasso":
-                regressor_params["alpha"] = trial.suggest_loguniform(
-                    "lasso_alpha", self.lasso_alpha[0], self.lasso_alpha[1]
-                )
-                regressor_params["max_iter"] = self.lasso_max_iter
-                regressor_params["warm_start"] = trial.suggest_categorical(
-                    "lasso_warm_start", self.lasso_warm_start
-                )
-                regressor_params["normalize"] = trial.suggest_categorical(
-                    "lasso_normalize", self.lasso_normalize
-                )
-                regressor_params["selection"] = trial.suggest_categorical(
-                    "lasso_selection", self.lasso_selection
                 )
 
             else:
