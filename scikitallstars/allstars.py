@@ -1557,14 +1557,14 @@ class StackingClassifierS(StackingClassifier):
         super(StackingClassifier, self).__init__(**args)
         self.support = None
 
-    def predict(self, x, y):
+    def score(self, x, y):
         if self.support is None:
-            return self.predict(x, y)
+            return self.score(x, y)
         else:
-            return self.predict(x.iloc[:, self.support], y)
+            return self.score(x.iloc[:, self.support], y)
 
-    def score(self, x):
+    def predict(self, x):
         if self.support is None:
-            return self.score(x)
+            return predict.score(x)
         else:
-            return self.score(x.iloc[:, self.support])
+            return predict.score(x.iloc[:, self.support])
