@@ -1042,9 +1042,9 @@ class StackingClassifierS(StackingClassifier):
 
     def fit(self, x, y):
         if self.support is None or len(self.support) != x.shape[1]: 
-            return super(StackingRegressor, self).fit(x, y)
+            return super(StackingClassifier, self).fit(x, y)
         else:
-            return super(StackingRegressor, self).fit(x.iloc[:, self.support], y)
+            return super(StackingClassifier, self).fit(x.iloc[:, self.support], y)
 
     def score(self, x, y):
         if self.support is None or len(self.support) != x.shape[1]: 
