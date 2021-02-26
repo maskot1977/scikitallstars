@@ -617,7 +617,7 @@ class Objective:
         return self.best_model.predict(x, support=self.support)
     
     def score(self, x, y):
-        return self.best_model.score(x, y, support=self.support, score=True)
+        return self.best_model.score(x, y, support=self.support)
 
 
 class Classifier:
