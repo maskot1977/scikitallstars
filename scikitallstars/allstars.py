@@ -612,6 +612,12 @@ class Objective:
             params["regressor_params"] = regressor_params
 
         return params
+    
+    def predict(x):
+        return self.best_model.predict(x, support=self.support)
+    
+    def score(x, y):
+        return self.best_model.score(x, y, support=self.support, score=True)
 
 
 class Classifier:
@@ -715,11 +721,14 @@ class Regressor:
         if self.debug:
             print(self.model)
 
-    def _fit_and_predict_core(self, x, y=None, fitting=False, proba=False, support=None):
+    def _fit_and_predict_core(self, x, y=None, fitting=False, proba=False, support=None, score=False):
         if support is None:
             if fitting == True:
                 self.standardizer.fit(x)
+                
             self.standardizer.transform(x)
+            if score:
+                return self.model.score(x, y)
 
             if fitting == True:
                 self.model.fit(x, y)
@@ -755,6 +764,9 @@ class Regressor:
     def predict_proba(self, x, support=None):
         pred_y = self._fit_and_predict_core(x, proba=True, support=support)
         return pred_y
+    
+    def score(self, x, y, support=None):
+        return self._fit_and_predict_core(x, support=support, score=True)
 
 
 class NullScaler(BaseEstimator, TransformerMixin):
