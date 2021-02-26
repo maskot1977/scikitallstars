@@ -1541,7 +1541,7 @@ class StackingRegressorS(StackingRegressor):
         self.support = None
 
     def score(self, x, y):
-        # print(x.shape, x.iloc[:, self.support].shape, y.shape) #####
+        print(x.shape, x.iloc[:, self.support].shape, y.shape) #####
         if self.support is None:
             return super(StackingRegressor, self).score(x, y)
         else:
