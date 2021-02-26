@@ -728,7 +728,7 @@ class Regressor:
                 
             self.standardizer.transform(x)
             if score:
-                pred = np.array(self.model.predict(x)
+                pred = np.array(self.model.predict(x))
                 return r2_score(pred.reshape(pred.shape[0], 1), np.array(y).reshape(pred.shape[0], 1))
 
             if fitting == True:
