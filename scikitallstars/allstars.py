@@ -728,7 +728,7 @@ class Regressor:
                 
             self.standardizer.transform(x)
             if score:
-                return self.model.score(x, y)
+                return r2_score(self.model.predict(x), y)
 
             if fitting == True:
                 self.model.fit(x, y)
@@ -743,7 +743,7 @@ class Regressor:
                 
             self.standardizer.transform(x.iloc[:, support])
             if score:
-                return self.model.score(x.iloc[:, support], y)
+                return r2_score(self.model.predict(x.iloc[:, support]), y)
 
             if fitting == True:
                 self.model.fit(x.iloc[:, support], y)
