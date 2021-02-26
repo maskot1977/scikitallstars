@@ -72,7 +72,7 @@ def metrics(model, X_train, y_train, X_test = None, y_test = None):
         y_y_plot(model, X_train, y_train, X_test, y_test)
 
         
-def y_y_plot(model, X_train, X_test, y_train = None, y_test = None):
+def y_y_plot(model, X_train, y_train, X_test = None, y_test = None):
 
     if y_train is None:
         fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(8, 4))
