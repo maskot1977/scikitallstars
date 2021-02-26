@@ -1486,10 +1486,27 @@ class StackingObjective:
 def get_best_stacking(objective, X_train, y_train, verbose=True, timeout=1000, n_trials=50, show_progress_bar=True):
     stacking_objective = StackingObjective(objective, X_train, y_train)
     study = optuna.create_study(direction='maximize')
+    
     try_all = {}
     for model_name in objective.get_model_names():
         try_all[model_name] = 1
     study.enqueue_trial(try_all)
+    
+    threshold = sum(
+                [
+                    objective.best_scores[name]
+                    for name, model in objective.best_models.items()
+                ]
+            ) / len(objective.best_models.items())
+    try_threshold = {}
+    for model_name in objective.get_model_names():
+        model = objective.best_models[model_name]
+        if objective.best_scores[name] >= threshold:
+            try_all[model_name] = 1
+        else:
+            try_all[model_name] = 0
+    study.enqueue_trial(try_threshold)
+                    
     study.optimize(stacking_objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
     return stacking_objective.best_model
 
