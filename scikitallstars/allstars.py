@@ -1369,7 +1369,7 @@ def pca_summary(
     plt.show()
 
     
-def random_forest_feature_selector(X_train, y_train, timeout=20, n_trials=20, show_progress_bar=False):
+def random_forest_feature_selector(X_train, y_train, timeout=20, n_trials=10, show_progress_bar=False):
     objective = Objective(X_train, y_train)
     objective.set_model_names(['RandomForest'])
 
