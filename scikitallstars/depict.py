@@ -76,10 +76,10 @@ def y_y_plot(model, X_train, y_train, X_test = None, y_test = None):
 
     if X_test is None:
         fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(8, 4))
-        ax = exes
+        ax = axes
     else:
         fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8, 4))
-        ax = exes[0]
+        ax = axes[0]
 
     y_pred = model.predict(X_train)
     score = model.score(X_train, y_train)
