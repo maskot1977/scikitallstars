@@ -715,8 +715,8 @@ class Regressor:
         if self.debug:
             print(self.model)
 
-    def _fit_and_predict_core(self, x, y=None, fitting=False, proba=False):
-        if True: #self.support is None:
+    def _fit_and_predict_core(self, x, y=None, fitting=False, proba=False, support=None):
+        if support is None:
             if fitting == True:
                 self.standardizer.fit(x)
             self.standardizer.transform(x)
@@ -744,16 +744,16 @@ class Regressor:
         return None
 
     @on_timeout(limit=60, handler=handler_func, hint=u"regressor.fit")
-    def fit(self, x, y):
-        self._fit_and_predict_core(x, y, fitting=True)
+    def fit(self, x, y, support=None):
+        self._fit_and_predict_core(x, y, fitting=True, support=support)
         return self
 
-    def predict(self, x):
-        pred_y = self._fit_and_predict_core(x)
+    def predict(self, x, support=None):
+        pred_y = self._fit_and_predict_core(x, support=support)
         return pred_y
 
-    def predict_proba(self, x):
-        pred_y = self._fit_and_predict_core(x, proba=True)
+    def predict_proba(self, x, support=None):
+        pred_y = self._fit_and_predict_core(x, proba=True, support=support)
         return pred_y
 
 
