@@ -1466,7 +1466,6 @@ class StackingObjective:
         stacking_model1 = stacking(self.objective, estimators=estimators, verbose=self.verbose, params=params)
         stacking_model1.support = self.objective.support
         stacking_model1.fit(x_train, y_train)
-        print(x_train.shape, x_test.shape)
         score = stacking_model1.score(x_test, y_test)
         if self.verbose:
             print("Trial ", self.n_trial)
