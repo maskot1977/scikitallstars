@@ -1464,6 +1464,7 @@ class StackingObjective:
                 self.X_train.iloc[:, self.support], self.y_train, test_size=0.2
             )
         stacking_model1 = stacking(self.objective, estimators=estimators, verbose=self.verbose, params=params)
+        stacking_model1.support = self.objective.support
         stacking_model1.fit(x_train, y_train)
         print(x_train.shape, x_test.shape)
         score = stacking_model1.score(x_test, y_test)
@@ -1494,6 +1495,7 @@ class StackingRegressorS(StackingRegressor):
     def __init__(self, **args):
         super(StackingRegressor, self).__init__(**args)
         self.support = None
+        self.x = None
 
     def score(self, x, y):
         if self.support is None or len(self.support) != x.shape[1]: 
