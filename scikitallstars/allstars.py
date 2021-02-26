@@ -854,6 +854,7 @@ def stacking(objective, final_estimator=None, use_all=False, verbose=True, estim
         model = StackingRegressorS(
             estimators=estimators, final_estimator=final_estimator,
         )
+        model.support = objective.support
     else:
         if final_estimator is None:
             if params is None:
@@ -864,6 +865,7 @@ def stacking(objective, final_estimator=None, use_all=False, verbose=True, estim
         model = StackingClassifierS(
             estimators=estimators, final_estimator=final_estimator,
         )
+        model.support = objective.support
     return model
 
 
