@@ -613,10 +613,10 @@ class Objective:
 
         return params
     
-    def predict(x):
+    def predict(self, x):
         return self.best_model.predict(x, support=self.support)
     
-    def score(x, y):
+    def score(self, x, y):
         return self.best_model.score(x, y, support=self.support, score=True)
 
 
