@@ -76,26 +76,28 @@ def y_y_plot(model, X_train, y_train, X_test = None, y_test = None):
 
     if X_test is None:
         fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(8, 4))
+        ax = exes
     else:
         fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8, 4))
+        ax = exes[0]
 
     y_pred = model.predict(X_train)
     score = model.score(X_train, y_train)
     y_min = min(y_train.min(), y_pred.min())
     y_max = min(y_train.max(), y_pred.max())
 
-    axes[0].set_title("Training data")
-    axes[0].scatter(y_train, y_pred, alpha=0.5)
-    axes[0].plot([y_min, y_max], [y_min, y_max])
-    axes[0].text(
+    ax.set_title("Training data")
+    ax.scatter(y_train, y_pred, alpha=0.5)
+    ax.plot([y_min, y_max], [y_min, y_max])
+    ax.text(
         y_max - 0.3,
         y_min + 0.3,
         ("%.3f" % score).lstrip("0"),
         size=15,
         horizontalalignment="right",
     )
-    axes[0].set_xlabel("Real")
-    axes[0].set_ylabel("Predicted")
+    ax.set_xlabel("Real")
+    ax.set_ylabel("Predicted")
 
     if X_test is not None:
         y_pred = model.predict(X_test)
