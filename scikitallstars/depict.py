@@ -74,7 +74,7 @@ def metrics(model, X_train, y_train, X_test = None, y_test = None):
         
 def y_y_plot(model, X_train, y_train, X_test = None, y_test = None):
 
-    if y_train is None:
+    if X_test is None:
         fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(8, 4))
     else:
         fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8, 4))
@@ -97,7 +97,7 @@ def y_y_plot(model, X_train, y_train, X_test = None, y_test = None):
     axes[0].set_xlabel("Real")
     axes[0].set_ylabel("Predicted")
 
-    if y_train is not None:
+    if X_test is not None:
         y_pred = model.predict(X_test)
         score = model.score(X_test, y_test)
         y_min = min(y_test.min(), y_pred.min())
