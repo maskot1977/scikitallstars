@@ -1501,7 +1501,7 @@ def get_best_stacking(objective, X_train, y_train, verbose=True, timeout=1000, n
     try_threshold = {}
     for model_name in objective.get_model_names():
         model = objective.best_models[model_name]
-        if objective.best_scores[name] >= threshold:
+        if objective.best_scores[model_name] >= threshold:
             try_all[model_name] = 1
         else:
             try_all[model_name] = 0
