@@ -1496,13 +1496,13 @@ class StackingRegressorS(StackingRegressor):
         self.support = None
 
     def score(self, x, y):
-        if self.support is None:
+        if self.support is None or len(self.support) != x.shape[1]: 
             return super(StackingRegressor, self).score(x, y)
         else:
             return super(StackingRegressor, self).score(x.iloc[:, self.support], y)
 
     def predict(self, x):
-        if self.support is None:
+        if self.support is None or len(self.support) != x.shape[1]: 
             return super(StackingRegressor, self).predict(x)
         else:
             return super(StackingRegressor, self).predict(x.iloc[:, self.support])
@@ -1514,13 +1514,13 @@ class StackingClassifierS(StackingClassifier):
         self.support = None
 
     def score(self, x, y):
-        if self.support is None:
+        if self.support is None or len(self.support) != x.shape[1]: 
             return super(StackingClassifier, self).score(x, y)
         else:
             return super(StackingClassifier, self).score(x.iloc[:, self.support], y)
 
     def predict(self, x):
-        if self.support is None:
+        if self.support is None or len(self.support) != x.shape[1]: 
             return super(StackingClassifier, self).predict(x)
         else:
             return super(StackingClassifier, self).predict(x.iloc[:, self.support])
