@@ -1534,8 +1534,8 @@ def get_best_stacking(objective, X_train, y_train, verbose=True, timeout=1000, n
     return stacking_objective.best_model
 
 class StackingRegressorS(StackingRegressor):
-    def __init__(self, support = None):
-        super(StackingRegressor, self).__init__()
+    def __init__(self, **args):
+        super(StackingRegressor, self).__init__(**args)
         self.support = support
 
     def predict(self, x, y):
@@ -1551,8 +1551,8 @@ class StackingRegressorS(StackingRegressor):
             return self.score(x.iloc[:, self.support])
 
 class StackingClassifierS(StackingClassifier):
-    def __init__(self, support = None):
-        super(StackingClassifier, self).__init__()
+    def __init__(self, **args):
+        super(StackingClassifier, self).__init__(**args)
         self.support = support
 
     def predict(self, x, y):
