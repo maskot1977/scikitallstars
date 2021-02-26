@@ -1039,6 +1039,10 @@ class StackingClassifierS(StackingClassifier):
     def __init__(self, **args):
         super(StackingClassifier, self).__init__(**args)
         self.support = None
+        
+    @property
+    def classes_(self):
+       return self.classes_
 
     def fit(self, x, y):
         if self.support is None or len(self.support) != x.shape[1]: 
@@ -1057,7 +1061,7 @@ class StackingClassifierS(StackingClassifier):
             return super(StackingClassifier, self).predict(x)
         else:
             return super(StackingClassifier, self).predict(x.iloc[:, self.support])
-        
+               
         
 def stacking(objective, final_estimator=None, use_all=False, verbose=True, estimators=None, params=None):
     if estimators is None:
