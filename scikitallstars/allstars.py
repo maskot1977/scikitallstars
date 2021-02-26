@@ -1502,7 +1502,7 @@ class StackingObjective:
         if len(estimators) == 0:
             return 0 - 530000
 
-        if self.support is None:
+        if True: #self.support is None:
             x_train, x_test, y_train, y_test = train_test_split(
                 self.X_train, self.y_train, test_size=0.2
             )
@@ -1541,7 +1541,7 @@ class StackingRegressorS(StackingRegressor):
         self.support = None
 
     def score(self, x, y):
-        print(x.shape, x.iloc[:, self.support].shape, y.shape) #####
+        # print(x.shape, x.iloc[:, self.support].shape, y.shape) #####
         if self.support is None:
             return super(StackingRegressor, self).score(x, y)
         else:
