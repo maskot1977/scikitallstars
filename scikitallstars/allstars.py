@@ -234,7 +234,7 @@ class Objective:
                 self.best_models[params["classifier_name"]] = model
 
         else:
-            model = Regressor(params, debug=self.debug)
+            model = Regressor(params, debug=self.debug, support=self.support)
             seconds = self.model_fit(model, x_train, y_train)
             if params["regressor_name"] not in self.times.keys():
                 self.times[params["regressor_name"]] = []
@@ -679,9 +679,10 @@ class Classifier:
 
 
 class Regressor:
-    def __init__(self, params, debug=False):
+    def __init__(self, params, debug=False, support=None):
         self.params = params
         self.debug = debug
+        self.support = support
         if params["standardize"] == "StandardScaler":
             self.standardizer = StandardScaler()
         elif params["standardize"] == "MinMaxScaler":
@@ -715,17 +716,31 @@ class Regressor:
             print(self.model)
 
     def _fit_and_predict_core(self, x, y=None, fitting=False, proba=False):
-        if fitting == True:
-            self.standardizer.fit(x)
-        self.standardizer.transform(x)
+        if self.support is None:
+            if fitting == True:
+                self.standardizer.fit(x)
+            self.standardizer.transform(x)
 
-        if fitting == True:
-            self.model.fit(x, y)
-        if y is None:
-            if proba:
-                return self.model.predict_proba(x)
-            else:
-                return self.model.predict(x)
+            if fitting == True:
+                self.model.fit(x, y)
+            if y is None:
+                if proba:
+                    return self.model.predict_proba(x)
+                else:
+                    return self.model.predict(x)
+        else:
+            if fitting == True:
+                self.standardizer.fit(x.iloc[:, self.support])
+            self.standardizer.transform(x.iloc[:, self.support])
+
+            if fitting == True:
+                self.model.fit(x.iloc[:, self.support], y)
+            if y is None:
+                if proba:
+                    return self.model.predict_proba(x.iloc[:, self.support])
+                else:
+                    return self.model.predict(x.iloc[:, self.support])
+                
         return None
 
     @on_timeout(limit=60, handler=handler_func, hint=u"regressor.fit")
