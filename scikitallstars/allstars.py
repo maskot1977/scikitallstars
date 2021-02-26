@@ -739,16 +739,20 @@ class Regressor:
                     return self.model.predict(x)
         else:
             if fitting == True:
-                self.standardizer.fit(x.iloc[:, self.support])
-            self.standardizer.transform(x.iloc[:, self.support])
+                self.standardizer.fit(x.iloc[:, support])
+                
+            self.standardizer.transform(x.iloc[:, support])
+            if score:
+                return self.model.score(x.iloc[:, support], y)
 
             if fitting == True:
-                self.model.fit(x.iloc[:, self.support], y)
+                self.model.fit(x.iloc[:, support], y)
+                
             if y is None:
                 if proba:
-                    return self.model.predict_proba(x.iloc[:, self.support])
+                    return self.model.predict_proba(x.iloc[:, support])
                 else:
-                    return self.model.predict(x.iloc[:, self.support])
+                    return self.model.predict(x.iloc[:, support])
                 
         return None
 
