@@ -1,3 +1,5 @@
+import numpy as np
+
 def remove_low_variance_features(df, threshold=0.0):
     ok_id = []
     for colid, col in enumerate(df.values.T):
