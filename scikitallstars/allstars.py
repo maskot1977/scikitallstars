@@ -671,18 +671,33 @@ class Classifier:
         return None
 
     @on_timeout(limit=60, handler=handler_func, hint=u"classifier.fit")
-    def fit(self, x, y):
-        self._fit_and_predict_core(x, y, fitting=True)
+    #def fit(self, x, y):
+    #    self._fit_and_predict_core(x, y, fitting=True)
+    #    return self
+
+    #def predict(self, x):
+    #    pred_y = self._fit_and_predict_core(x)
+    #    return pred_y
+
+    #def predict_proba(self, x):
+    #    pred_y = self._fit_and_predict_core(x, proba=True)
+    #    return pred_y
+    
+    @on_timeout(limit=60, handler=handler_func, hint=params["classifier_name"])
+    def fit(self, x, y, support=None):
+        self._fit_and_predict_core(x, y, fitting=True, support=support)
         return self
 
-    def predict(self, x):
-        pred_y = self._fit_and_predict_core(x)
+    def predict(self, x, support=None):
+        pred_y = self._fit_and_predict_core(x, support=support)
         return pred_y
 
-    def predict_proba(self, x):
-        pred_y = self._fit_and_predict_core(x, proba=True)
+    def predict_proba(self, x, support=None):
+        pred_y = self._fit_and_predict_core(x, proba=True, support=support)
         return pred_y
-
+    
+    def score(self, x, y, support=None):
+        return self._fit_and_predict_core(x, y, support=support, score=True)
 
 class Regressor:
     def __init__(self, params, debug=False, support=None):
