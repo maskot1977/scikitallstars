@@ -716,7 +716,7 @@ class Regressor:
             print(self.model)
 
     def _fit_and_predict_core(self, x, y=None, fitting=False, proba=False):
-        if self.support is None:
+        if True: #self.support is None:
             if fitting == True:
                 self.standardizer.fit(x)
             self.standardizer.transform(x)
