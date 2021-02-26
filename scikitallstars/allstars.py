@@ -729,7 +729,7 @@ class Regressor:
             self.standardizer.transform(x)
             if score:
                 pred = np.array(self.model.predict(x))
-                return r2_score(pred.reshape(pred.shape[0], 1), np.array(y).reshape(pred.shape[0], 1))
+                return r2_score(pred.flatten(), np.array(y).flatten())
 
             if fitting == True:
                 self.model.fit(x, y)
@@ -745,7 +745,7 @@ class Regressor:
             self.standardizer.transform(x.iloc[:, support])
             if score:
                 pred = np.array(self.model.predict(x.iloc[:, support]))
-                return r2_score(pred.reshape(pred.shape[0], 1), np.array(y).reshape(pred.shape[0], 1))
+                return r2_score(pred.flatten(), np.array(y).flatten())
 
             if fitting == True:
                 self.model.fit(x.iloc[:, support], y)
