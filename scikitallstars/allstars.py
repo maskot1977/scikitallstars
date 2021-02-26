@@ -1322,7 +1322,7 @@ def pca_summary(
     plt.show()
 
     
-def random_forest_feature_selector(X_train, y_train, timeout=20, n_trials=10, show_progress_bar=False):
+def random_forest_feature_selector(X_train, y_train, timeout=30, n_trials=20, show_progress_bar=False):
     objective = Objective(X_train, y_train)
     objective.set_model_names(['RandomForest'])
 
@@ -1486,6 +1486,10 @@ class StackingObjective:
 def get_best_stacking(objective, X_train, y_train, verbose=True, timeout=1000, n_trials=50, show_progress_bar=True):
     stacking_objective = StackingObjective(objective, X_train, y_train)
     study = optuna.create_study(direction='maximize')
+    try_all = {}
+    for model_name in objective.get_model_names():
+        try_all[model_name] = 1
+    study.enqueue_trial(try_all)
     study.optimize(stacking_objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
     return stacking_objective.best_model
 
