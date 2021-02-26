@@ -823,54 +823,7 @@ def objective_summary(objective):
     axes[3].yaxis.set_visible(False)
     plt.show()
 
-
-def stacking(objective, final_estimator=None, use_all=False, verbose=True, estimators=None, params=None):
-    if estimators is None:
-        if use_all:
-            estimators = [
-                (name, model.model) for name, model in objective.best_models.items()
-            ]
-
-        else:
-            threshold = sum(
-                [
-                    objective.best_scores[name]
-                    for name, model in objective.best_models.items()
-                ]
-            ) / len(objective.best_models.items())
-            estimators = []
-            for name, model in objective.best_models.items():
-                if objective.best_scores[name] >= threshold:
-                    estimators.append((name, model.model))
-                
-    if verbose:
-        print([name for name, model in estimators])
-
-    if objective.is_regressor:
-        if final_estimator is None:
-            if params is None:
-                final_estimator = RandomForestRegressor()
-            else:
-                final_estimator = RandomForestRegressor(**params)
-
-        model = StackingRegressorS(
-            estimators=estimators, final_estimator=final_estimator,
-        )
-        model.support = objective.support
-    else:
-        if final_estimator is None:
-            if params is None:
-                final_estimator = RandomForestClassifier()
-            else:
-                final_estimator = RandomForestClassifier(**params)
-
-        model = StackingClassifierS(
-            estimators=estimators, final_estimator=final_estimator,
-        )
-        model.support = objective.support
-    return model
-
-
+    
 def allsklearn_classification_metrics(objective, X_test, y_test):
     fig, axes = plt.subplots(
         nrows=3,
@@ -1512,6 +1465,7 @@ class StackingObjective:
             )
         stacking_model1 = stacking(self.objective, estimators=estimators, verbose=self.verbose, params=params)
         stacking_model1.fit(x_train, y_train)
+        print(x_train.shape, x_test.shape)
         score = stacking_model1.score(x_test, y_test)
         if self.verbose:
             print("Trial ", self.n_trial)
@@ -1535,13 +1489,13 @@ def get_best_stacking(objective, X_train, y_train, verbose=True, timeout=1000, n
     study.optimize(stacking_objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
     return stacking_objective.best_model
 
+
 class StackingRegressorS(StackingRegressor):
     def __init__(self, **args):
         super(StackingRegressor, self).__init__(**args)
         self.support = None
 
     def score(self, x, y):
-        print(x.shape, x.iloc[:, self.support].shape, y.shape) #####
         if self.support is None:
             return super(StackingRegressor, self).score(x, y)
         else:
@@ -1570,3 +1524,51 @@ class StackingClassifierS(StackingClassifier):
             return super(StackingClassifier, self).predict(x)
         else:
             return super(StackingClassifier, self).predict(x.iloc[:, self.support])
+        
+        
+def stacking(objective, final_estimator=None, use_all=False, verbose=True, estimators=None, params=None):
+    if estimators is None:
+        if use_all:
+            estimators = [
+                (name, model.model) for name, model in objective.best_models.items()
+            ]
+
+        else:
+            threshold = sum(
+                [
+                    objective.best_scores[name]
+                    for name, model in objective.best_models.items()
+                ]
+            ) / len(objective.best_models.items())
+            estimators = []
+            for name, model in objective.best_models.items():
+                if objective.best_scores[name] >= threshold:
+                    estimators.append((name, model.model))
+                
+    if verbose:
+        print([name for name, model in estimators])
+
+    if objective.is_regressor:
+        if final_estimator is None:
+            if params is None:
+                final_estimator = RandomForestRegressor()
+            else:
+                final_estimator = RandomForestRegressor(**params)
+
+        model = StackingRegressorS(
+            estimators=estimators, final_estimator=final_estimator,
+        )
+        model.support = objective.support
+    else:
+        if final_estimator is None:
+            if params is None:
+                final_estimator = RandomForestClassifier()
+            else:
+                final_estimator = RandomForestClassifier(**params)
+
+        model = StackingClassifierS(
+            estimators=estimators, final_estimator=final_estimator,
+        )
+        model.support = objective.support
+    return model
+        
