@@ -851,7 +851,7 @@ def stacking(objective, final_estimator=None, use_all=False, verbose=True, estim
             else:
                 final_estimator = RandomForestRegressor(**params)
 
-        model = StackingRegressor(
+        model = StackingRegressorS(
             estimators=estimators, final_estimator=final_estimator,
         )
     else:
@@ -861,7 +861,7 @@ def stacking(objective, final_estimator=None, use_all=False, verbose=True, estim
             else:
                 final_estimator = RandomForestClassifier(**params)
 
-        model = StackingClassifier(
+        model = StackingClassifierS(
             estimators=estimators, final_estimator=final_estimator,
         )
     return model
@@ -1530,3 +1530,37 @@ def get_best_stacking(objective, X_train, y_train, verbose=True, timeout=1000, n
     study = optuna.create_study(direction='maximize')
     study.optimize(stacking_objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
     return stacking_objective.best_model
+
+class StackingRegressorS(StackingRegressor):
+    def __init__(self, support = None):
+        super(StackingRegressor, self).__init__()
+        self.support = support
+
+    def predict(self, x, y):
+        if self.support is None:
+            return self.predict(x, y)
+        else:
+            return self.predict(x.iloc[:, self.support], y)
+
+    def score(self, x):
+        if self.support is None:
+            return self.score(x)
+        else:
+            return self.score(x.iloc[:, self.support])
+
+class StackingClassifierS(StackingClassifier):
+    def __init__(self, support = None):
+        super(StackingClassifier, self).__init__()
+        self.support = support
+
+    def predict(self, x, y):
+        if self.support is None:
+            return self.predict(x, y)
+        else:
+            return self.predict(x.iloc[:, self.support], y)
+
+    def score(self, x):
+        if self.support is None:
+            return self.score(x)
+        else:
+            return self.score(x.iloc[:, self.support])
