@@ -41,6 +41,7 @@ from sklearn.metrics import (
     precision_recall_curve,
     r2_score,
     roc_curve,
+    f1_score
 )
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
@@ -656,18 +657,55 @@ class Classifier:
         if self.debug:
             print(self.model)
 
-    def _fit_and_predict_core(self, x, y=None, fitting=False, proba=False):
-        if fitting == True:
-            self.standardizer.fit(x)
-        self.standardizer.transform(x)
+    #def _fit_and_predict_core(self, x, y=None, fitting=False, proba=False):
+    #    if fitting == True:
+    #        self.standardizer.fit(x)
+    #    self.standardizer.transform(x)
 
-        if fitting == True:
-            self.model.fit(x, y)
-        if y is None:
-            if proba and hasattr(self.model, "predict_proba"):
-                return self.model.predict_proba(x)
-            else:
-                return self.model.predict(x)
+    #    if fitting == True:
+    #        self.model.fit(x, y)
+    #    if y is None:
+    #        if proba and hasattr(self.model, "predict_proba"):
+    #            return self.model.predict_proba(x)
+    #        else:
+    #            return self.model.predict(x)
+    #    return None
+    
+    def _fit_and_predict_core(self, x, y=None, fitting=False, proba=False, support=None, score=False):
+        if support is None:
+            if fitting == True:
+                self.standardizer.fit(x)
+                
+            self.standardizer.transform(x)
+            if score:
+                pred = np.array(self.model.predict(x))
+                return f1_score(pred.flatten(), np.array(y).flatten())
+
+            if fitting == True:
+                self.model.fit(x, y)
+            if y is None:
+                if proba:
+                    return self.model.predict_proba(x)
+                else:
+                    return self.model.predict(x)
+        else:
+            if fitting == True:
+                self.standardizer.fit(x.iloc[:, support])
+                
+            self.standardizer.transform(x.iloc[:, support])
+            if score:
+                pred = np.array(self.model.predict(x.iloc[:, support]))
+                return f1_score(pred.flatten(), np.array(y).flatten())
+
+            if fitting == True:
+                self.model.fit(x.iloc[:, support], y)
+                
+            if y is None:
+                if proba and hasattr(self.model, "predict_proba"):
+                    return self.model.predict_proba(x.iloc[:, support])
+                else:
+                    return self.model.predict(x.iloc[:, support])
+                
         return None
 
     #@on_timeout(limit=60, handler=handler_func, hint=u"classifier.fit")
