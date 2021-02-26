@@ -774,7 +774,7 @@ class Regressor:
         return pred_y
     
     def score(self, x, y, support=None):
-        return self._fit_and_predict_core(x, support=support, score=True)
+        return self._fit_and_predict_core(x, y, support=support, score=True)
 
 
 class NullScaler(BaseEstimator, TransformerMixin):
