@@ -670,7 +670,7 @@ class Classifier:
                 return self.model.predict(x)
         return None
 
-    @on_timeout(limit=60, handler=handler_func, hint=u"classifier.fit")
+    #@on_timeout(limit=60, handler=handler_func, hint=u"classifier.fit")
     #def fit(self, x, y):
     #    self._fit_and_predict_core(x, y, fitting=True)
     #    return self
@@ -683,7 +683,7 @@ class Classifier:
     #    pred_y = self._fit_and_predict_core(x, proba=True)
     #    return pred_y
     
-    @on_timeout(limit=60, handler=handler_func, hint=self.params["classifier_name"])
+    @on_timeout(limit=60, handler=handler_func, hint=u"classifier.fit")
     def fit(self, x, y, support=None):
         self._fit_and_predict_core(x, y, fitting=True, support=support)
         return self
