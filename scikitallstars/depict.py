@@ -65,16 +65,19 @@ def stacking_model_contribution(stacking_model):
 
     
     
-def metrics(model, X_train, y_train, X_test, y_test):
+def metrics(model, X_train, y_train, X_test = None, y_test = None):
     if hasattr(model, "predict_proba") or hasattr(model, "decision_function"):
         classification_metrics(model, X_train, y_train, X_test, y_test)
     else:
         y_y_plot(model, X_train, y_train, X_test, y_test)
 
         
-def y_y_plot(model, X_train, X_test, y_train, y_test):
+def y_y_plot(model, X_train, X_test, y_train = None, y_test = None):
 
-    fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8, 4))
+    if y_train is None:
+        fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(8, 4))
+    else:
+        fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8, 4))
 
     y_pred = model.predict(X_train)
     score = model.score(X_train, y_train)
@@ -94,23 +97,24 @@ def y_y_plot(model, X_train, X_test, y_train, y_test):
     axes[0].set_xlabel("Real")
     axes[0].set_ylabel("Predicted")
 
-    y_pred = model.predict(X_test)
-    score = model.score(X_test, y_test)
-    y_min = min(y_test.min(), y_pred.min())
-    y_max = min(y_test.max(), y_pred.max())
+    if y_train is not None:
+        y_pred = model.predict(X_test)
+        score = model.score(X_test, y_test)
+        y_min = min(y_test.min(), y_pred.min())
+        y_max = min(y_test.max(), y_pred.max())
 
-    axes[1].set_title("Test data")
-    axes[1].scatter(y_test, y_pred, alpha=0.5)
-    axes[1].plot([y_min, y_max], [y_min, y_max])
-    axes[1].text(
-        y_max - 0.3,
-        y_min + 0.3,
-        ("%.3f" % score).lstrip("0"),
-        size=15,
-        horizontalalignment="right",
-    )
-    axes[1].set_xlabel("Real")
-    axes[1].set_ylabel("Predicted")
+        axes[1].set_title("Test data")
+        axes[1].scatter(y_test, y_pred, alpha=0.5)
+        axes[1].plot([y_min, y_max], [y_min, y_max])
+        axes[1].text(
+            y_max - 0.3,
+            y_min + 0.3,
+            ("%.3f" % score).lstrip("0"),
+            size=15,
+            horizontalalignment="right",
+        )
+        axes[1].set_xlabel("Real")
+        axes[1].set_ylabel("Predicted")
     plt.show()
     
 
