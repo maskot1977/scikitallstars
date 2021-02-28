@@ -1039,7 +1039,7 @@ class StackingClassifierS(StackingClassifier):
     def __init__(self, **args):
         super(StackingClassifier, self).__init__(**args)
         self.support = None
-        self.classes_ = super(StackingClassifier, self).classes_
+        self.classes_ = 2
         
     #@property
     #def classes_(self):
