@@ -657,20 +657,7 @@ class Classifier:
             self.model = AdaBoostClassifier(**params["classifier_params"])
         if self.debug:
             print(self.model)
-
-    #def _fit_and_predict_core(self, x, y=None, fitting=False, proba=False):
-    #    if fitting == True:
-    #        self.standardizer.fit(x)
-    #    self.standardizer.transform(x)
-
-    #    if fitting == True:
-    #        self.model.fit(x, y)
-    #    if y is None:
-    #        if proba and hasattr(self.model, "predict_proba"):
-    #            return self.model.predict_proba(x)
-    #        else:
-    #            return self.model.predict(x)
-    #    return None
+            
     
     def _fit_and_predict_core(self, x, y=None, fitting=False, proba=False, support=None, score=False):
         if support is None:
@@ -709,19 +696,7 @@ class Classifier:
                 
         return None
 
-    #@on_timeout(limit=60, handler=handler_func, hint=u"classifier.fit")
-    #def fit(self, x, y):
-    #    self._fit_and_predict_core(x, y, fitting=True)
-    #    return self
 
-    #def predict(self, x):
-    #    pred_y = self._fit_and_predict_core(x)
-    #    return pred_y
-
-    #def predict_proba(self, x):
-    #    pred_y = self._fit_and_predict_core(x, proba=True)
-    #    return pred_y
-    
     @on_timeout(limit=60, handler=handler_func, hint=u"classifier.fit")
     def fit(self, x, y, support=None):
         self._fit_and_predict_core(x, y, fitting=True, support=support)
@@ -881,10 +856,11 @@ def fit(X_train, y_train, feature_selection=True, verbose=True, timeout=100, n_t
     objective = Objective(X_train, y_train, support=support)
     optuna.logging.set_verbosity(optuna.logging.WARN)
     study = optuna.create_study(direction='maximize')
-    study.optimize(objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
     
     model_names = objective.get_model_names()
     for model_name in model_names:
+        if verbose:
+            print(model_name)
         for _ in range(n_trials):
             if objective.is_regressor:
                 study.enqueue_trial({"regressor_name":model_name})
@@ -892,22 +868,10 @@ def fit(X_train, y_train, feature_selection=True, verbose=True, timeout=100, n_t
                 study.enqueue_trial({"classifier_name":model_name})
                 
         study.optimize(objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
-        if verbose:
-            print(objective.best_scores[model_name], objective.best_models[model_name].model)
+        #if verbose:
+        #    print(objective.best_scores[model_name], objective.best_models[model_name].model)
 
-    
-    #model_names = objective.get_model_names()
-    #for model_name in model_names:
-    #    if verbose:
-    #        print(model_name)
-
-    #    objective.set_model_names([model_name])
-    #    study = optuna.create_study(direction='maximize')
-    #    study.optimize(objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
-    #    if verbose:
-    #        print(objective.best_scores[model_name], objective.best_models[model_name].model)
-
-    #objective.set_model_names(model_names)
+    study.optimize(objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
     
     if verbose:
         print(objective.best_scores)
