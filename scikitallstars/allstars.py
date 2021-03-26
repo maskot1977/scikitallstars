@@ -5,6 +5,7 @@ import optuna
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import scikitallstars.timeout_decorator as timeout_decorator
 from scikitallstars.timeout import on_timeout
 from sklearn import metrics
