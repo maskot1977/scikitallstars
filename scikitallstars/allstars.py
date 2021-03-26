@@ -986,6 +986,8 @@ class StackingObjective:
         return score
     
 def get_best_stacking(objective, X_train, y_train, verbose=True, timeout=1000, n_trials=50, show_progress_bar=True):
+    X_train = pd.DataFrame(X_train)
+    y_train = pd.DataFrame(y_train)[0]
     stacking_objective = StackingObjective(objective, X_train, y_train)
     study = optuna.create_study(direction='maximize')
     
