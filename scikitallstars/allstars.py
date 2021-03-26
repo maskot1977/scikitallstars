@@ -864,6 +864,8 @@ def random_forest_feature_selector(X_train, y_train, timeout=30, n_trials=20, sh
 
 
 def fit(X_train, y_train, feature_selection=True, verbose=True, timeout=100, n_trials=100, show_progress_bar=True):
+    X_train = pd.DataFrame(X_train)
+    y_train = pd.DataFrame(y_train)
     if feature_selection:
         support = random_forest_feature_selector(X_train, y_train)
         X_train_selected = X_train.iloc[:, support]
