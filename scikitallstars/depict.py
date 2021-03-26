@@ -1,6 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+def best_scores(allstars_model):
+    keys = list(allstars_model.best_scores.keys())
+    values = allstars_model.best_scores.values()
+    plt.figure(figsize=(6, int(len(keys)/3)))
+    plt.title("Best scores")
+    plt.barh(keys, values)
+    plt.grid()
+    plt.show()
+    
+
 def training_summary(objective):
     fig, axes = plt.subplots(nrows=1, ncols=4, figsize=(16, 8))
 
