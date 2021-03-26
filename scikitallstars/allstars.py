@@ -1028,12 +1028,15 @@ class StackingRegressorS(StackingRegressor):
             return super(StackingRegressor, self).fit(x.iloc[:, self.support], y)
         
     def score(self, x, y):
+        x = pd.DataFrame(x)
+        y = pd.DataFrame(y)[0]
         if self.support is None or len(self.support) != x.shape[1]: 
             return super(StackingRegressor, self).score(x, y)
         else:
             return super(StackingRegressor, self).score(x.iloc[:, self.support], y)
 
     def predict(self, x):
+        x = pd.DataFrame(x)
         if self.support is None or len(self.support) != x.shape[1]: 
             return super(StackingRegressor, self).predict(x)
         else:
@@ -1057,12 +1060,15 @@ class StackingClassifierS(StackingClassifier):
             return super(StackingClassifier, self).fit(x.iloc[:, self.support], y)
 
     def score(self, x, y):
+        x = pd.DataFrame(x)
+        y = pd.DataFrame(y)[0]
         if self.support is None or len(self.support) != x.shape[1]: 
             return super(StackingClassifier, self).score(x, y)
         else:
             return super(StackingClassifier, self).score(x.iloc[:, self.support], y)
 
     def predict(self, x):
+        x = pd.DataFrame(x)
         if self.support is None or len(self.support) != x.shape[1]: 
             return super(StackingClassifier, self).predict(x)
         else:
