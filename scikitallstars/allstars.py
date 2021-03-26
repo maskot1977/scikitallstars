@@ -619,7 +619,7 @@ class Objective:
         return self.best_model.predict(pd.DataFrame(x), support=self.support)
     
     def score(self, x, y):
-        return self.best_model.score(pd.DataFrame(x), pd.DataFrame(y), support=self.support)
+        return self.best_model.score(pd.DataFrame(x), pd.DataFrame(y)[0], support=self.support)
 
 
 class Classifier:
@@ -866,7 +866,7 @@ def random_forest_feature_selector(X_train, y_train, timeout=30, n_trials=20, sh
 
 def fit(X_train, y_train, feature_selection=True, verbose=True, timeout=100, n_trials=100, show_progress_bar=True):
     X_train = pd.DataFrame(X_train)
-    y_train = pd.DataFrame(y_train)
+    y_train = pd.DataFrame(y_train)[0]
     if feature_selection:
         support = random_forest_feature_selector(X_train, y_train)
         X_train_selected = X_train.iloc[:, support]
