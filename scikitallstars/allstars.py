@@ -616,10 +616,10 @@ class Objective:
         return params
     
     def predict(self, x):
-        return self.best_model.predict(x, support=self.support)
+        return self.best_model.predict(pd.DataFrame(x), support=self.support)
     
     def score(self, x, y):
-        return self.best_model.score(x, y, support=self.support)
+        return self.best_model.score(pd.DataFrame(x), pd.DataFrame(y), support=self.support)
 
 
 class Classifier:
