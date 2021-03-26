@@ -881,20 +881,35 @@ def fit(X_train, y_train, feature_selection=True, verbose=True, timeout=100, n_t
     objective = Objective(X_train, y_train, support=support)
     optuna.logging.set_verbosity(optuna.logging.WARN)
     study = optuna.create_study(direction='maximize')
-    study.optimize(objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
     
     model_names = objective.get_model_names()
     for model_name in model_names:
-        if verbose:
-            print(model_name)
+        for _ in range(n_trials):
+            if objective.is_regressor:
+                study.enqueue_trial({"regressor_name":model_name})
+            else:
+                study.enqueue_trial({"classifier_name":model_name})
+                
+    study.optimize(objective, timeout=timeout, n_trials=n_trials*len(model_names), show_progress_bar=show_progress_bar)
+    study.optimize(objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
 
-        objective.set_model_names([model_name])
-        study = optuna.create_study(direction='maximize')
-        study.optimize(objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
+    for model_name in model_names:
         if verbose:
             print(objective.best_scores[model_name], objective.best_models[model_name].model)
 
-    objective.set_model_names(model_names)
+    
+    #model_names = objective.get_model_names()
+    #for model_name in model_names:
+    #    if verbose:
+    #        print(model_name)
+
+    #    objective.set_model_names([model_name])
+    #    study = optuna.create_study(direction='maximize')
+    #    study.optimize(objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
+    #    if verbose:
+    #        print(objective.best_scores[model_name], objective.best_models[model_name].model)
+
+    #objective.set_model_names(model_names)
     
     if verbose:
         print(objective.best_scores)
