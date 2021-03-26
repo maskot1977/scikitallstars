@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
 def best_scores(allstars_model):
@@ -76,6 +77,12 @@ def model_importances(stacking_model):
     
     
 def metrics(model, X_train, y_train, X_test = None, y_test = None):
+    X_train = pd.DataFrame(X_train)
+    y_train = pd.DataFrame(y_train)[0]
+    if X_test is not None:
+        X_test = pd.DataFrame(X_test)
+    if y_test is not None:
+        y_test = pd.DataFrame(y_test)
     if hasattr(model, "predict_proba") or hasattr(model, "decision_function"):
         classification_metrics(model, X_train, y_train, X_test, y_test)
     else:
@@ -309,6 +316,8 @@ def all_regression_metrics(objective, X_test, y_test):
 
 
 def all_metrics(objective, X_test, y_test):
+    X_test = pd.DataFrame(X_test)
+    y_test = pd.DataFrame(y_test)[0]
     if objective.is_regressor:
         all_regression_metrics(objective, X_test, y_test)
     else:
