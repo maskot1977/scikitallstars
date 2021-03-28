@@ -120,8 +120,8 @@ def regression_metrics(model, X_train, y_train, X_test = None, y_test = None):
     if X_test is not None:
         y_pred = model.predict(X_test)
         score = model.score(X_test, y_test)
-        y_min = min(y_test.min(), y_pred.min())
-        y_max = min(y_test.max(), y_pred.max())
+        #y_min = min(y_test.ravel()min(), y_pred.min())
+        #y_max = min(y_test.max(), y_pred.max())
 
         axes[1].set_title("Test data")
         axes[1].scatter(y_test, y_pred, alpha=0.5)
