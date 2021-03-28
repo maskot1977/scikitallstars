@@ -144,7 +144,7 @@ def regression_metrics(model, X_train, y_train, X_test = None, y_test = None):
     
 
 def classification_metrics(model, X_train, y_train, X_test, y_test):
-    if model.support:
+    if model.support is not None:
         X_train = X_train.iloc[:, model.support]
         X_test = X_test.iloc[:, model.support]
     if hasattr(model, "best_model"):
