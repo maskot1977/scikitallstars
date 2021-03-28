@@ -465,7 +465,7 @@ class Objective:
                 )
                 regressor_params["bootstrap"] = True
                 regressor_params["oob_score"] = trial.suggest_categorical(
-                    "et_oob_score", [True, False]
+                    "et_oob_score", [True]
                 )
                 regressor_params["warm_start"] = trial.suggest_categorical(
                     "et_warm_start", self.et_warm_start
