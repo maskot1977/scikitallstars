@@ -84,7 +84,7 @@ def metrics(model, X_train, y_train, X_test = None, y_test = None):
         X_test = pd.DataFrame(X_test)
     if y_test is not None:
         y_test = pd.DataFrame(y_test)
-    if model.is_regressor:
+    if !model.is_regressor:
     #if hasattr(model, "predict_proba") or hasattr(model, "decision_function"):
         classification_metrics(model, X_train, y_train, X_test, y_test)
     else:
