@@ -218,7 +218,6 @@ class Objective:
                 self.times[params["classifier_name"]] = []
             self.times[params["classifier_name"]].append(seconds)
 
-            print("self.x_test", self.x_test)
             if self.classification_metrics == "f1_score":
                 #score = metrics.f1_score(model.predict(x_test), y_test)
                 if self.support is None:
