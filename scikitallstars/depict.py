@@ -223,15 +223,15 @@ def all_classification_metrics(objective, X_test, y_test):
     for name in objective.best_models.keys():
         model = objective.best_models[name]
         if hasattr(model.model, "predict_proba"):
-            probas = model.predict_proba(X_test)
+            probas = model.predict_proba(X_test.iloc[:, objective.support])
         else:
-            probas = np.array([[x, x] for x in model.model.decision_function(X_test)])
+            probas = np.array([[x, x] for x in model.model.decision_function(X_test.iloc[:, objective.support])])
 
         fpr, tpr, thresholds = roc_curve(y_test, probas[:, 1])
         roc_auc = auc(fpr, tpr)
         precision, recall, thresholds = precision_recall_curve(y_test, probas[:, 1])
         area = auc(recall, precision)
-        matrix = confusion_matrix(model.predict(X_test), y_test)
+        matrix = confusion_matrix(model.predict(X_test.iloc[:, objective.support]), y_test)
         TN = matrix[0][0]
         FP = matrix[1][0]
         FN = matrix[0][1]
