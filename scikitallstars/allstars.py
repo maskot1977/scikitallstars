@@ -464,6 +464,8 @@ class Objective:
                     "et_max_features", ["auto", "sqrt", "log2"]
                 )
                 regressor_params["bootstrap"] = True
+                regressor_params["oob_score"] = trial.suggest_categorical(
+                    "et_oob_score", [True]
                 )
                 regressor_params["warm_start"] = trial.suggest_categorical(
                     "et_warm_start", self.et_warm_start
