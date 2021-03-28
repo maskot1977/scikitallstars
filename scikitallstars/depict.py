@@ -144,6 +144,8 @@ def regression_metrics(model, X_train, y_train, X_test = None, y_test = None):
     
 
 def classification_metrics(model, X_train, X_test, y_train, y_test):
+    if hasattr(model, "best_model"):
+        model = model.best_model.model
     fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(4 * 2, 4 * 3))
     i = 0
     for XX, YY, name in [
