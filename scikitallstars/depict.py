@@ -294,7 +294,7 @@ def all_regression_metrics(objective, X_test, y_test):
     )
     i = 0
     for name in objective.best_models.keys():
-        y_pred = objective.best_models[name].predict(X_test)
+        y_pred = objective.best_models[name].predict(X_test, support=objective.support)
         score = r2_score(np.array(y_pred).ravel(), np.array(y_test).ravel())
         axes[i].set_title(name)
         axes[i].scatter(y_test, y_pred, alpha=0.5)
