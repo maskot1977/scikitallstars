@@ -61,7 +61,7 @@ def feature_importances(allstars_model):
   keys = list(barh_dict.keys())
   values = barh_dict.values()
 
-  plt.figure(figsize=(6, int(len(keys)/3)))
+  plt.figure(figsize=(6, int(len(keys)/3)+1))
   plt.title("Feature importances in RF")
   plt.barh(keys, values)
   plt.grid()
