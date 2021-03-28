@@ -717,6 +717,8 @@ class Classifier:
         return self
 
     def predict(self, x, support=None):
+        if x is None:
+            return 0
         pred_y = self._fit_and_predict_core(x, support=support)
         return pred_y
 
