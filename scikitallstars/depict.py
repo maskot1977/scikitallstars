@@ -143,8 +143,10 @@ def regression_metrics(model, X_train, y_train, X_test = None, y_test = None):
     plt.show()
     
 
-def classification_metrics(model, X_train, X_test, y_train, y_test):
+def classification_metrics(model, X_train, y_train, X_test, y_test):
     if hasattr(model, "best_model"):
+        X_train = X_train.iloc[:, model.support]
+        X_test = X_test.iloc[:, model.support]
         model = model.best_model.model
     fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(4 * 2, 4 * 3))
     i = 0
