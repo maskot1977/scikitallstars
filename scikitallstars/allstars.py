@@ -219,9 +219,18 @@ class Objective:
             self.times[params["classifier_name"]].append(seconds)
 
             if self.classification_metrics == "f1_score":
-                score = metrics.f1_score(y_test, model.predict(x_test))
+                #score = metrics.f1_score(model.predict(x_test), y_test)
+                if self.support is None:
+                    score = metrics.f1_score(model.predict(self.x_test), self.y_test)
+                else:
+                    score = metrics.f1_score(model.predict(self.x_test.iloc[:, self.support]), self.y_test)
             else:
-                score = model.model.score(x_test, y_test)
+                #score = model.model.score(x_test, y_test)
+                if self.support is None:
+                    score = model.model.score(self.x_train, self.y_train) 
+                else:
+                    score = model.model.score(self.x_train.iloc[:, self.support], self.y_train) 
+                    
             if params["classifier_name"] not in self.scores.keys():
                 self.scores[params["classifier_name"]] = []
             self.scores[params["classifier_name"]].append(score)
@@ -242,11 +251,11 @@ class Objective:
                 self.times[params["regressor_name"]] = []
             self.times[params["regressor_name"]].append(seconds)
 
-            score = model.model.score(x_test, y_test)
+            #score = model.model.score(x_test, y_test)
             if self.support is None:
-                score = model.model.score(self.x_train, self.y_train) #######
+                score = model.model.score(self.x_train, self.y_train) 
             else:
-                score = model.model.score(self.x_train.iloc[:, self.support], self.y_train) #######
+                score = model.model.score(self.x_train.iloc[:, self.support], self.y_train) 
             if params["regressor_name"] not in self.scores.keys():
                 self.scores[params["regressor_name"]] = []
             self.scores[params["regressor_name"]].append(score)
