@@ -152,8 +152,7 @@ class Objective:
         self.lasso_max_iter = 530000
         self.lasso_warm_start = [True, False]
         self.lasso_normalize = [True, False]
-        self.lasso_
-        = ["cyclic", "random"]
+        self.lasso_selection = ["cyclic", "random"]
 
         self.ridge_alpha = [1e-5, 1e5]
         self.ridge_max_iter = 530000
