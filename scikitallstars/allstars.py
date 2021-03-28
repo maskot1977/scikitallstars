@@ -243,6 +243,7 @@ class Objective:
             self.times[params["regressor_name"]].append(seconds)
 
             score = model.model.score(x_test, y_test)
+            score = model.model.score(self.x_train, self.y_train) #######
             if params["regressor_name"] not in self.scores.keys():
                 self.scores[params["regressor_name"]] = []
             self.scores[params["regressor_name"]].append(score)
