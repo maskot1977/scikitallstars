@@ -155,7 +155,7 @@ def classification_metrics(model, X_train, X_test, y_train, y_test):
         elif hasattr(model, "decision_function"):
             probas = np.array([[x, x] for x in model.decision_function(XX)])
         else:
-            probas = np.array([[x, x] for x in model.oob_decision_function_(XX)])
+            probas = np.array([[x, x] for x in model.model.decision_function(XX)])
 
         fpr, tpr, thresholds = roc_curve(YY, probas[:, 1])
         roc_auc = auc(fpr, tpr)
