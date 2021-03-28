@@ -718,7 +718,6 @@ class Classifier:
 
     def predict(self, x, support=None):
         pred_y = self._fit_and_predict_core(x, support=support)
-        print(721, x.shape, pred_y.shape) #############
         return pred_y
 
     def predict_proba(self, x, support=None):
@@ -857,8 +856,6 @@ def fit(X_train, y_train, feature_selection=True, verbose=True, timeout=100, n_t
     X_train = pd.DataFrame(X_train)
     y_train = pd.DataFrame(y_train)[0]
     if feature_selection:
-        print(X_train) ######
-        print(y_train) ######
         support = random_forest_feature_selector(X_train, y_train)
         X_train_selected = X_train.iloc[:, support]
         if verbose:
