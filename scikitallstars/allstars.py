@@ -1110,3 +1110,5 @@ def stacking(objective, final_estimator=None, use_all=False, verbose=True, estim
         model.support = objective.support
     return model
         
+
+    
