@@ -632,7 +632,9 @@ class Objective:
         return self.best_model.predict(pd.DataFrame(x), support=self.support)
     
     def score(self, x, y):
-        return self.best_model.score(pd.DataFrame(x), pd.DataFrame(y)[0], support=self.support)
+        if type(y) is not pd.core.series.Series:
+            y = pd.DataFrame(y)[0]
+        return self.best_model.score(pd.DataFrame(x), y, support=self.support)
 
 
 class Classifier:
