@@ -1027,7 +1027,8 @@ class StackingRegressorS(StackingRegressor):
         
     def score(self, x, y):
         x = pd.DataFrame(x)
-        y = pd.DataFrame(y)[0]
+        if type(y) is not pd.core.series.Series:
+            y = pd.DataFrame(y)[0]
         if self.support is None or len(self.support) != x.shape[1]: 
             return super(StackingRegressor, self).score(x, y)
         else:
