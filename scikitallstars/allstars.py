@@ -50,7 +50,7 @@ from sklearn.neural_network import MLPClassifier, MLPRegressor
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.svm import SVC, SVR
-from umap import UMAP
+#from umap import UMAP
 from sklearn.feature_selection import SelectFromModel
 
 
