@@ -636,7 +636,10 @@ class Objective:
     
     def score(self, x, y):
         if type(y) is not pd.core.series.Series:
-            y = pd.DataFrame(y)[0]
+            try:
+                y = pd.DataFrame(y)[0]
+            except:
+                pass
         return self.best_model.score(pd.DataFrame(x), y, support=self.support)
 
 
