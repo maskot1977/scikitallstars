@@ -330,7 +330,8 @@ def all_regression_metrics(objective, X_test, y_test):
 
 def all_metrics(objective, X_test, y_test):
     X_test = pd.DataFrame(X_test)
-    y_test = pd.DataFrame(y_test)[0]
+    if type(y_train) is not pd.core.series.Series:
+        y_test = pd.DataFrame(y_test)[0]
     if objective.is_regressor:
         all_regression_metrics(objective, X_test, y_test)
     else:
