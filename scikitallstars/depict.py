@@ -79,7 +79,8 @@ def model_importances(stacking_model):
     
 def metrics(model, X_train, y_train, X_test = None, y_test = None):
     X_train = pd.DataFrame(X_train)
-    y_train = pd.DataFrame(y_train)[0]
+    if type(y_train) is not pd.core.series.Series:
+        y_train = pd.DataFrame(y_train)[0]
     if X_test is not None:
         X_test = pd.DataFrame(X_test)
     if y_test is not None:
