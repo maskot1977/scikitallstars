@@ -916,10 +916,11 @@ class StackingObjective:
         estimators = []
         key = ""
         for model_name in self.objective.get_model_names():
-            in_out = trial.suggest_int(model_name, 0, 1)
-            key += str(in_out)
-            if in_out == 1:
-                estimators.append((model_name, self.objective.best_models[model_name].model))
+            if model_name in self.objective.best_models.keys():
+                in_out = trial.suggest_int(model_name, 0, 1)
+                key += str(in_out)
+                if in_out == 1:
+                    estimators.append((model_name, self.objective.best_models[model_name].model))
                 
         params = {}
         params["n_estimators"] = trial.suggest_int(
