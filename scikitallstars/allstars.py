@@ -231,7 +231,7 @@ class Objective:
                     #score = model.model.score(self.x_train, self.y_train) 
                 else:
                     #score = model.model.score(self.x_train.iloc[:, self.support], self.y_train) 
-                    score = model.model.score(x_test.iloc[:, self.support], y_test) 
+                    score = model.model.score(x_test, y_test)
                     
             if params["classifier_name"] not in self.scores.keys():
                 self.scores[params["classifier_name"]] = []
@@ -258,7 +258,7 @@ class Objective:
                 score = model.model.score(x_test, y_test)
             else:
                 #score = model.model.score(self.x_train.iloc[:, self.support], self.y_train) 
-                score = model.model.score(x_test.iloc[:, self.support], y_test)
+                score = model.model.score(x_test, y_test)
             if params["regressor_name"] not in self.scores.keys():
                 self.scores[params["regressor_name"]] = []
             self.scores[params["regressor_name"]].append(score)
