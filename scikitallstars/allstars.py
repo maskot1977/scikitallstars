@@ -997,7 +997,7 @@ def get_best_stacking(objective, X_train, y_train, verbose=True, timeout=1000, n
             ) / len(objective.best_models.items())
     try_threshold = {}
     for model_name in objective.get_model_names():
-        if model_name is in objective.best_models.keys():
+        if model_name in objective.best_models.keys():
             model = objective.best_models[model_name]
             if objective.best_scores[model_name] >= threshold:
                 try_threshold[model_name] = 1
