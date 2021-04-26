@@ -1013,7 +1013,7 @@ def get_best_stacking(objective, X_train, y_train, verbose=True, timeout=1000, n
     study.enqueue_trial(try_threshold)
                     
     study.optimize(stacking_objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
-    return stacking_objective.best_model
+    return stacking_objective
 
 
 class StackingRegressorS(StackingRegressor):
