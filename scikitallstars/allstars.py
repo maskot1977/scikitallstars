@@ -901,7 +901,7 @@ def fit(X_train, y_train, feature_selection=True, verbose=True, timeout=100, n_t
 
 class StackingObjective:
     def __init__(self, objective, X_train, y_train, verbose=True):
-        self.X_train = X_train
+        self.x_train = X_train
         self.y_train = y_train
         self.verbose = verbose
         self.objective = objective
@@ -958,11 +958,11 @@ class StackingObjective:
 
         if True: #self.support is None:
             x_train, x_test, y_train, y_test = train_test_split(
-                self.X_train, self.y_train, test_size=0.2
+                self.x_train, self.y_train, test_size=0.2
             )
         else:
             x_train, x_test, y_train, y_test = train_test_split(
-                self.X_train.iloc[:, self.support], self.y_train, test_size=0.2
+                self.x_train.iloc[:, self.support], self.y_train, test_size=0.2
             )
         stacking_model1 = stacking(self.objective, estimators=estimators, verbose=self.verbose, params=params)
         stacking_model1.support = self.objective.support
