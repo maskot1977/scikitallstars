@@ -984,10 +984,10 @@ class StackingObjective:
 
         return score
     
-    def predict(X):
+    def predict(self, X):
         return self.best_model.predict(X)
     
-    def score(X, Y):
+    def score(self, X, Y):
         return self.best_model.score(X, Y)
     
     
