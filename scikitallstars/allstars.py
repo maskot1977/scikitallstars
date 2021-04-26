@@ -984,6 +984,13 @@ class StackingObjective:
 
         return score
     
+    def predict(X):
+        return self.best_model.predict(X)
+    
+    def score(X, Y):
+        return self.best_model.score(X, Y)
+    
+    
 def get_best_stacking(objective, X_train, y_train, verbose=True, timeout=1000, n_trials=50, show_progress_bar=True):
     X_train = pd.DataFrame(X_train)
     if type(y_train) is not pd.core.series.Series:
