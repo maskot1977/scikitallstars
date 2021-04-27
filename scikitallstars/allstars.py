@@ -1,57 +1,37 @@
 import time
 import timeit
 
-import optuna
-
 import matplotlib.pyplot as plt
 import numpy as np
+import optuna
 import pandas as pd
-import scikitallstars.timeout_decorator as timeout_decorator
-from scikitallstars.timeout import on_timeout
 from sklearn import metrics
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.decomposition import PCA
-from sklearn.discriminant_analysis import (
-    LinearDiscriminantAnalysis,
-    QuadraticDiscriminantAnalysis,
-)
-from sklearn.ensemble import (
-    GradientBoostingClassifier,
-    GradientBoostingRegressor,
-    RandomForestClassifier,
-    RandomForestRegressor,
-    StackingClassifier,
-    StackingRegressor,
-    ExtraTreesRegressor,
-    ExtraTreesClassifier,
-    AdaBoostRegressor,
-    AdaBoostClassifier,
-)
-from sklearn.linear_model import (
-    Lasso,
-    LinearRegression,
-    LogisticRegression,
-    Ridge,
-    RidgeClassifier,
-)
-from sklearn.metrics import (
-    auc,
-    classification_report,
-    confusion_matrix,
-    precision_recall_curve,
-    r2_score,
-    roc_curve,
-    f1_score
-)
+from sklearn.discriminant_analysis import (LinearDiscriminantAnalysis,
+                                           QuadraticDiscriminantAnalysis)
+from sklearn.ensemble import (AdaBoostClassifier, AdaBoostRegressor,
+                              ExtraTreesClassifier, ExtraTreesRegressor,
+                              GradientBoostingClassifier,
+                              GradientBoostingRegressor,
+                              RandomForestClassifier, RandomForestRegressor,
+                              StackingClassifier, StackingRegressor)
+# from umap import UMAP
+from sklearn.feature_selection import SelectFromModel
+from sklearn.linear_model import (Lasso, LinearRegression, LogisticRegression,
+                                  Ridge, RidgeClassifier)
+from sklearn.metrics import (auc, classification_report, confusion_matrix,
+                             f1_score, precision_recall_curve, r2_score,
+                             roc_curve)
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.neural_network import MLPClassifier, MLPRegressor
-
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.svm import SVC, SVR
-#from umap import UMAP
-from sklearn.feature_selection import SelectFromModel
+
+import scikitallstars.timeout_decorator as timeout_decorator
+from scikitallstars.timeout import on_timeout
 
 
 def handler_func(msg):
@@ -114,7 +94,7 @@ class Objective:
         self.is_regressor = True
         if len(set(y_train)) < 3:
             self.is_regressor = False
-            
+
         self.gb_loss = ["deviance", "exponential"]
         self.gb_learning_rate_init = [0.001, 0.1]
         self.gb_n_estimators = [50, 200]
@@ -124,10 +104,10 @@ class Objective:
         self.et_n_estimators = [50, 300]
         self.et_max_depth = [2, 32]
         self.et_warm_start = [True, False]
-        
+
         self.ab_n_estimators = [50, 300]
         self.ab_loss = ["linear", "square", "exponential"]
-        
+
         self.knn_n_neighbors = [2, 10]
         self.knn_weights = ["uniform", "distance"]
         self.knn_algorithm = ["auto", "ball_tree", "kd_tree", "brute"]
@@ -156,7 +136,15 @@ class Objective:
 
         self.ridge_alpha = [1e-5, 1e5]
         self.ridge_max_iter = 530000
-        self.ridge_solver = ["auto", "svd", "cholesky", "lsqr", "sparse_cg", "sag", "saga"]
+        self.ridge_solver = [
+            "auto",
+            "svd",
+            "cholesky",
+            "lsqr",
+            "sparse_cg",
+            "sag",
+            "saga",
+        ]
         self.ridge_normalize = [True, False]
 
         self.rf_max_depth = [2, 32]
@@ -168,10 +156,10 @@ class Objective:
         self.svm_c = [1e-5, 1e5]
         self.svm_epsilon = [1e-5, 1e5]
         self.svm_max_iter = 530000
-        
+
         self.linear_regression_fit_intercept = [True, False]
         self.linear_regression_normalize = [True, False]
-        
+
     def get_model_names(self):
         if self.is_regressor:
             return self.regressor_names
@@ -207,7 +195,7 @@ class Objective:
                 x_test = self.x_test.iloc[:, self.support]
                 y_train = self.y_train
                 y_test = self.y_test
-                
+
         params = self.generate_params(trial, x_train)
 
         if len(set(y_train)) < 3:
@@ -221,18 +209,20 @@ class Objective:
             if self.classification_metrics == "f1_score":
                 if self.support is None:
                     score = metrics.f1_score(model.predict(x_test), y_test)
-                    #score = metrics.f1_score(model.predict(self.x_train), self.y_train)
+                    # score = metrics.f1_score(model.predict(self.x_train), self.y_train)
                 else:
-                    #score = metrics.f1_score(model.predict(self.x_train.iloc[:, self.support]), self.y_train)
-                    score = metrics.f1_score(model.predict(x_test.iloc[:, self.support]), y_test)
+                    # score = metrics.f1_score(model.predict(self.x_train.iloc[:, self.support]), self.y_train)
+                    score = metrics.f1_score(
+                        model.predict(x_test.iloc[:, self.support]), y_test
+                    )
             else:
                 if self.support is None:
                     score = model.model.score(x_test, y_test)
-                    #score = model.model.score(self.x_train, self.y_train) 
+                    # score = model.model.score(self.x_train, self.y_train)
                 else:
-                    #score = model.model.score(self.x_train.iloc[:, self.support], self.y_train) 
+                    # score = model.model.score(self.x_train.iloc[:, self.support], self.y_train)
                     score = model.model.score(x_test, y_test)
-                    
+
             if params["classifier_name"] not in self.scores.keys():
                 self.scores[params["classifier_name"]] = []
             self.scores[params["classifier_name"]].append(score)
@@ -254,10 +244,10 @@ class Objective:
             self.times[params["regressor_name"]].append(seconds)
 
             if self.support is None:
-                #score = model.model.score(self.x_train, self.y_train) 
+                # score = model.model.score(self.x_train, self.y_train)
                 score = model.model.score(x_test, y_test)
             else:
-                #score = model.model.score(self.x_train.iloc[:, self.support], self.y_train) 
+                # score = model.model.score(self.x_train.iloc[:, self.support], self.y_train)
                 score = model.model.score(x_test, y_test)
             if params["regressor_name"] not in self.scores.keys():
                 self.scores[params["regressor_name"]] = []
@@ -295,9 +285,9 @@ class Objective:
                 classifier_params["C"] = trial.suggest_loguniform(
                     "svm_c", self.svm_c[0], self.svm_c[1]
                 )
-                #classifier_params["epsilon"] = trial.suggest_loguniform(
+                # classifier_params["epsilon"] = trial.suggest_loguniform(
                 #    "svm_epsilon", self.svm_epsilon[0], self.svm_epsilon[1]
-                #)
+                # )
                 if classifier_params["kernel"] == "rbf":
                     classifier_params["gamma"] = trial.suggest_categorical(
                         "svc_gamma", ["auto", "scale"]
@@ -316,7 +306,7 @@ class Objective:
                 )
                 classifier_params["n_jobs"] = -1
                 classifier_params["max_depth"] = trial.suggest_int(
-                        "rf_max_depth", self.rf_max_depth[0], self.rf_max_depth[1]
+                    "rf_max_depth", self.rf_max_depth[0], self.rf_max_depth[1]
                 )
                 classifier_params["warm_start"] = trial.suggest_categorical(
                     "rf_warm_start", self.rf_warm_start
@@ -360,7 +350,7 @@ class Objective:
                     "gb_n_estimators", self.gb_n_estimators[0], self.gb_n_estimators[1]
                 )
                 classifier_params["max_depth"] = trial.suggest_int(
-                        "gb_max_depth", self.gb_max_depth[0], self.gb_max_depth[1]
+                    "gb_max_depth", self.gb_max_depth[0], self.gb_max_depth[1]
                 )
                 classifier_params["warm_start"] = trial.suggest_categorical(
                     "gb_warm_start", self.gb_warm_start
@@ -371,20 +361,20 @@ class Objective:
                     "et_n_estimators", self.et_n_estimators[0], self.et_n_estimators[1]
                 )
                 classifier_params["max_depth"] = trial.suggest_int(
-                        "et_max_depth", self.et_max_depth[0], self.et_max_depth[1]
+                    "et_max_depth", self.et_max_depth[0], self.et_max_depth[1]
                 )
                 classifier_params["warm_start"] = trial.suggest_categorical(
                     "et_warm_start", self.et_warm_start
                 )
-                
+
             elif params["classifier_name"] == "AdaBoost":
                 classifier_params["n_estimators"] = trial.suggest_int(
                     "ab_n_estimators", self.ab_n_estimators[0], self.ab_n_estimators[1]
                 )
-                #classifier_params["loss"] = trial.suggest_categorical(
+                # classifier_params["loss"] = trial.suggest_categorical(
                 #    "ab_loss", self.ab_loss
-                #)
-                
+                # )
+
             elif params["classifier_name"] == "kNN":
                 classifier_params["n_neighbors"] = trial.suggest_int(
                     "knn_n_neighbors", self.knn_n_neighbors[0], self.knn_n_neighbors[1]
@@ -405,10 +395,10 @@ class Objective:
                 )
                 classifier_params["max_iter"] = self.ridge_max_iter
                 classifier_params["normalize"] = trial.suggest_categorical(
-                "ridge_normalize", self.ridge_normalize
+                    "ridge_normalize", self.ridge_normalize
                 )
                 classifier_params["solver"] = trial.suggest_categorical(
-                "ridge_solver", self.ridge_solver
+                    "ridge_solver", self.ridge_solver
                 )
 
             elif params["classifier_name"] == "QDA":
@@ -424,11 +414,11 @@ class Objective:
                 "regressor_name", self.regressor_names
             )
             regressor_params = {}
-            
+
             if params["regressor_name"] == "GradientBoosting":
-                #regressor_params["loss"] = trial.suggest_categorical(
+                # regressor_params["loss"] = trial.suggest_categorical(
                 #    "gb_loss", ["ls", "lad", "huber", "quantile"]
-                #)
+                # )
                 regressor_params["learning_rate"] = trial.suggest_loguniform(
                     "learning_rate_init",
                     self.gb_learning_rate_init[0],
@@ -437,22 +427,22 @@ class Objective:
                 regressor_params["n_estimators"] = trial.suggest_int(
                     "gb_n_estimators", self.gb_n_estimators[0], self.gb_n_estimators[1]
                 )
-                #regressor_params["criterion"] = trial.suggest_categorical(
+                # regressor_params["criterion"] = trial.suggest_categorical(
                 #    "gb_criterion", ["friedman_mse", "mse", "mae"]
-                #)
+                # )
                 regressor_params["max_depth"] = trial.suggest_int(
                     "gb_max_depth", self.gb_max_depth[0], self.gb_max_depth[1]
                 )
                 regressor_params["warm_start"] = trial.suggest_categorical(
                     "gb_warm_start", self.gb_warm_start
                 )
-                #regressor_params["max_features"] = trial.suggest_categorical(
+                # regressor_params["max_features"] = trial.suggest_categorical(
                 #    "gb_max_features", ["auto", "sqrt", "log2"]
-                #)
-                #regressor_params["tol"] = trial.suggest_loguniform(
+                # )
+                # regressor_params["tol"] = trial.suggest_loguniform(
                 #    "gb_tol", 1e-5, 1e-3
-                #)
-                
+                # )
+
             elif params["regressor_name"] == "ExtraTrees":
                 regressor_params["n_estimators"] = trial.suggest_int(
                     "et_n_estimators", self.et_n_estimators[0], self.et_n_estimators[1]
@@ -461,7 +451,7 @@ class Objective:
                     "et_criterion", ["mse", "mae"]
                 )
                 regressor_params["max_depth"] = trial.suggest_int(
-                        "et_max_depth", self.et_max_depth[0], self.et_max_depth[1]
+                    "et_max_depth", self.et_max_depth[0], self.et_max_depth[1]
                 )
                 regressor_params["max_features"] = trial.suggest_categorical(
                     "et_max_features", ["auto", "sqrt", "log2"]
@@ -473,7 +463,7 @@ class Objective:
                 regressor_params["warm_start"] = trial.suggest_categorical(
                     "et_warm_start", self.et_warm_start
                 )
-                
+
             elif params["regressor_name"] == "RandomForest":
                 regressor_params["n_estimators"] = trial.suggest_int(
                     "rf_n_estimators", self.rf_n_estimators[0], self.rf_n_estimators[1]
@@ -494,7 +484,7 @@ class Objective:
                 regressor_params["warm_start"] = trial.suggest_categorical(
                     "rf_warm_start", self.rf_warm_start
                 )
-            
+
             elif params["regressor_name"] == "AdaBoost":
                 regressor_params["n_estimators"] = trial.suggest_int(
                     "ab_n_estimators", self.ab_n_estimators[0], self.ab_n_estimators[1]
@@ -505,7 +495,7 @@ class Objective:
                 regressor_params["loss"] = trial.suggest_categorical(
                     "ab_loss", self.ab_loss
                 )
-                
+
             elif params["regressor_name"] == "MLP":
                 layers = []
                 n_layers = trial.suggest_int(
@@ -518,12 +508,12 @@ class Objective:
                         )
                     )
                 regressor_params["hidden_layer_sizes"] = set(layers)
-                #regressor_params["activation"] = trial.suggest_categorical(
+                # regressor_params["activation"] = trial.suggest_categorical(
                 #    "mlp_activation", self.mlp_activation
-                #)
-                #regressor_params["solver"] = trial.suggest_categorical(
+                # )
+                # regressor_params["solver"] = trial.suggest_categorical(
                 #    "mlp_solver", ["sgd", "adam"]
-                #)
+                # )
                 regressor_params["solver"] = "adam"
                 regressor_params["learning_rate"] = trial.suggest_categorical(
                     "mlp_learning_rate", ["constant", "invscaling", "adaptive"]
@@ -537,7 +527,6 @@ class Objective:
                 regressor_params["warm_start"] = trial.suggest_categorical(
                     "mlp_warm_start", self.mlp_warm_start
                 )
-
 
             elif params["regressor_name"] == "SVR":
                 regressor_params["kernel"] = trial.suggest_categorical(
@@ -553,9 +542,9 @@ class Objective:
                 else:
                     regressor_params["gamma"] = "auto"
                 regressor_params["max_iter"] = self.svm_max_iter
-                #regressor_params["epsilon"] = trial.suggest_loguniform(
+                # regressor_params["epsilon"] = trial.suggest_loguniform(
                 #    "svm_epsilon", self.svm_epsilon[0], self.svm_epsilon[1]
-                #)
+                # )
 
             elif params["regressor_name"] == "kNN":
                 regressor_params["n_neighbors"] = trial.suggest_int(
@@ -567,19 +556,19 @@ class Objective:
                 regressor_params["algorithm"] = trial.suggest_categorical(
                     "knn_algorithm", self.knn_algorithm
                 )
-                
+
             elif params["regressor_name"] == "Ridge":
                 regressor_params["alpha"] = trial.suggest_loguniform(
                     "ridge_alpha", self.ridge_alpha[0], self.ridge_alpha[1]
                 )
                 regressor_params["max_iter"] = self.ridge_max_iter
                 regressor_params["normalize"] = trial.suggest_categorical(
-                "ridge_normalize", self.ridge_normalize
+                    "ridge_normalize", self.ridge_normalize
                 )
                 regressor_params["solver"] = trial.suggest_categorical(
-                "ridge_solver", self.ridge_solver
+                    "ridge_solver", self.ridge_solver
                 )
-                
+
             elif params["regressor_name"] == "Lasso":
                 regressor_params["alpha"] = trial.suggest_loguniform(
                     "lasso_alpha", self.lasso_alpha[0], self.lasso_alpha[1]
@@ -594,7 +583,7 @@ class Objective:
                 regressor_params["selection"] = trial.suggest_categorical(
                     "lasso_selection", self.lasso_selection
                 )
-                
+
             elif params["regressor_name"] == "PLS":
                 if self.support is None:
                     regressor_params["n_components"] = trial.suggest_int(
@@ -608,9 +597,9 @@ class Objective:
                 regressor_params["scale"] = trial.suggest_categorical(
                     "pls_scale", self.pls_scale
                 )
-                #regressor_params["algorithm"] = trial.suggest_categorical(
+                # regressor_params["algorithm"] = trial.suggest_categorical(
                 #    "pls_algorithm", self.pls_algorithm
-                #)
+                # )
                 regressor_params["tol"] = trial.suggest_loguniform(
                     "pls_tol",
                     self.pls_tol[0],
@@ -619,7 +608,8 @@ class Objective:
 
             elif params["regressor_name"] == "LinearRegression":
                 regressor_params["fit_intercept"] = trial.suggest_categorical(
-                    "linear_regression_fit_intercept", self.linear_regression_fit_intercept
+                    "linear_regression_fit_intercept",
+                    self.linear_regression_fit_intercept,
                 )
                 regressor_params["normalize"] = trial.suggest_categorical(
                     "linear_regression_normalize", self.linear_regression_normalize
@@ -630,10 +620,10 @@ class Objective:
             params["regressor_params"] = regressor_params
 
         return params
-    
+
     def predict(self, x):
         return self.best_model.predict(pd.DataFrame(x), support=self.support)
-    
+
     def score(self, x, y):
         if type(y) is not pd.core.series.Series:
             try:
@@ -678,13 +668,14 @@ class Classifier:
             self.model = AdaBoostClassifier(**params["classifier_params"])
         if self.debug:
             print(self.model)
-            
-    
-    def _fit_and_predict_core(self, x, y=None, fitting=False, proba=False, support=None, score=False):
+
+    def _fit_and_predict_core(
+        self, x, y=None, fitting=False, proba=False, support=None, score=False
+    ):
         if support is None:
             if fitting == True:
                 self.standardizer.fit(x)
-                
+
             self.standardizer.transform(x)
             if score:
                 pred = np.array(self.model.predict(x))
@@ -700,7 +691,7 @@ class Classifier:
         else:
             if fitting == True:
                 self.standardizer.fit(x.iloc[:, support])
-                
+
             self.standardizer.transform(x.iloc[:, support])
             if score:
                 pred = np.array(self.model.predict(x.iloc[:, support]))
@@ -708,15 +699,14 @@ class Classifier:
 
             if fitting == True:
                 self.model.fit(x.iloc[:, support], y)
-                
+
             if y is None:
                 if proba and hasattr(self.model, "predict_proba"):
                     return self.model.predict_proba(x.iloc[:, support])
                 else:
                     return self.model.predict(x.iloc[:, support])
-                
-        return None
 
+        return None
 
     @on_timeout(limit=60, handler=handler_func, hint=u"classifier.fit")
     def fit(self, x, y, support=None):
@@ -730,9 +720,10 @@ class Classifier:
     def predict_proba(self, x, support=None):
         pred_y = self._fit_and_predict_core(x, proba=True, support=support)
         return pred_y
-    
+
     def score(self, x, y, support=None):
         return self._fit_and_predict_core(x, y, support=support, score=True)
+
 
 class Regressor:
     def __init__(self, params, debug=False, support=None):
@@ -771,11 +762,13 @@ class Regressor:
         if self.debug:
             print(self.model)
 
-    def _fit_and_predict_core(self, x, y=None, fitting=False, proba=False, support=None, score=False):
+    def _fit_and_predict_core(
+        self, x, y=None, fitting=False, proba=False, support=None, score=False
+    ):
         if support is None:
             if fitting == True:
                 self.standardizer.fit(x)
-                
+
             self.standardizer.transform(x)
             if score:
                 pred = np.array(self.model.predict(x))
@@ -791,7 +784,7 @@ class Regressor:
         else:
             if fitting == True:
                 self.standardizer.fit(x.iloc[:, support])
-                
+
             self.standardizer.transform(x.iloc[:, support])
             if score:
                 pred = np.array(self.model.predict(x.iloc[:, support]))
@@ -799,13 +792,13 @@ class Regressor:
 
             if fitting == True:
                 self.model.fit(x.iloc[:, support], y)
-                
+
             if y is None:
                 if proba:
                     return self.model.predict_proba(x.iloc[:, support])
                 else:
                     return self.model.predict(x.iloc[:, support])
-                
+
         return None
 
     @on_timeout(limit=600, handler=handler_func, hint=u"regressor.fit")
@@ -820,7 +813,7 @@ class Regressor:
     def predict_proba(self, x, support=None):
         pred_y = self._fit_and_predict_core(x, proba=True, support=support)
         return pred_y
-    
+
     def score(self, x, y, support=None):
         return self._fit_and_predict_core(x, y, support=support, score=True)
 
@@ -836,30 +829,42 @@ class NullScaler(BaseEstimator, TransformerMixin):
         return x
 
 
-
-
-    
-
-    
-def random_forest_feature_selector(X_train, y_train, timeout=30, n_trials=20, show_progress_bar=False):
+def random_forest_feature_selector(
+    X_train, y_train, timeout=30, n_trials=20, show_progress_bar=False
+):
     objective = Objective(X_train, y_train)
-    objective.set_model_names(['RandomForest'])
+    objective.set_model_names(["RandomForest"])
 
     optuna.logging.set_verbosity(optuna.logging.WARN)
-    study = optuna.create_study(direction='maximize')
-    study.optimize(objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
-    support = np.where(objective.best_model.model.feature_importances_ == 0, False, True)
+    study = optuna.create_study(direction="maximize")
+    study.optimize(
+        objective,
+        timeout=timeout,
+        n_trials=n_trials,
+        show_progress_bar=show_progress_bar,
+    )
+    support = np.where(
+        objective.best_model.model.feature_importances_ == 0, False, True
+    )
 
     if sum([1 if x else 0 for x in support]) == len(support):
-        selector = SelectFromModel(estimator=objective.best_model.model).fit(X_train, y_train)
-        support =  selector.get_support()
+        selector = SelectFromModel(estimator=objective.best_model.model).fit(
+            X_train, y_train
+        )
+        support = selector.get_support()
 
     return support
 
 
-
-
-def fit(X_train, y_train, feature_selection=True, verbose=True, timeout=100, n_trials=100, show_progress_bar=True): 
+def fit(
+    X_train,
+    y_train,
+    feature_selection=True,
+    verbose=True,
+    timeout=100,
+    n_trials=100,
+    show_progress_bar=True,
+):
     X_train = pd.DataFrame(X_train)
     if type(y_train) is not pd.core.series.Series:
         y_train = pd.DataFrame(y_train)[0]
@@ -867,8 +872,13 @@ def fit(X_train, y_train, feature_selection=True, verbose=True, timeout=100, n_t
         support = random_forest_feature_selector(X_train, y_train)
         X_train_selected = X_train.iloc[:, support]
         if verbose:
-            print("feature selection: X_train", X_train.shape, "->", X_train_selected.shape)
-        #X_train = X_train_selected
+            print(
+                "feature selection: X_train",
+                X_train.shape,
+                "->",
+                X_train_selected.shape,
+            )
+        # X_train = X_train_selected
     else:
         support = np.array([True] * X_train.shape[1])
         if verbose:
@@ -876,28 +886,39 @@ def fit(X_train, y_train, feature_selection=True, verbose=True, timeout=100, n_t
 
     objective = Objective(X_train, y_train, support=support)
     optuna.logging.set_verbosity(optuna.logging.WARN)
-    study = optuna.create_study(direction='maximize')
-    
+    study = optuna.create_study(direction="maximize")
+
     model_names = objective.get_model_names()
     for model_name in model_names:
         if verbose:
             print(model_name)
         for _ in range(n_trials):
             if objective.is_regressor:
-                study.enqueue_trial({"regressor_name":model_name})
+                study.enqueue_trial({"regressor_name": model_name})
             else:
-                study.enqueue_trial({"classifier_name":model_name})
-                
-        study.optimize(objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
-        #if verbose:
+                study.enqueue_trial({"classifier_name": model_name})
+
+        study.optimize(
+            objective,
+            timeout=timeout,
+            n_trials=n_trials,
+            show_progress_bar=show_progress_bar,
+        )
+        # if verbose:
         #    print(objective.best_scores[model_name], objective.best_models[model_name].model)
 
-    study.optimize(objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
-    
+    study.optimize(
+        objective,
+        timeout=timeout,
+        n_trials=n_trials,
+        show_progress_bar=show_progress_bar,
+    )
+
     if verbose:
         print(objective.best_scores)
 
     return objective
+
 
 class StackingObjective:
     def __init__(self, objective, X_train, y_train, verbose=True):
@@ -916,7 +937,7 @@ class StackingObjective:
         self.rf_oob_score = [True, False]
         self.n_trial = 0
         self.support = objective.support
-        
+
     def __call__(self, trial):
         self.n_trial += 1
         estimators = []
@@ -926,37 +947,39 @@ class StackingObjective:
                 in_out = trial.suggest_int(model_name, 0, 1)
                 key += str(in_out)
                 if in_out == 1:
-                    estimators.append((model_name, self.objective.best_models[model_name].model))
-                
+                    estimators.append(
+                        (model_name, self.objective.best_models[model_name].model)
+                    )
+
         params = {}
         params["n_estimators"] = trial.suggest_int(
-                    "rf_n_estimators", self.rf_n_estimators[0], self.rf_n_estimators[1]
-                )
-        #params["max_features"] = trial.suggest_categorical(
+            "rf_n_estimators", self.rf_n_estimators[0], self.rf_n_estimators[1]
+        )
+        # params["max_features"] = trial.suggest_categorical(
         #            "rf_max_features", self.rf_max_features
         #        )
         params["n_jobs"] = -1
         params["warm_start"] = trial.suggest_categorical(
-                    "rf_warm_start", self.rf_warm_start
-                )
+            "rf_warm_start", self.rf_warm_start
+        )
         params["max_depth"] = trial.suggest_int(
-                        "rf_max_depth", self.rf_max_depth[0], self.rf_max_depth[1]
-                )
-        #params["criterion"] = trial.suggest_categorical(
+            "rf_max_depth", self.rf_max_depth[0], self.rf_max_depth[1]
+        )
+        # params["criterion"] = trial.suggest_categorical(
         #            "rf_criterion", self.rf_criterion
         #        )
         params["oob_score"] = trial.suggest_categorical(
-                    "rf_oob_score", self.rf_oob_score
-                )
+            "rf_oob_score", self.rf_oob_score
+        )
 
         if key in self.already_tried.keys():
             pass
-            #return self.already_tried[key]
-        
+            # return self.already_tried[key]
+
         if len(estimators) == 0:
             return 0 - 530000
 
-        if True: #self.support is None:
+        if True:  # self.support is None:
             x_train, x_test, y_train, y_test = train_test_split(
                 self.x_train, self.y_train, test_size=0.2
             )
@@ -964,7 +987,9 @@ class StackingObjective:
             x_train, x_test, y_train, y_test = train_test_split(
                 self.x_train.iloc[:, self.support], self.y_train, test_size=0.2
             )
-        stacking_model1 = stacking(self.objective, estimators=estimators, verbose=self.verbose, params=params)
+        stacking_model1 = stacking(
+            self.objective, estimators=estimators, verbose=self.verbose, params=params
+        )
         stacking_model1.support = self.objective.support
         stacking_model1.fit(x_train, y_train)
         score = stacking_model1.score(x_test, y_test)
@@ -979,36 +1004,41 @@ class StackingObjective:
         elif self.best_score < score:
             self.best_score = score
             self.best_model = stacking_model1
-            
+
         self.already_tried[key] = score
 
         return score
-    
+
     def predict(self, X):
         return self.best_model.predict(X)
-    
+
     def score(self, X, Y):
         return self.best_model.score(X, Y)
-    
-    
-def get_best_stacking(objective, X_train, y_train, verbose=True, timeout=1000, n_trials=50, show_progress_bar=True):
+
+
+def get_best_stacking(
+    objective,
+    X_train,
+    y_train,
+    verbose=True,
+    timeout=1000,
+    n_trials=50,
+    show_progress_bar=True,
+):
     X_train = pd.DataFrame(X_train)
     if type(y_train) is not pd.core.series.Series:
         y_train = pd.DataFrame(y_train)[0]
     stacking_objective = StackingObjective(objective, X_train, y_train)
-    study = optuna.create_study(direction='maximize')
-    
+    study = optuna.create_study(direction="maximize")
+
     try_all = {}
     for model_name in objective.get_model_names():
         try_all[model_name] = 1
     study.enqueue_trial(try_all)
-    
+
     threshold = sum(
-                [
-                    objective.best_scores[name]
-                    for name, model in objective.best_models.items()
-                ]
-            ) / len(objective.best_models.items())
+        [objective.best_scores[name] for name, model in objective.best_models.items()]
+    ) / len(objective.best_models.items())
     try_threshold = {}
     for model_name in objective.get_model_names():
         if model_name in objective.best_models.keys():
@@ -1018,8 +1048,13 @@ def get_best_stacking(objective, X_train, y_train, verbose=True, timeout=1000, n
             else:
                 try_threshold[model_name] = 0
     study.enqueue_trial(try_threshold)
-                    
-    study.optimize(stacking_objective, timeout=timeout, n_trials=n_trials, show_progress_bar=show_progress_bar)
+
+    study.optimize(
+        stacking_objective,
+        timeout=timeout,
+        n_trials=n_trials,
+        show_progress_bar=show_progress_bar,
+    )
     return stacking_objective
 
 
@@ -1030,11 +1065,11 @@ class StackingRegressorS(StackingRegressor):
         self.x = None
 
     def fit(self, x, y):
-        if self.support is None or len(self.support) != x.shape[1]: 
+        if self.support is None or len(self.support) != x.shape[1]:
             return super(StackingRegressor, self).fit(x, y)
         else:
             return super(StackingRegressor, self).fit(x.iloc[:, self.support], y)
-        
+
     def score(self, x, y):
         x = pd.DataFrame(x)
         if type(y) is not pd.core.series.Series:
@@ -1042,31 +1077,31 @@ class StackingRegressorS(StackingRegressor):
                 y = pd.DataFrame(y)[0]
             except:
                 pass
-        if self.support is None or len(self.support) != x.shape[1]: 
+        if self.support is None or len(self.support) != x.shape[1]:
             return super(StackingRegressor, self).score(x, y)
         else:
             return super(StackingRegressor, self).score(x.iloc[:, self.support], y)
 
     def predict(self, x):
         x = pd.DataFrame(x)
-        if self.support is None or len(self.support) != x.shape[1]: 
+        if self.support is None or len(self.support) != x.shape[1]:
             return super(StackingRegressor, self).predict(x)
         else:
             return super(StackingRegressor, self).predict(x.iloc[:, self.support])
-        
+
 
 class StackingClassifierS(StackingClassifier):
     def __init__(self, **args):
         super(StackingClassifier, self).__init__(**args)
         self.support = None
         self.classes_ = [0, 1]
-        
-    #@property
-    #def classes_(self):
+
+    # @property
+    # def classes_(self):
     #   return self.classes_
 
     def fit(self, x, y):
-        if self.support is None or len(self.support) != x.shape[1]: 
+        if self.support is None or len(self.support) != x.shape[1]:
             return super(StackingClassifier, self).fit(x, y)
         else:
             return super(StackingClassifier, self).fit(x.iloc[:, self.support], y)
@@ -1074,20 +1109,27 @@ class StackingClassifierS(StackingClassifier):
     def score(self, x, y):
         x = pd.DataFrame(x)
         y = pd.DataFrame(y)[0]
-        if self.support is None or len(self.support) != x.shape[1]: 
+        if self.support is None or len(self.support) != x.shape[1]:
             return super(StackingClassifier, self).score(x, y)
         else:
             return super(StackingClassifier, self).score(x.iloc[:, self.support], y)
 
     def predict(self, x):
         x = pd.DataFrame(x)
-        if self.support is None or len(self.support) != x.shape[1]: 
+        if self.support is None or len(self.support) != x.shape[1]:
             return super(StackingClassifier, self).predict(x)
         else:
             return super(StackingClassifier, self).predict(x.iloc[:, self.support])
-               
-        
-def stacking(objective, final_estimator=None, use_all=False, verbose=True, estimators=None, params=None):
+
+
+def stacking(
+    objective,
+    final_estimator=None,
+    use_all=False,
+    verbose=True,
+    estimators=None,
+    params=None,
+):
     if estimators is None:
         if use_all:
             estimators = [
@@ -1105,7 +1147,7 @@ def stacking(objective, final_estimator=None, use_all=False, verbose=True, estim
             for name, model in objective.best_models.items():
                 if objective.best_scores[name] >= threshold:
                     estimators.append((name, model.model))
-                
+
     if verbose:
         print([name for name, model in estimators])
 
@@ -1117,7 +1159,8 @@ def stacking(objective, final_estimator=None, use_all=False, verbose=True, estim
                 final_estimator = RandomForestRegressor(**params)
 
         model = StackingRegressorS(
-            estimators=estimators, final_estimator=final_estimator,
+            estimators=estimators,
+            final_estimator=final_estimator,
         )
         model.support = objective.support
     else:
@@ -1128,10 +1171,8 @@ def stacking(objective, final_estimator=None, use_all=False, verbose=True, estim
                 final_estimator = RandomForestClassifier(**params)
 
         model = StackingClassifierS(
-            estimators=estimators, final_estimator=final_estimator,
+            estimators=estimators,
+            final_estimator=final_estimator,
         )
         model.support = objective.support
     return model
-        
-
-    

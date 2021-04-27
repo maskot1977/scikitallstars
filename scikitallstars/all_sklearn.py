@@ -3,52 +3,33 @@ import timeit
 
 import matplotlib.pyplot as plt
 import numpy as np
-import scikitallstars.timeout_decorator as timeout_decorator
-from scikitallstars.timeout import on_timeout
 from sklearn import metrics
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.decomposition import PCA
-from sklearn.discriminant_analysis import (
-    LinearDiscriminantAnalysis,
-    QuadraticDiscriminantAnalysis,
-)
-from sklearn.ensemble import (
-    GradientBoostingClassifier,
-    GradientBoostingRegressor,
-    RandomForestClassifier,
-    RandomForestRegressor,
-    StackingClassifier,
-    StackingRegressor,
-    ExtraTreesRegressor,
-    ExtraTreesClassifier,
-    AdaBoostRegressor,
-    AdaBoostClassifier,
-)
-from sklearn.linear_model import (
-    Lasso,
-    LinearRegression,
-    LogisticRegression,
-    Ridge,
-    RidgeClassifier,
-)
-from sklearn.metrics import (
-    auc,
-    classification_report,
-    confusion_matrix,
-    precision_recall_curve,
-    r2_score,
-    roc_curve,
-)
+from sklearn.discriminant_analysis import (LinearDiscriminantAnalysis,
+                                           QuadraticDiscriminantAnalysis)
+from sklearn.ensemble import (AdaBoostClassifier, AdaBoostRegressor,
+                              ExtraTreesClassifier, ExtraTreesRegressor,
+                              GradientBoostingClassifier,
+                              GradientBoostingRegressor,
+                              RandomForestClassifier, RandomForestRegressor,
+                              StackingClassifier, StackingRegressor)
+from sklearn.linear_model import (Lasso, LinearRegression, LogisticRegression,
+                                  Ridge, RidgeClassifier)
+from sklearn.metrics import (auc, classification_report, confusion_matrix,
+                             precision_recall_curve, r2_score, roc_curve)
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.neural_network import MLPClassifier, MLPRegressor
-
 # from sklearn.model_selection import KFold, StratifiedKFold
 # from sklearn.model_selection import KFold, StratifiedKFold
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.svm import SVC, SVR
 from umap import UMAP
+
+import scikitallstars.timeout_decorator as timeout_decorator
+from scikitallstars.timeout import on_timeout
 
 
 def handler_func(msg):
@@ -116,9 +97,9 @@ class Objective:
 
         self.et_n_estimators = [50, 100, 150, 200]
         self.et_max_depth = [2, 32]
-        
+
         self.ab_n_estimators = [50, 200]
-        
+
         self.knn_n_neighbors = [2, 10]
         self.knn_weights = ["uniform", "distance"]
         self.knn_algorithm = ["auto", "ball_tree", "kd_tree", "brute"]
@@ -146,7 +127,7 @@ class Objective:
         self.svm_kernel = ["linear", "rbf"]
         self.svm_c = [1e-5, 1e5]
         self.svm_max_iter = 530000
-        
+
         self.history = {}
 
     def get_model_names(self):
@@ -318,12 +299,12 @@ class Objective:
                         "et_max_depth", self.et_max_depth[0], self.et_max_depth[1]
                     )
                 )
-                
+
             elif params["classifier_name"] == "AdaBoost":
                 classifier_params["n_estimators"] = trial.suggest_int(
                     "ab_n_estimators", self.ab_n_estimators[0], self.ab_n_estimators[1]
                 )
-                
+
             elif params["classifier_name"] == "kNN":
                 classifier_params["n_neighbors"] = trial.suggest_int(
                     "knn_n_neighbors", self.knn_n_neighbors[0], self.knn_n_neighbors[1]
@@ -420,7 +401,7 @@ class Objective:
                         "gb_max_depth", self.gb_max_depth[0], self.gb_max_depth[1]
                     )
                 )
-                
+
             elif params["regressor_name"] == "ExtraTrees":
                 regressor_params["n_estimators"] = trial.suggest_categorical(
                     "et_n_estimators", self.et_n_estimators
@@ -430,12 +411,12 @@ class Objective:
                         "et_max_depth", self.et_max_depth[0], self.et_max_depth[1]
                     )
                 )
-                
+
             elif params["regressor_name"] == "AdaBoost":
                 regressor_params["n_estimators"] = trial.suggest_int(
                     "ab_n_estimators", self.ab_n_estimators[0], self.ab_n_estimators[1]
                 )
-                
+
             elif params["regressor_name"] == "kNN":
                 regressor_params["n_neighbors"] = trial.suggest_int(
                     "knn_n_neighbors", self.knn_n_neighbors[0], self.knn_n_neighbors[1]
@@ -674,14 +655,16 @@ def stacking(objective, final_estimator=None, use_all=False):
             final_estimator = RandomForestRegressor()
 
         model = StackingRegressor(
-            estimators=estimators, final_estimator=final_estimator,
+            estimators=estimators,
+            final_estimator=final_estimator,
         )
     else:
         if final_estimator is None:
             final_estimator = RandomForestClassifier()
 
         model = StackingClassifier(
-            estimators=estimators, final_estimator=final_estimator,
+            estimators=estimators,
+            final_estimator=final_estimator,
         )
     return model
 
@@ -1131,7 +1114,11 @@ def pca_summary(
     loading_color=None,
     text_limit=100,
 ):
-    fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(6 * 3, 6),)
+    fig, axes = plt.subplots(
+        nrows=1,
+        ncols=3,
+        figsize=(6 * 3, 6),
+    )
 
     pca_feature_train = pca.transform(X_train)
     if y_train is not None:
@@ -1167,7 +1154,9 @@ def pca_summary(
     if loading_color is None:
         axes[1].scatter(pca.components_[0], pca.components_[1], edgecolors="k")
     else:
-        axes[1].scatter(pca.components_[0], pca.components_[1], edgecolors="k", c=loading_color)
+        axes[1].scatter(
+            pca.components_[0], pca.components_[1], edgecolors="k", c=loading_color
+        )
 
     if len(pca.components_[0]) < text_limit:
         for x, y, name in zip(pca.components_[0], pca.components_[1], X_train.columns):

@@ -1,17 +1,19 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.metrics import r2_score, roc_curve, auc, precision_recall_curve, confusion_matrix
+from sklearn.metrics import (auc, confusion_matrix, precision_recall_curve,
+                             r2_score, roc_curve)
+
 
 def best_scores(allstars_model):
     keys = list(allstars_model.best_scores.keys())
     values = allstars_model.best_scores.values()
-    plt.figure(figsize=(6, int(len(keys)/3)))
+    plt.figure(figsize=(6, int(len(keys) / 3)))
     plt.title("Best scores")
     plt.barh(keys, values)
     plt.grid()
     plt.show()
-    
+
 
 def training_summary(objective):
     fig, axes = plt.subplots(nrows=1, ncols=4, figsize=(16, 8))
@@ -49,35 +51,37 @@ def training_summary(objective):
     axes[3].grid()
     axes[3].yaxis.set_visible(False)
     plt.show()
-    
+
 
 def feature_importances(allstars_model):
-  barh_dict = {}
-  for key, value in zip(
-      list(allstars_model.x_train.iloc[:, allstars_model.support].columns),
-      allstars_model.best_models["RandomForest"].model.feature_importances_
-  ):
-      barh_dict[key] = value
+    barh_dict = {}
+    for key, value in zip(
+        list(allstars_model.x_train.iloc[:, allstars_model.support].columns),
+        allstars_model.best_models["RandomForest"].model.feature_importances_,
+    ):
+        barh_dict[key] = value
 
-  keys = list(barh_dict.keys())
-  values = barh_dict.values()
+    keys = list(barh_dict.keys())
+    values = barh_dict.values()
 
-  plt.figure(figsize=(6, int(len(keys)/3)+1))
-  plt.title("Feature importances in RF")
-  plt.barh(keys, values)
-  plt.grid()
-  plt.show()
-  
-  
+    plt.figure(figsize=(6, int(len(keys) / 3) + 1))
+    plt.title("Feature importances in RF")
+    plt.barh(keys, values)
+    plt.grid()
+    plt.show()
+
+
 def model_importances(stacking_model):
-  plt.title("Model importances in stacking")
-  plt.barh(list(stacking_model.named_estimators_.keys()), stacking_model.final_estimator_.feature_importances_)
-  plt.grid()
-  plt.show()
+    plt.title("Model importances in stacking")
+    plt.barh(
+        list(stacking_model.named_estimators_.keys()),
+        stacking_model.final_estimator_.feature_importances_,
+    )
+    plt.grid()
+    plt.show()
 
-    
-    
-def metrics(model, X_train, y_train, X_test = None, y_test = None):
+
+def metrics(model, X_train, y_train, X_test=None, y_test=None):
     X_train = pd.DataFrame(X_train)
     if type(y_train) is not pd.core.series.Series:
         y_train = pd.DataFrame(y_train)[0]
@@ -95,8 +99,8 @@ def metrics(model, X_train, y_train, X_test = None, y_test = None):
     else:
         regression_metrics(model, X_train, y_train, X_test, y_test)
 
-        
-def regression_metrics(model, X_train, y_train, X_test = None, y_test = None):
+
+def regression_metrics(model, X_train, y_train, X_test=None, y_test=None):
 
     if X_test is None:
         fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(8, 4))
@@ -126,8 +130,8 @@ def regression_metrics(model, X_train, y_train, X_test = None, y_test = None):
     if X_test is not None:
         y_pred = model.predict(X_test)
         score = model.score(X_test, y_test)
-        #y_min = min(y_test.ravel()min(), y_pred.min())
-        #y_max = min(y_test.max(), y_pred.max())
+        # y_min = min(y_test.ravel()min(), y_pred.min())
+        # y_max = min(y_test.max(), y_pred.max())
 
         axes[1].set_title("Test data")
         axes[1].scatter(y_test, y_pred, alpha=0.5)
@@ -142,7 +146,7 @@ def regression_metrics(model, X_train, y_train, X_test = None, y_test = None):
         axes[1].set_xlabel("Real")
         axes[1].set_ylabel("Predicted")
     plt.show()
-    
+
 
 def classification_metrics(model, X_train, y_train, X_test, y_test):
     if model.support is not None:
@@ -223,9 +227,6 @@ def classification_metrics(model, X_train, y_train, X_test, y_test):
     plt.show()
 
 
-
-
-    
 def all_classification_metrics(objective, X_test, y_test):
     fig, axes = plt.subplots(
         nrows=3,
@@ -238,13 +239,22 @@ def all_classification_metrics(objective, X_test, y_test):
         if hasattr(model.model, "predict_proba"):
             probas = model.predict_proba(X_test.iloc[:, objective.support])
         else:
-            probas = np.array([[x, x] for x in model.model.decision_function(X_test.iloc[:, objective.support])])
+            probas = np.array(
+                [
+                    [x, x]
+                    for x in model.model.decision_function(
+                        X_test.iloc[:, objective.support]
+                    )
+                ]
+            )
 
         fpr, tpr, thresholds = roc_curve(y_test, probas[:, 1])
         roc_auc = auc(fpr, tpr)
         precision, recall, thresholds = precision_recall_curve(y_test, probas[:, 1])
         area = auc(recall, precision)
-        matrix = confusion_matrix(model.predict(X_test.iloc[:, objective.support]), y_test)
+        matrix = confusion_matrix(
+            model.predict(X_test.iloc[:, objective.support]), y_test
+        )
         TN = matrix[0][0]
         FP = matrix[1][0]
         FN = matrix[0][1]
