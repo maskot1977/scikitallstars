@@ -3,3 +3,5 @@ python:
     - 3.6
 script:
     - pytest tests/tests.py
+notifications:
+  slack: kotlab-ut:YWpko9C0o3LpuO97w8gV0bRp
