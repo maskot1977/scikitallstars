@@ -74,8 +74,8 @@ def feature_importances(allstars_model):
 def model_importances(stacking_model):
     plt.title("Model importances in stacking")
     plt.barh(
-        list(stacking_model.named_estimators_.keys()),
-        stacking_model.final_estimator_.feature_importances_,
+        list(stacking_model.best_model.named_estimators_.keys()),
+        stacking_model.best_model.final_estimator_.feature_importances_,
     )
     plt.grid()
     plt.show()
@@ -153,7 +153,10 @@ def classification_metrics(model, X_train, y_train, X_test, y_test):
         X_train = X_train.iloc[:, model.support]
         X_test = X_test.iloc[:, model.support]
     if hasattr(model, "best_model"):
-        model = model.best_model.model
+        if hasattr(model.best_model, "model"):
+            model = model.best_model.model
+        else:
+            model = model.best_model
     fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(4 * 2, 4 * 3))
     i = 0
     for XX, YY, name in [

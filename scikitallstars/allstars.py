@@ -902,8 +902,8 @@ def fit(
             n_trials=n_trials,
             show_progress_bar=show_progress_bar,
         )
-        # if verbose:
-        #    print(objective.best_scores[model_name], objective.best_models[model_name].model)
+        if verbose:
+            print(objective.best_scores[model_name], objective.best_models[model_name].model)
 
     study.optimize(
         objective,
@@ -935,6 +935,7 @@ class StackingObjective:
         self.rf_oob_score = [True, False]
         self.n_trial = 0
         self.support = objective.support
+        self.is_regressor = objective.is_regressor
 
     def __call__(self, trial):
         self.n_trial += 1
