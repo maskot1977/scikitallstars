@@ -211,9 +211,8 @@ class Objective:
                     # score = metrics.f1_score(model.predict(self.x_train), self.y_train)
                 else:
                     # score = metrics.f1_score(model.predict(self.x_train.iloc[:, self.support]), self.y_train)
-                    score = metrics.f1_score(
-                        model.predict(x_test.iloc[:, self.support]), y_test
-                    )
+                    # score = metrics.f1_score(model.predict(x_test.iloc[:, self.support]), y_test)
+                    score = metrics.f1_score(model.predict(x_test), y_test)
             else:
                 if self.support is None:
                     score = model.model.score(x_test, y_test)
