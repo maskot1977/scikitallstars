@@ -776,7 +776,7 @@ class Regressor:
                 if hasattr(self, "model"):
                     self.model.fit(x, y)
                 else:
-                    print(params)
+                    print(self.params)
             if y is None:
                 if proba:
                     return self.model.predict_proba(x)
