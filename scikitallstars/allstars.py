@@ -294,7 +294,7 @@ class Objective:
         params = {}
 
         params["standardize"] = trial.suggest_categorical("standardize", self.scalers)
-        if len(set(self.y_train)) < len(self.y_train) / 10:
+        if len(set(self.y_train)) < 3:
             params["model_name"] = trial.suggest_categorical(
                 "model_name", self.classifier_names
             )
