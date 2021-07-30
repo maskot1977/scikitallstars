@@ -796,10 +796,7 @@ class Regressor:
                 return r2_score(pred.flatten(), np.array(y).flatten())
 
             if fitting == True:
-                if hasattr(self, "model"):
-                    self.model.fit(x, y)
-                else:
-                    print(self.params)
+                self.model.fit(x, y)
             if y is None:
                 if proba:
                     return self.model.predict_proba(x)
