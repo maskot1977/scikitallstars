@@ -1,4 +1,4 @@
-import time
+mport time
 import timeit
 
 import matplotlib.pyplot as plt
@@ -243,7 +243,10 @@ class Objective:
 
             if self.support is None:
                 # score = model.model.score(self.x_train, self.y_train)
-                score = model.model.score(x_test, y_test)
+                if hasattr(model, "model"):
+                    score = model.model.score(x_test, y_test)
+                else:
+                    print(model)
             else:
                 # score = model.model.score(self.x_train.iloc[:, self.support], self.y_train)
                 score = model.model.score(x_test, y_test)
