@@ -781,6 +781,8 @@ class Regressor:
             self.model = ExtraTreesRegressor(**params["model_params"])
         elif params["model_name"] == "AdaBoost":
             self.model = AdaBoostRegressor(**params["model_params"])
+        else:
+            self.model = None
         if self.debug:
             print(self.model)
 
