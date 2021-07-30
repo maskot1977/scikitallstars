@@ -1,4 +1,4 @@
-mport time
+import time
 import timeit
 
 import matplotlib.pyplot as plt
@@ -9,21 +9,43 @@ from sklearn import metrics
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.decomposition import PCA
-from sklearn.discriminant_analysis import (LinearDiscriminantAnalysis,
-                                           QuadraticDiscriminantAnalysis)
-from sklearn.ensemble import (AdaBoostClassifier, AdaBoostRegressor,
-                              ExtraTreesClassifier, ExtraTreesRegressor,
-                              GradientBoostingClassifier,
-                              GradientBoostingRegressor,
-                              RandomForestClassifier, RandomForestRegressor,
-                              StackingClassifier, StackingRegressor)
+from sklearn.discriminant_analysis import (
+    LinearDiscriminantAnalysis,
+    QuadraticDiscriminantAnalysis,
+)
+from sklearn.ensemble import (
+    AdaBoostClassifier,
+    AdaBoostRegressor,
+    ExtraTreesClassifier,
+    ExtraTreesRegressor,
+    GradientBoostingClassifier,
+    GradientBoostingRegressor,
+    RandomForestClassifier,
+    RandomForestRegressor,
+    StackingClassifier,
+    StackingRegressor,
+)
+
 # from umap import UMAP
 from sklearn.feature_selection import SelectFromModel
-from sklearn.linear_model import (Lasso, LinearRegression, LogisticRegression,
-                                  Ridge, RidgeClassifier)
-from sklearn.metrics import (auc, classification_report, confusion_matrix,
-                             f1_score, precision_recall_curve, r2_score,
-                             roc_curve, mean_absolute_error, mean_squared_error)
+from sklearn.linear_model import (
+    Lasso,
+    LinearRegression,
+    LogisticRegression,
+    Ridge,
+    RidgeClassifier,
+)
+from sklearn.metrics import (
+    auc,
+    classification_report,
+    confusion_matrix,
+    f1_score,
+    precision_recall_curve,
+    r2_score,
+    roc_curve,
+    mean_absolute_error,
+    mean_squared_error,
+)
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.neural_network import MLPClassifier, MLPRegressor
@@ -32,6 +54,7 @@ from sklearn.svm import SVC, SVR
 
 import scikitallstars.timeout_decorator as timeout_decorator
 from scikitallstars.timeout import on_timeout
+
 
 def handler_func(msg):
     print(msg)
@@ -344,9 +367,7 @@ class Objective:
                 model_params["max_iter"] = self.lr_max_iter
 
             elif params["model_name"] == "GradientBoosting":
-                model_params["loss"] = trial.suggest_categorical(
-                    "loss", self.gb_loss
-                )
+                model_params["loss"] = trial.suggest_categorical("loss", self.gb_loss)
                 model_params["n_estimators"] = trial.suggest_int(
                     "gb_n_estimators", self.gb_n_estimators[0], self.gb_n_estimators[1]
                 )
@@ -906,7 +927,10 @@ def fit(
             show_progress_bar=show_progress_bar,
         )
         if verbose:
-            print(objective.best_scores[model_name], objective.best_models[model_name].model)
+            print(
+                objective.best_scores[model_name],
+                objective.best_models[model_name].model,
+            )
 
     study.optimize(
         objective,
