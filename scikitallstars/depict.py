@@ -174,18 +174,21 @@ def classification_metrics(model, X_train, y_train, X_test, y_test):
         roc_auc = auc(fpr, tpr)
         precision, recall, thresholds = precision_recall_curve(YY, probas[:, 1])
         area = auc(recall, precision)
+
         matrix = confusion_matrix(model.predict(XX), YY)
         TN = matrix[0][0]
         FP = matrix[1][0]
         FN = matrix[0][1]
         TP = matrix[1][1]
+
         data = [TP, FN, FP, TN]
         axes[0][i].set_title(name)
         axes[0][i].pie(
             data,
             counterclock=False,
             startangle=90,
-            autopct=lambda x: "{}".format(int(x * sum(data) / 100)),
+            # autopct=lambda x: "{}".format(int(x * sum(data) / 100)),
+            autopct=lambda x: "{}".format(x),
             labels=["TP", "FN", "FP", "TN"],
             wedgeprops=dict(width=1, edgecolor="w"),
             colors=["skyblue", "orange", "tan", "lime"],

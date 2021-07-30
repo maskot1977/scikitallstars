@@ -274,39 +274,39 @@ class Objective:
             params["model_name"] = trial.suggest_categorical(
                 "model_name", self.classifier_names
             )
-            classifier_params = {}
+            model_params = {}
 
             if params["model_name"] == "SVC":
-                classifier_params["kernel"] = trial.suggest_categorical(
+                model_params["kernel"] = trial.suggest_categorical(
                     "svc_kernel", ["linear", "rbf"]
                 )
-                classifier_params["C"] = trial.suggest_loguniform(
+                model_params["C"] = trial.suggest_loguniform(
                     "svm_c", self.svm_c[0], self.svm_c[1]
                 )
-                # classifier_params["epsilon"] = trial.suggest_loguniform(
+                # model_params["epsilon"] = trial.suggest_loguniform(
                 #    "svm_epsilon", self.svm_epsilon[0], self.svm_epsilon[1]
                 # )
-                if classifier_params["kernel"] == "rbf":
-                    classifier_params["gamma"] = trial.suggest_categorical(
+                if model_params["kernel"] == "rbf":
+                    model_params["gamma"] = trial.suggest_categorical(
                         "svc_gamma", ["auto", "scale"]
                     )
                 else:
-                    classifier_params["gamma"] = "auto"
-                classifier_params["max_iter"] = self.svm_max_iter
-                classifier_params["probability"] = True
+                    model_params["gamma"] = "auto"
+                model_params["max_iter"] = self.svm_max_iter
+                model_params["probability"] = True
 
             elif params["model_name"] == "RandomForest":
-                classifier_params["n_estimators"] = trial.suggest_int(
+                model_params["n_estimators"] = trial.suggest_int(
                     "rf_n_estimators", self.rf_n_estimators[0], self.rf_n_estimators[1]
                 )
-                classifier_params["max_features"] = trial.suggest_categorical(
+                model_params["max_features"] = trial.suggest_categorical(
                     "rf_max_features", self.rf_max_features
                 )
-                classifier_params["n_jobs"] = -1
-                classifier_params["max_depth"] = trial.suggest_int(
+                model_params["n_jobs"] = -1
+                model_params["max_depth"] = trial.suggest_int(
                     "rf_max_depth", self.rf_max_depth[0], self.rf_max_depth[1]
                 )
-                classifier_params["warm_start"] = trial.suggest_categorical(
+                model_params["warm_start"] = trial.suggest_categorical(
                     "rf_warm_start", self.rf_warm_start
                 )
 
@@ -321,81 +321,81 @@ class Objective:
                             str(i), self.mlp_n_neurons[0], self.mlp_n_neurons[1]
                         )
                     )
-                classifier_params["hidden_layer_sizes"] = set(layers)
-                classifier_params["max_iter"] = self.mlp_max_iter
-                classifier_params["early_stopping"] = True
-                classifier_params["warm_start"] = trial.suggest_categorical(
+                model_params["hidden_layer_sizes"] = set(layers)
+                model_params["max_iter"] = self.mlp_max_iter
+                model_params["early_stopping"] = True
+                model_params["warm_start"] = trial.suggest_categorical(
                     "mlp_warm_start", self.mlp_warm_start
                 )
-                classifier_params["activation"] = trial.suggest_categorical(
+                model_params["activation"] = trial.suggest_categorical(
                     "mlp_activation", self.mlp_activation
                 )
 
             elif params["model_name"] == "LogisticRegression":
-                classifier_params["C"] = trial.suggest_loguniform(
+                model_params["C"] = trial.suggest_loguniform(
                     "lr_C", self.lr_C[0], self.lr_C[0]
                 )
-                classifier_params["solver"] = trial.suggest_categorical(
+                model_params["solver"] = trial.suggest_categorical(
                     "lr_solver", self.lr_solver
                 )
-                classifier_params["max_iter"] = self.lr_max_iter
+                model_params["max_iter"] = self.lr_max_iter
 
             elif params["model_name"] == "GradientBoosting":
-                classifier_params["loss"] = trial.suggest_categorical(
+                model_params["loss"] = trial.suggest_categorical(
                     "loss", self.gb_loss
                 )
-                classifier_params["n_estimators"] = trial.suggest_int(
+                model_params["n_estimators"] = trial.suggest_int(
                     "gb_n_estimators", self.gb_n_estimators[0], self.gb_n_estimators[1]
                 )
-                classifier_params["max_depth"] = trial.suggest_int(
+                model_params["max_depth"] = trial.suggest_int(
                     "gb_max_depth", self.gb_max_depth[0], self.gb_max_depth[1]
                 )
-                classifier_params["warm_start"] = trial.suggest_categorical(
+                model_params["warm_start"] = trial.suggest_categorical(
                     "gb_warm_start", self.gb_warm_start
                 )
 
             elif params["model_name"] == "ExtraTrees":
-                classifier_params["n_estimators"] = trial.suggest_int(
+                model_params["n_estimators"] = trial.suggest_int(
                     "et_n_estimators", self.et_n_estimators[0], self.et_n_estimators[1]
                 )
-                classifier_params["max_depth"] = trial.suggest_int(
+                model_params["max_depth"] = trial.suggest_int(
                     "et_max_depth", self.et_max_depth[0], self.et_max_depth[1]
                 )
-                classifier_params["warm_start"] = trial.suggest_categorical(
+                model_params["warm_start"] = trial.suggest_categorical(
                     "et_warm_start", self.et_warm_start
                 )
 
             elif params["model_name"] == "AdaBoost":
-                classifier_params["n_estimators"] = trial.suggest_int(
+                model_params["n_estimators"] = trial.suggest_int(
                     "ab_n_estimators", self.ab_n_estimators[0], self.ab_n_estimators[1]
                 )
-                # classifier_params["loss"] = trial.suggest_categorical(
+                # model_params["loss"] = trial.suggest_categorical(
                 #    "ab_loss", self.ab_loss
                 # )
 
             elif params["model_name"] == "kNN":
-                classifier_params["n_neighbors"] = trial.suggest_int(
+                model_params["n_neighbors"] = trial.suggest_int(
                     "knn_n_neighbors", self.knn_n_neighbors[0], self.knn_n_neighbors[1]
                 )
-                classifier_params["weights"] = trial.suggest_categorical(
+                model_params["weights"] = trial.suggest_categorical(
                     "knn_weights", self.knn_weights
                 )
-                classifier_params["algorithm"] = trial.suggest_categorical(
+                model_params["algorithm"] = trial.suggest_categorical(
                     "knn_algorithm", self.knn_algorithm
                 )
-                classifier_params["leaf_size"] = trial.suggest_int(
+                model_params["leaf_size"] = trial.suggest_int(
                     "knn_leaf_size", self.knn_leaf_size[0], self.knn_leaf_size[1]
                 )
 
             elif params["model_name"] == "Ridge":
-                classifier_params["alpha"] = trial.suggest_loguniform(
+                model_params["alpha"] = trial.suggest_loguniform(
                     "ridge_alpha", self.ridge_alpha[0], self.ridge_alpha[1]
                 )
-                classifier_params["max_iter"] = self.ridge_max_iter
-                classifier_params["normalize"] = trial.suggest_categorical(
+                model_params["max_iter"] = self.ridge_max_iter
+                model_params["normalize"] = trial.suggest_categorical(
                     "ridge_normalize", self.ridge_normalize
                 )
-                classifier_params["solver"] = trial.suggest_categorical(
+                model_params["solver"] = trial.suggest_categorical(
                     "ridge_solver", self.ridge_solver
                 )
 
@@ -405,92 +405,92 @@ class Objective:
                 pass
             else:
                 raise RuntimeError("unspport classifier", params["model_name"])
-            params["classifier_params"] = classifier_params
+            params["model_params"] = model_params
 
         else:
             params["model_name"] = trial.suggest_categorical(
                 "model_name", self.regressor_names
             )
-            regressor_params = {}
+            model_params = {}
 
             if params["model_name"] == "GradientBoosting":
-                # regressor_params["loss"] = trial.suggest_categorical(
+                # model_params["loss"] = trial.suggest_categorical(
                 #    "gb_loss", ["ls", "lad", "huber", "quantile"]
                 # )
-                regressor_params["learning_rate"] = trial.suggest_loguniform(
+                model_params["learning_rate"] = trial.suggest_loguniform(
                     "learning_rate_init",
                     self.gb_learning_rate_init[0],
                     self.gb_learning_rate_init[1],
                 )
-                regressor_params["n_estimators"] = trial.suggest_int(
+                model_params["n_estimators"] = trial.suggest_int(
                     "gb_n_estimators", self.gb_n_estimators[0], self.gb_n_estimators[1]
                 )
-                # regressor_params["criterion"] = trial.suggest_categorical(
+                # model_params["criterion"] = trial.suggest_categorical(
                 #    "gb_criterion", ["friedman_mse", "mse", "mae"]
                 # )
-                regressor_params["max_depth"] = trial.suggest_int(
+                model_params["max_depth"] = trial.suggest_int(
                     "gb_max_depth", self.gb_max_depth[0], self.gb_max_depth[1]
                 )
-                regressor_params["warm_start"] = trial.suggest_categorical(
+                model_params["warm_start"] = trial.suggest_categorical(
                     "gb_warm_start", self.gb_warm_start
                 )
-                # regressor_params["max_features"] = trial.suggest_categorical(
+                # model_params["max_features"] = trial.suggest_categorical(
                 #    "gb_max_features", ["auto", "sqrt", "log2"]
                 # )
-                # regressor_params["tol"] = trial.suggest_loguniform(
+                # model_params["tol"] = trial.suggest_loguniform(
                 #    "gb_tol", 1e-5, 1e-3
                 # )
 
             elif params["model_name"] == "ExtraTrees":
-                regressor_params["n_estimators"] = trial.suggest_int(
+                model_params["n_estimators"] = trial.suggest_int(
                     "et_n_estimators", self.et_n_estimators[0], self.et_n_estimators[1]
                 )
-                regressor_params["criterion"] = trial.suggest_categorical(
+                model_params["criterion"] = trial.suggest_categorical(
                     "et_criterion", ["mse", "mae"]
                 )
-                regressor_params["max_depth"] = trial.suggest_int(
+                model_params["max_depth"] = trial.suggest_int(
                     "et_max_depth", self.et_max_depth[0], self.et_max_depth[1]
                 )
-                regressor_params["max_features"] = trial.suggest_categorical(
+                model_params["max_features"] = trial.suggest_categorical(
                     "et_max_features", ["auto", "sqrt", "log2"]
                 )
-                regressor_params["bootstrap"] = True
-                regressor_params["oob_score"] = trial.suggest_categorical(
+                model_params["bootstrap"] = True
+                model_params["oob_score"] = trial.suggest_categorical(
                     "et_oob_score", [True]
                 )
-                regressor_params["warm_start"] = trial.suggest_categorical(
+                model_params["warm_start"] = trial.suggest_categorical(
                     "et_warm_start", self.et_warm_start
                 )
 
             elif params["model_name"] == "RandomForest":
-                regressor_params["n_estimators"] = trial.suggest_int(
+                model_params["n_estimators"] = trial.suggest_int(
                     "rf_n_estimators", self.rf_n_estimators[0], self.rf_n_estimators[1]
                 )
-                regressor_params["criterion"] = trial.suggest_categorical(
+                model_params["criterion"] = trial.suggest_categorical(
                     "rf_criterion", ["mse", "mae"]
                 )
-                regressor_params["max_depth"] = trial.suggest_int(
+                model_params["max_depth"] = trial.suggest_int(
                     "rf_max_depth", self.rf_max_depth[0], self.rf_max_depth[1]
                 )
-                regressor_params["max_features"] = trial.suggest_categorical(
+                model_params["max_features"] = trial.suggest_categorical(
                     "rf_max_features", self.rf_max_features
                 )
-                regressor_params["bootstrap"] = True
-                regressor_params["oob_score"] = trial.suggest_categorical(
+                model_params["bootstrap"] = True
+                model_params["oob_score"] = trial.suggest_categorical(
                     "rf_oob_score", [True]
                 )
-                regressor_params["warm_start"] = trial.suggest_categorical(
+                model_params["warm_start"] = trial.suggest_categorical(
                     "rf_warm_start", self.rf_warm_start
                 )
 
             elif params["model_name"] == "AdaBoost":
-                regressor_params["n_estimators"] = trial.suggest_int(
+                model_params["n_estimators"] = trial.suggest_int(
                     "ab_n_estimators", self.ab_n_estimators[0], self.ab_n_estimators[1]
                 )
-                regressor_params["learning_rate"] = trial.suggest_loguniform(
+                model_params["learning_rate"] = trial.suggest_loguniform(
                     "ab_learning_rate", 0.1, 1.0
                 )
-                regressor_params["loss"] = trial.suggest_categorical(
+                model_params["loss"] = trial.suggest_categorical(
                     "ab_loss", self.ab_loss
                 )
 
@@ -505,117 +505,117 @@ class Objective:
                             str(i), self.mlp_n_neurons[0], self.mlp_n_neurons[1]
                         )
                     )
-                regressor_params["hidden_layer_sizes"] = set(layers)
-                # regressor_params["activation"] = trial.suggest_categorical(
+                model_params["hidden_layer_sizes"] = set(layers)
+                # model_params["activation"] = trial.suggest_categorical(
                 #    "mlp_activation", self.mlp_activation
                 # )
-                # regressor_params["solver"] = trial.suggest_categorical(
+                # model_params["solver"] = trial.suggest_categorical(
                 #    "mlp_solver", ["sgd", "adam"]
                 # )
-                regressor_params["solver"] = "adam"
-                regressor_params["learning_rate"] = trial.suggest_categorical(
+                model_params["solver"] = "adam"
+                model_params["learning_rate"] = trial.suggest_categorical(
                     "mlp_learning_rate", ["constant", "invscaling", "adaptive"]
                 )
-                if regressor_params["solver"] in ["sgd", "adam"]:
-                    regressor_params["learning_rate_init"] = trial.suggest_loguniform(
+                if model_params["solver"] in ["sgd", "adam"]:
+                    model_params["learning_rate_init"] = trial.suggest_loguniform(
                         "mlp_learning_rate_init", 1e-4, 1e-2
                     )
-                regressor_params["max_iter"] = self.mlp_max_iter
-                regressor_params["early_stopping"] = True
-                regressor_params["warm_start"] = trial.suggest_categorical(
+                model_params["max_iter"] = self.mlp_max_iter
+                model_params["early_stopping"] = True
+                model_params["warm_start"] = trial.suggest_categorical(
                     "mlp_warm_start", self.mlp_warm_start
                 )
 
             elif params["model_name"] == "SVR":
-                regressor_params["kernel"] = trial.suggest_categorical(
+                model_params["kernel"] = trial.suggest_categorical(
                     "svm_kernel", self.svm_kernel
                 )
-                regressor_params["C"] = trial.suggest_loguniform(
+                model_params["C"] = trial.suggest_loguniform(
                     "svm_c", self.svm_c[0], self.svm_c[1]
                 )
-                if regressor_params["kernel"] == "rbf":
-                    regressor_params["gamma"] = trial.suggest_categorical(
+                if model_params["kernel"] == "rbf":
+                    model_params["gamma"] = trial.suggest_categorical(
                         "svc_gamma", ["auto", "scale"]
                     )
                 else:
-                    regressor_params["gamma"] = "auto"
-                regressor_params["max_iter"] = self.svm_max_iter
-                # regressor_params["epsilon"] = trial.suggest_loguniform(
+                    model_params["gamma"] = "auto"
+                model_params["max_iter"] = self.svm_max_iter
+                # model_params["epsilon"] = trial.suggest_loguniform(
                 #    "svm_epsilon", self.svm_epsilon[0], self.svm_epsilon[1]
                 # )
 
             elif params["model_name"] == "kNN":
-                regressor_params["n_neighbors"] = trial.suggest_int(
+                model_params["n_neighbors"] = trial.suggest_int(
                     "knn_n_neighbors", self.knn_n_neighbors[0], self.knn_n_neighbors[1]
                 )
-                regressor_params["weights"] = trial.suggest_categorical(
+                model_params["weights"] = trial.suggest_categorical(
                     "knn_weights", self.knn_weights
                 )
-                regressor_params["algorithm"] = trial.suggest_categorical(
+                model_params["algorithm"] = trial.suggest_categorical(
                     "knn_algorithm", self.knn_algorithm
                 )
 
             elif params["model_name"] == "Ridge":
-                regressor_params["alpha"] = trial.suggest_loguniform(
+                model_params["alpha"] = trial.suggest_loguniform(
                     "ridge_alpha", self.ridge_alpha[0], self.ridge_alpha[1]
                 )
-                regressor_params["max_iter"] = self.ridge_max_iter
-                regressor_params["normalize"] = trial.suggest_categorical(
+                model_params["max_iter"] = self.ridge_max_iter
+                model_params["normalize"] = trial.suggest_categorical(
                     "ridge_normalize", self.ridge_normalize
                 )
-                regressor_params["solver"] = trial.suggest_categorical(
+                model_params["solver"] = trial.suggest_categorical(
                     "ridge_solver", self.ridge_solver
                 )
 
             elif params["model_name"] == "Lasso":
-                regressor_params["alpha"] = trial.suggest_loguniform(
+                model_params["alpha"] = trial.suggest_loguniform(
                     "lasso_alpha", self.lasso_alpha[0], self.lasso_alpha[1]
                 )
-                regressor_params["max_iter"] = self.lasso_max_iter
-                regressor_params["warm_start"] = trial.suggest_categorical(
+                model_params["max_iter"] = self.lasso_max_iter
+                model_params["warm_start"] = trial.suggest_categorical(
                     "lasso_warm_start", self.lasso_warm_start
                 )
-                regressor_params["normalize"] = trial.suggest_categorical(
+                model_params["normalize"] = trial.suggest_categorical(
                     "lasso_normalize", self.lasso_normalize
                 )
-                regressor_params["selection"] = trial.suggest_categorical(
+                model_params["selection"] = trial.suggest_categorical(
                     "lasso_selection", self.lasso_selection
                 )
 
             elif params["model_name"] == "PLS":
                 if self.support is None:
-                    regressor_params["n_components"] = trial.suggest_int(
+                    model_params["n_components"] = trial.suggest_int(
                         "n_components", 2, self.x_train.shape[1]
                     )
                 else:
-                    regressor_params["n_components"] = trial.suggest_int(
+                    model_params["n_components"] = trial.suggest_int(
                         "n_components", 2, self.x_train.iloc[:, self.support].shape[1]
                     )
-                regressor_params["max_iter"] = self.pls_max_iter
-                regressor_params["scale"] = trial.suggest_categorical(
+                model_params["max_iter"] = self.pls_max_iter
+                model_params["scale"] = trial.suggest_categorical(
                     "pls_scale", self.pls_scale
                 )
-                # regressor_params["algorithm"] = trial.suggest_categorical(
+                # model_params["algorithm"] = trial.suggest_categorical(
                 #    "pls_algorithm", self.pls_algorithm
                 # )
-                regressor_params["tol"] = trial.suggest_loguniform(
+                model_params["tol"] = trial.suggest_loguniform(
                     "pls_tol",
                     self.pls_tol[0],
                     self.pls_tol[1],
                 )
 
             elif params["model_name"] == "LinearRegression":
-                regressor_params["fit_intercept"] = trial.suggest_categorical(
+                model_params["fit_intercept"] = trial.suggest_categorical(
                     "linear_regression_fit_intercept",
                     self.linear_regression_fit_intercept,
                 )
-                regressor_params["normalize"] = trial.suggest_categorical(
+                model_params["normalize"] = trial.suggest_categorical(
                     "linear_regression_normalize", self.linear_regression_normalize
                 )
 
             else:
                 raise RuntimeError("unspport regressor", params["model_name"])
-            params["regressor_params"] = regressor_params
+            params["model_params"] = model_params
 
         return params
 
@@ -643,27 +643,27 @@ class Classifier:
             self.standardizer = NullScaler()
 
         if params["model_name"] == "RandomForest":
-            self.model = RandomForestClassifier(**params["classifier_params"])
+            self.model = RandomForestClassifier(**params["model_params"])
         elif params["model_name"] == "SVC":
-            self.model = SVC(**params["classifier_params"])
+            self.model = SVC(**params["model_params"])
         elif params["model_name"] == "MLP":
-            self.model = MLPClassifier(**params["classifier_params"])
+            self.model = MLPClassifier(**params["model_params"])
         elif params["model_name"] == "LogisticRegression":
-            self.model = LogisticRegression(**params["classifier_params"])
+            self.model = LogisticRegression(**params["model_params"])
         elif params["model_name"] == "GradientBoosting":
-            self.model = GradientBoostingClassifier(**params["classifier_params"])
+            self.model = GradientBoostingClassifier(**params["model_params"])
         elif params["model_name"] == "kNN":
-            self.model = KNeighborsClassifier(**params["classifier_params"])
+            self.model = KNeighborsClassifier(**params["model_params"])
         elif params["model_name"] == "Ridge":
-            self.model = RidgeClassifier(**params["classifier_params"])
+            self.model = RidgeClassifier(**params["model_params"])
         elif params["model_name"] == "LDA":
-            self.model = LinearDiscriminantAnalysis(**params["classifier_params"])
+            self.model = LinearDiscriminantAnalysis(**params["model_params"])
         elif params["model_name"] == "QDA":
-            self.model = QuadraticDiscriminantAnalysis(**params["classifier_params"])
+            self.model = QuadraticDiscriminantAnalysis(**params["model_params"])
         elif params["model_name"] == "ExtraTrees":
-            self.model = ExtraTreesClassifier(**params["classifier_params"])
+            self.model = ExtraTreesClassifier(**params["model_params"])
         elif params["model_name"] == "AdaBoost":
-            self.model = AdaBoostClassifier(**params["classifier_params"])
+            self.model = AdaBoostClassifier(**params["model_params"])
         if self.debug:
             print(self.model)
 
@@ -736,27 +736,27 @@ class Regressor:
             self.standardizer = NullScaler()
 
         if params["model_name"] == "RandomForest":
-            self.model = RandomForestRegressor(**params["regressor_params"])
+            self.model = RandomForestRegressor(**params["model_params"])
         elif params["model_name"] == "SVR":
-            self.model = SVR(**params["regressor_params"])
+            self.model = SVR(**params["model_params"])
         elif params["model_name"] == "MLP":
-            self.model = MLPRegressor(**params["regressor_params"])
+            self.model = MLPRegressor(**params["model_params"])
         elif params["model_name"] == "LinearRegression":
-            self.model = LinearRegression(**params["regressor_params"])
+            self.model = LinearRegression(**params["model_params"])
         elif params["model_name"] == "PLS":
-            self.model = PLSRegression(**params["regressor_params"])
+            self.model = PLSRegression(**params["model_params"])
         elif params["model_name"] == "GradientBoosting":
-            self.model = GradientBoostingRegressor(**params["regressor_params"])
+            self.model = GradientBoostingRegressor(**params["model_params"])
         elif params["model_name"] == "kNN":
-            self.model = KNeighborsRegressor(**params["regressor_params"])
+            self.model = KNeighborsRegressor(**params["model_params"])
         elif params["model_name"] == "Ridge":
-            self.model = Ridge(**params["regressor_params"])
+            self.model = Ridge(**params["model_params"])
         elif params["model_name"] == "Lasso":
-            self.model = Lasso(**params["regressor_params"])
+            self.model = Lasso(**params["model_params"])
         elif params["model_name"] == "ExtraTrees":
-            self.model = ExtraTreesRegressor(**params["regressor_params"])
+            self.model = ExtraTreesRegressor(**params["model_params"])
         elif params["model_name"] == "AdaBoost":
-            self.model = AdaBoostRegressor(**params["regressor_params"])
+            self.model = AdaBoostRegressor(**params["model_params"])
         if self.debug:
             print(self.model)
 
