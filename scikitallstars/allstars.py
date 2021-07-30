@@ -780,6 +780,8 @@ class Regressor:
             self.model = AdaBoostRegressor(**params["model_params"])
         else:
             self.model = None
+            print(params)
+            raise
         if self.debug:
             print(self.model)
 
