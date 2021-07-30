@@ -258,6 +258,7 @@ class Objective:
                 self.best_models[params["model_name"]] = model
 
         else:
+            self.is_regressor = True
             model = Regressor(params, debug=self.debug, support=self.support)
             seconds = self.model_fit(model, x_train, y_train)
             if params["model_name"] not in self.times.keys():
