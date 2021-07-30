@@ -201,9 +201,9 @@ class Objective:
             self.is_regressor = False
             model = Classifier(params, debug=self.debug)
             seconds = self.model_fit(model, x_train, y_train)
-            if params["classifier_name"] not in self.times.keys():
-                self.times[params["classifier_name"]] = []
-            self.times[params["classifier_name"]].append(seconds)
+            if params["model_name"] not in self.times.keys():
+                self.times[params["model_name"]] = []
+            self.times[params["model_name"]].append(seconds)
 
             if self.classification_metrics == "f1_score":
                 if self.support is None:
@@ -221,25 +221,25 @@ class Objective:
                     # score = model.model.score(self.x_train.iloc[:, self.support], self.y_train)
                     score = model.model.score(x_test, y_test)
 
-            if params["classifier_name"] not in self.scores.keys():
-                self.scores[params["classifier_name"]] = []
-            self.scores[params["classifier_name"]].append(score)
+            if params["model_name"] not in self.scores.keys():
+                self.scores[params["model_name"]] = []
+            self.scores[params["model_name"]].append(score)
 
             if self.best_score < score:
                 self.best_score = score
                 self.best_model = model
-            if params["classifier_name"] not in self.best_scores.keys():
-                self.best_scores[params["classifier_name"]] = 0
-            if self.best_scores[params["classifier_name"]] < score:
-                self.best_scores[params["classifier_name"]] = score
-                self.best_models[params["classifier_name"]] = model
+            if params["model_name"] not in self.best_scores.keys():
+                self.best_scores[params["model_name"]] = 0
+            if self.best_scores[params["model_name"]] < score:
+                self.best_scores[params["model_name"]] = score
+                self.best_models[params["model_name"]] = model
 
         else:
             model = Regressor(params, debug=self.debug, support=self.support)
             seconds = self.model_fit(model, x_train, y_train)
-            if params["regressor_name"] not in self.times.keys():
-                self.times[params["regressor_name"]] = []
-            self.times[params["regressor_name"]].append(seconds)
+            if params["model_name"] not in self.times.keys():
+                self.times[params["model_name"]] = []
+            self.times[params["model_name"]].append(seconds)
 
             if self.support is None:
                 # score = model.model.score(self.x_train, self.y_train)
@@ -247,18 +247,18 @@ class Objective:
             else:
                 # score = model.model.score(self.x_train.iloc[:, self.support], self.y_train)
                 score = model.model.score(x_test, y_test)
-            if params["regressor_name"] not in self.scores.keys():
-                self.scores[params["regressor_name"]] = []
-            self.scores[params["regressor_name"]].append(score)
+            if params["model_name"] not in self.scores.keys():
+                self.scores[params["model_name"]] = []
+            self.scores[params["model_name"]].append(score)
 
             if self.best_score < score:
                 self.best_score = score
                 self.best_model = model
-            if params["regressor_name"] not in self.best_scores.keys():
-                self.best_scores[params["regressor_name"]] = 0
-            if self.best_scores[params["regressor_name"]] < score:
-                self.best_scores[params["regressor_name"]] = score
-                self.best_models[params["regressor_name"]] = model
+            if params["model_name"] not in self.best_scores.keys():
+                self.best_scores[params["model_name"]] = 0
+            if self.best_scores[params["model_name"]] < score:
+                self.best_scores[params["model_name"]] = score
+                self.best_models[params["model_name"]] = model
 
         return score
 
@@ -271,12 +271,12 @@ class Objective:
 
         params["standardize"] = trial.suggest_categorical("standardize", self.scalers)
         if len(set(self.y_train)) < len(self.y_train) / 10:
-            params["classifier_name"] = trial.suggest_categorical(
-                "classifier_name", self.classifier_names
+            params["model_name"] = trial.suggest_categorical(
+                "model_name", self.classifier_names
             )
             classifier_params = {}
 
-            if params["classifier_name"] == "SVC":
+            if params["model_name"] == "SVC":
                 classifier_params["kernel"] = trial.suggest_categorical(
                     "svc_kernel", ["linear", "rbf"]
                 )
@@ -295,7 +295,7 @@ class Objective:
                 classifier_params["max_iter"] = self.svm_max_iter
                 classifier_params["probability"] = True
 
-            elif params["classifier_name"] == "RandomForest":
+            elif params["model_name"] == "RandomForest":
                 classifier_params["n_estimators"] = trial.suggest_int(
                     "rf_n_estimators", self.rf_n_estimators[0], self.rf_n_estimators[1]
                 )
@@ -310,7 +310,7 @@ class Objective:
                     "rf_warm_start", self.rf_warm_start
                 )
 
-            elif params["classifier_name"] == "MLP":
+            elif params["model_name"] == "MLP":
                 layers = []
                 n_layers = trial.suggest_int(
                     "n_layers", self.mlp_n_layers[0], self.mlp_n_layers[1]
@@ -331,7 +331,7 @@ class Objective:
                     "mlp_activation", self.mlp_activation
                 )
 
-            elif params["classifier_name"] == "LogisticRegression":
+            elif params["model_name"] == "LogisticRegression":
                 classifier_params["C"] = trial.suggest_loguniform(
                     "lr_C", self.lr_C[0], self.lr_C[0]
                 )
@@ -340,7 +340,7 @@ class Objective:
                 )
                 classifier_params["max_iter"] = self.lr_max_iter
 
-            elif params["classifier_name"] == "GradientBoosting":
+            elif params["model_name"] == "GradientBoosting":
                 classifier_params["loss"] = trial.suggest_categorical(
                     "loss", self.gb_loss
                 )
@@ -354,7 +354,7 @@ class Objective:
                     "gb_warm_start", self.gb_warm_start
                 )
 
-            elif params["classifier_name"] == "ExtraTrees":
+            elif params["model_name"] == "ExtraTrees":
                 classifier_params["n_estimators"] = trial.suggest_int(
                     "et_n_estimators", self.et_n_estimators[0], self.et_n_estimators[1]
                 )
@@ -365,7 +365,7 @@ class Objective:
                     "et_warm_start", self.et_warm_start
                 )
 
-            elif params["classifier_name"] == "AdaBoost":
+            elif params["model_name"] == "AdaBoost":
                 classifier_params["n_estimators"] = trial.suggest_int(
                     "ab_n_estimators", self.ab_n_estimators[0], self.ab_n_estimators[1]
                 )
@@ -373,7 +373,7 @@ class Objective:
                 #    "ab_loss", self.ab_loss
                 # )
 
-            elif params["classifier_name"] == "kNN":
+            elif params["model_name"] == "kNN":
                 classifier_params["n_neighbors"] = trial.suggest_int(
                     "knn_n_neighbors", self.knn_n_neighbors[0], self.knn_n_neighbors[1]
                 )
@@ -387,7 +387,7 @@ class Objective:
                     "knn_leaf_size", self.knn_leaf_size[0], self.knn_leaf_size[1]
                 )
 
-            elif params["classifier_name"] == "Ridge":
+            elif params["model_name"] == "Ridge":
                 classifier_params["alpha"] = trial.suggest_loguniform(
                     "ridge_alpha", self.ridge_alpha[0], self.ridge_alpha[1]
                 )
@@ -399,21 +399,21 @@ class Objective:
                     "ridge_solver", self.ridge_solver
                 )
 
-            elif params["classifier_name"] == "QDA":
+            elif params["model_name"] == "QDA":
                 pass
-            elif params["classifier_name"] == "LDA":
+            elif params["model_name"] == "LDA":
                 pass
             else:
-                raise RuntimeError("unspport classifier", params["classifier_name"])
+                raise RuntimeError("unspport classifier", params["model_name"])
             params["classifier_params"] = classifier_params
 
         else:
-            params["regressor_name"] = trial.suggest_categorical(
-                "regressor_name", self.regressor_names
+            params["model_name"] = trial.suggest_categorical(
+                "model_name", self.regressor_names
             )
             regressor_params = {}
 
-            if params["regressor_name"] == "GradientBoosting":
+            if params["model_name"] == "GradientBoosting":
                 # regressor_params["loss"] = trial.suggest_categorical(
                 #    "gb_loss", ["ls", "lad", "huber", "quantile"]
                 # )
@@ -441,7 +441,7 @@ class Objective:
                 #    "gb_tol", 1e-5, 1e-3
                 # )
 
-            elif params["regressor_name"] == "ExtraTrees":
+            elif params["model_name"] == "ExtraTrees":
                 regressor_params["n_estimators"] = trial.suggest_int(
                     "et_n_estimators", self.et_n_estimators[0], self.et_n_estimators[1]
                 )
@@ -462,7 +462,7 @@ class Objective:
                     "et_warm_start", self.et_warm_start
                 )
 
-            elif params["regressor_name"] == "RandomForest":
+            elif params["model_name"] == "RandomForest":
                 regressor_params["n_estimators"] = trial.suggest_int(
                     "rf_n_estimators", self.rf_n_estimators[0], self.rf_n_estimators[1]
                 )
@@ -483,7 +483,7 @@ class Objective:
                     "rf_warm_start", self.rf_warm_start
                 )
 
-            elif params["regressor_name"] == "AdaBoost":
+            elif params["model_name"] == "AdaBoost":
                 regressor_params["n_estimators"] = trial.suggest_int(
                     "ab_n_estimators", self.ab_n_estimators[0], self.ab_n_estimators[1]
                 )
@@ -494,7 +494,7 @@ class Objective:
                     "ab_loss", self.ab_loss
                 )
 
-            elif params["regressor_name"] == "MLP":
+            elif params["model_name"] == "MLP":
                 layers = []
                 n_layers = trial.suggest_int(
                     "n_layers", self.mlp_n_layers[0], self.mlp_n_layers[1]
@@ -526,7 +526,7 @@ class Objective:
                     "mlp_warm_start", self.mlp_warm_start
                 )
 
-            elif params["regressor_name"] == "SVR":
+            elif params["model_name"] == "SVR":
                 regressor_params["kernel"] = trial.suggest_categorical(
                     "svm_kernel", self.svm_kernel
                 )
@@ -544,7 +544,7 @@ class Objective:
                 #    "svm_epsilon", self.svm_epsilon[0], self.svm_epsilon[1]
                 # )
 
-            elif params["regressor_name"] == "kNN":
+            elif params["model_name"] == "kNN":
                 regressor_params["n_neighbors"] = trial.suggest_int(
                     "knn_n_neighbors", self.knn_n_neighbors[0], self.knn_n_neighbors[1]
                 )
@@ -555,7 +555,7 @@ class Objective:
                     "knn_algorithm", self.knn_algorithm
                 )
 
-            elif params["regressor_name"] == "Ridge":
+            elif params["model_name"] == "Ridge":
                 regressor_params["alpha"] = trial.suggest_loguniform(
                     "ridge_alpha", self.ridge_alpha[0], self.ridge_alpha[1]
                 )
@@ -567,7 +567,7 @@ class Objective:
                     "ridge_solver", self.ridge_solver
                 )
 
-            elif params["regressor_name"] == "Lasso":
+            elif params["model_name"] == "Lasso":
                 regressor_params["alpha"] = trial.suggest_loguniform(
                     "lasso_alpha", self.lasso_alpha[0], self.lasso_alpha[1]
                 )
@@ -582,7 +582,7 @@ class Objective:
                     "lasso_selection", self.lasso_selection
                 )
 
-            elif params["regressor_name"] == "PLS":
+            elif params["model_name"] == "PLS":
                 if self.support is None:
                     regressor_params["n_components"] = trial.suggest_int(
                         "n_components", 2, self.x_train.shape[1]
@@ -604,7 +604,7 @@ class Objective:
                     self.pls_tol[1],
                 )
 
-            elif params["regressor_name"] == "LinearRegression":
+            elif params["model_name"] == "LinearRegression":
                 regressor_params["fit_intercept"] = trial.suggest_categorical(
                     "linear_regression_fit_intercept",
                     self.linear_regression_fit_intercept,
@@ -614,7 +614,7 @@ class Objective:
                 )
 
             else:
-                raise RuntimeError("unspport regressor", params["regressor_name"])
+                raise RuntimeError("unspport regressor", params["model_name"])
             params["regressor_params"] = regressor_params
 
         return params
@@ -642,27 +642,27 @@ class Classifier:
         elif params["standardize"] == "NoScaler":
             self.standardizer = NullScaler()
 
-        if params["classifier_name"] == "RandomForest":
+        if params["model_name"] == "RandomForest":
             self.model = RandomForestClassifier(**params["classifier_params"])
-        elif params["classifier_name"] == "SVC":
+        elif params["model_name"] == "SVC":
             self.model = SVC(**params["classifier_params"])
-        elif params["classifier_name"] == "MLP":
+        elif params["model_name"] == "MLP":
             self.model = MLPClassifier(**params["classifier_params"])
-        elif params["classifier_name"] == "LogisticRegression":
+        elif params["model_name"] == "LogisticRegression":
             self.model = LogisticRegression(**params["classifier_params"])
-        elif params["classifier_name"] == "GradientBoosting":
+        elif params["model_name"] == "GradientBoosting":
             self.model = GradientBoostingClassifier(**params["classifier_params"])
-        elif params["classifier_name"] == "kNN":
+        elif params["model_name"] == "kNN":
             self.model = KNeighborsClassifier(**params["classifier_params"])
-        elif params["classifier_name"] == "Ridge":
+        elif params["model_name"] == "Ridge":
             self.model = RidgeClassifier(**params["classifier_params"])
-        elif params["classifier_name"] == "LDA":
+        elif params["model_name"] == "LDA":
             self.model = LinearDiscriminantAnalysis(**params["classifier_params"])
-        elif params["classifier_name"] == "QDA":
+        elif params["model_name"] == "QDA":
             self.model = QuadraticDiscriminantAnalysis(**params["classifier_params"])
-        elif params["classifier_name"] == "ExtraTrees":
+        elif params["model_name"] == "ExtraTrees":
             self.model = ExtraTreesClassifier(**params["classifier_params"])
-        elif params["classifier_name"] == "AdaBoost":
+        elif params["model_name"] == "AdaBoost":
             self.model = AdaBoostClassifier(**params["classifier_params"])
         if self.debug:
             print(self.model)
@@ -735,27 +735,27 @@ class Regressor:
         elif params["standardize"] == "NoScaler":
             self.standardizer = NullScaler()
 
-        if params["regressor_name"] == "RandomForest":
+        if params["model_name"] == "RandomForest":
             self.model = RandomForestRegressor(**params["regressor_params"])
-        elif params["regressor_name"] == "SVR":
+        elif params["model_name"] == "SVR":
             self.model = SVR(**params["regressor_params"])
-        elif params["regressor_name"] == "MLP":
+        elif params["model_name"] == "MLP":
             self.model = MLPRegressor(**params["regressor_params"])
-        elif params["regressor_name"] == "LinearRegression":
+        elif params["model_name"] == "LinearRegression":
             self.model = LinearRegression(**params["regressor_params"])
-        elif params["regressor_name"] == "PLS":
+        elif params["model_name"] == "PLS":
             self.model = PLSRegression(**params["regressor_params"])
-        elif params["regressor_name"] == "GradientBoosting":
+        elif params["model_name"] == "GradientBoosting":
             self.model = GradientBoostingRegressor(**params["regressor_params"])
-        elif params["regressor_name"] == "kNN":
+        elif params["model_name"] == "kNN":
             self.model = KNeighborsRegressor(**params["regressor_params"])
-        elif params["regressor_name"] == "Ridge":
+        elif params["model_name"] == "Ridge":
             self.model = Ridge(**params["regressor_params"])
-        elif params["regressor_name"] == "Lasso":
+        elif params["model_name"] == "Lasso":
             self.model = Lasso(**params["regressor_params"])
-        elif params["regressor_name"] == "ExtraTrees":
+        elif params["model_name"] == "ExtraTrees":
             self.model = ExtraTreesRegressor(**params["regressor_params"])
-        elif params["regressor_name"] == "AdaBoost":
+        elif params["model_name"] == "AdaBoost":
             self.model = AdaBoostRegressor(**params["regressor_params"])
         if self.debug:
             print(self.model)
@@ -891,10 +891,7 @@ def fit(
         if verbose:
             print(model_name)
         for _ in range(n_trials):
-            if objective.is_regressor:
-                study.enqueue_trial({"regressor_name": model_name})
-            else:
-                study.enqueue_trial({"classifier_name": model_name})
+            study.enqueue_trial({"model_name": model_name})
 
         study.optimize(
             objective,
