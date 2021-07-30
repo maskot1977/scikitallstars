@@ -266,10 +266,7 @@ class Objective:
 
             if self.support is None:
                 # score = model.model.score(self.x_train, self.y_train)
-                if hasattr(model, "model"):
-                    score = model.model.score(x_test, y_test)
-                else:
-                    print(model)
+                score = model.model.score(x_test, y_test)
             else:
                 # score = model.model.score(self.x_train.iloc[:, self.support], self.y_train)
                 score = model.model.score(x_test, y_test)
