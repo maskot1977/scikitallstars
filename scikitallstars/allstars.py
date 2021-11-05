@@ -926,10 +926,11 @@ def fit(
             show_progress_bar=show_progress_bar,
         )
         if verbose:
-            print(
-                objective.best_scores[model_name],
-                objective.best_models[model_name].model,
-            )
+            if model_name in objective.best_scores.keys():
+                print(
+                    objective.best_scores[model_name],
+                    objective.best_models[model_name].model,
+                )
 
     study.optimize(
         objective,
