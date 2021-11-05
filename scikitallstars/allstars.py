@@ -927,10 +927,11 @@ def fit(
         )
         if verbose:
             if model_name in objective.best_scores.keys():
-                print(
-                    objective.best_scores[model_name],
-                    objective.best_models[model_name].model,
-                )
+                if model_name in objective.best_models.keys():
+                    print(
+                        objective.best_scores[model_name],
+                        objective.best_models[model_name].model,
+                    )
 
     study.optimize(
         objective,
