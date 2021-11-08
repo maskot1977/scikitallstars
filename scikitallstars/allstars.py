@@ -200,7 +200,7 @@ class Objective:
         if self.support is None:
             if self.y_test is None:
                 x_train, x_test, y_train, y_test = train_test_split(
-                    self.x_train, self.y_train, test_size=0.4
+                    self.x_train, self.y_train, test_size=self.test_size
                 )
             else:
                 x_train = self.x_train
@@ -210,7 +210,7 @@ class Objective:
         else:
             if self.y_test is None:
                 x_train, x_test, y_train, y_test = train_test_split(
-                    self.x_train.iloc[:, self.support], self.y_train, test_size=0.4
+                    self.x_train.iloc[:, self.support], self.y_train, test_size=self.test_size
                 )
             else:
                 x_train = self.x_train.iloc[:, self.support]
