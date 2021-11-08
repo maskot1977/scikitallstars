@@ -77,8 +77,8 @@ class SplitTester:
 
     def depict_boxplot(self):
         data = pd.DataFrame(self.history)
-        data.columns = ["seed", "score"]
-        ax = data.boxplot(column="score", by="seed")
+        data.columns = ["split seed", "score"]
+        ax = data.boxplot(column="score", by="split seed")
         ax.set_title("test_size={}".format(self.test_size))
         plt.suptitle('')
         ax.set_ylabel("score (test)")
