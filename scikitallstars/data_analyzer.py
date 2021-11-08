@@ -64,12 +64,12 @@ class SplitTester:
         ax.set_ylabel("score (test)")
 
     def depict_feature_importances(self, top_n=10):
-        importances = [list(fi) for random_state, fi in tester.feature_importances]
+        importances = [list(fi) for random_state, fi in self.feature_importances]
         mean_importances = pd.DataFrame(importances).describe().T['mean'].values
         n_shown = 0
         for i in list(np.argsort(mean_importances))[::-1]:
             tmp_ary = []
-            for random_state, fi in tester.feature_importances:
+            for random_state, fi in self.feature_importances:
                 tmp_ary.append([random_state, fi[i]])
                        
             data = pd.DataFrame(tmp_ary)
