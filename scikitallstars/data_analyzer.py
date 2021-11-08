@@ -80,6 +80,7 @@ class SplitTester:
         data.columns = ["seed", "score"]
         ax = data.boxplot(column="score", by="seed")
         ax.set_title("")
+        plt.suptitle('')
         ax.set_ylabel("score (test)")
         plt.show()
 
