@@ -19,8 +19,12 @@ class SplitTester:
         self.best_score = None
         self.history = []
         self.verbose = verbose
-        self.feature_importances = []
+        self.feature_importances = {}
         self.feature_names = []
+        self.dist_train_train = []
+        self.dist_train_test = []
+        self.dist_test_test = []
+        self.scores = {}
 
     def __call__(self, X, Y):
         X = pd.DataFrame(X)
@@ -33,20 +37,34 @@ class SplitTester:
             self.is_regressor = True
             self.model = self.regressor
 
-        for random_state in np.random.randint(
-            self.smallest, 
-            self.largest, 
-            self.num_seeds
-            ):
+        random_states = [x for x in range(self.smallest, self.largest)]
+        np.random.shuffle(random_states)
+        for i, random_state in enumerate(random_states):
+            if i >= self.num_seeds:
+                break
             X_train, X_test, Y_train, Y_test = train_test_split(
                 X, Y, 
                 random_state=random_state, 
                 test_size=self.test_size
             )
+            for d in cos_sim_dist(X_train.values, X_train.values):
+                self.dist_train_train.append([random_state, d])
+
+            for d in cos_sim_dist(X_train.values, X_test.values):
+                self.dist_train_test.append([random_state, d])
+
+            for d in cos_sim_dist(X_test.values, X_test.values):
+                self.dist_test_test.append([random_state, d])
+
             for _ in range(self.n_trials):
                 self.model.fit(X_train, Y_train)
-                self.feature_importances.append([random_state, self.model.feature_importances_])
+                if random_state not in self.feature_importances.keys():
+                    self.feature_importances[random_state] = []
+                self.feature_importances[random_state].append(list(self.model.feature_importances_))
                 score = self.model.score(X_test, Y_test)
+                if random_state not in self.scores.keys():
+                    self.scores[random_state] = []
+                self.scores[random_state].append(score)
                 if self.verbose:
                     print([random_state, score])
                 self.history.append([random_state, score])
@@ -63,20 +81,24 @@ class SplitTester:
         ax.set_title("")
         ax.set_ylabel("score (test)")
 
-    def depict_feature_importances(self, top_n=10):
-        importances = [list(fi) for random_state, fi in self.feature_importances]
-        mean_importances = pd.DataFrame(importances).describe().T['mean'].values
-        n_shown = 0
-        for i in list(np.argsort(mean_importances))[::-1]:
-            tmp_ary = []
-            for random_state, fi in self.feature_importances:
-                tmp_ary.append([random_state, fi[i]])
-                       
-            data = pd.DataFrame(tmp_ary)
-            data.columns = ["seed", "score"]
-            ax = data.boxplot(column="score", by="seed")
-            ax.set_title(self.feature_names[i])
-            ax.set_ylabel("feature importance")
-            n_shown += 1
-            if n_shown >= top_n:
-                break 
+    def depict_feature_importances(self, n_features = 10):
+        for random_state, fi in self.feature_importances.items():
+            data = pd.DataFrame(fi)
+            data.columns = self.feature_names
+            sorted_idx = list(np.argsort(data.describe().T['mean'].values))[::-1]
+            data = data.iloc[:, sorted_idx[:n_features]]
+            data.boxplot(vert=False)
+            plt.title("random_state={}, score={}".format(
+                random_state, sum(self.scores[random_state]) / len(self.scores[random_state]))
+            )
+            plt.show()
+
+def cos_sim(v1, v2):
+    return np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
+
+def cos_sim_dist(ary1, ary2):
+    dist = []
+    for v1 in ary1:
+        for v2 in ary2:
+            dist.append(cos_sim(v1, v2))
+    return dist
