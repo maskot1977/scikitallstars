@@ -95,6 +95,7 @@ class Objective:
             "LinearRegression",
         ],
         classification_metrics="f1_score",
+        test_size=0.1
     ):
         self.x_train = x_train
         self.x_test = x_test
@@ -106,6 +107,7 @@ class Objective:
         self.best_models = {}
         self.best_score = 0
         self.best_model = None
+        self.test_size = test_size
         self.classifier_names = classifier_names
         self.regressor_names = regressor_names
         self.classification_metrics = classification_metrics
@@ -947,7 +949,7 @@ def fit(
 
 
 class StackingObjective:
-    def __init__(self, objective, X_train, y_train, verbose=True):
+    def __init__(self, objective, X_train, y_train, test_size=0.1, verbose=True):
         self.x_train = X_train
         self.y_train = y_train
         self.verbose = verbose
@@ -964,6 +966,7 @@ class StackingObjective:
         self.n_trial = 0
         self.support = objective.support
         self.is_regressor = objective.is_regressor
+        self.test_size = test_size
 
     def __call__(self, trial):
         self.n_trial += 1
@@ -1008,11 +1011,11 @@ class StackingObjective:
 
         if True:  # self.support is None:
             x_train, x_test, y_train, y_test = train_test_split(
-                self.x_train, self.y_train, test_size=0.2
+                self.x_train, self.y_train, test_size=self.test_size
             )
         else:
             x_train, x_test, y_train, y_test = train_test_split(
-                self.x_train.iloc[:, self.support], self.y_train, test_size=0.2
+                self.x_train.iloc[:, self.support], self.y_train, test_size=self.test_size
             )
         stacking_model1 = stacking(
             self.objective, estimators=estimators, verbose=self.verbose, params=params
