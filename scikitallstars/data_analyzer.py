@@ -67,7 +67,7 @@ class SplitTester:
                     self.scores[random_state] = []
                 self.scores[random_state].append(score)
                 if self.verbose:
-                    print([random_state, score])
+                    print([i, random_state, score])
                 self.history.append([random_state, score])
                 if self.best_seed is None or self.best_score < score:
                     self.best_seed = random_state
