@@ -6,8 +6,8 @@ from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 
 class SplitTester:
     def __init__(self, 
-                 test_size = 0.1, n_trials = 10,
-                 smallest = 0, largest = 100, num_seeds = 10, 
+                 test_size = 0.1, n_trials = 5,
+                 smallest = 0, largest = 20, num_seeds = 20, 
                  verbose = True):
         self.test_size = test_size
         self.n_trials = n_trials
