@@ -79,7 +79,7 @@ class SplitTester:
         data = pd.DataFrame(self.history)
         data.columns = ["seed", "score"]
         ax = data.boxplot(column="score", by="seed")
-        ax.set_title("")
+        ax.set_title("test_size={}".format(self.test_size))
         plt.suptitle('')
         ax.set_ylabel("score (test)")
         plt.show()
