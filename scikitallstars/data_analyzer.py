@@ -81,6 +81,7 @@ class SplitTester:
         ax = data.boxplot(column="score", by="seed")
         ax.set_title("")
         ax.set_ylabel("score (test)")
+        plt.show()
 
     def depict_feature_importances(self, n_features = 10):
         for random_state, fi in self.feature_importances.items():
