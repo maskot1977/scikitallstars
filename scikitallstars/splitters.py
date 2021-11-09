@@ -33,6 +33,10 @@ class SplitTester:
         self.dist_train_test = []
         self.dist_test_test = []
         self.scores = {}
+        self.X_train = None
+        self.X_test = None
+        self.Y_train = None
+        self.Y_test = None
 
     def __call__(self, X, Y, splitter=train_test_split):
         X = pd.DataFrame(X)
@@ -80,6 +84,10 @@ class SplitTester:
                 if self.best_seed is None or self.best_score < score:
                     self.best_seed = random_state
                     self.best_score = score
+                    self.X_train = X_train
+                    self.X_test = X_test
+                    self.Y_train = Y_train
+                    self.Y_test = Y_test
 
         return self.best_seed
 
