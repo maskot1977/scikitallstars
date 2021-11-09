@@ -1,5 +1,6 @@
 import pandas as pd
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+
 
 class ScoreFeatureSelector:
     def __init__(self):
@@ -8,7 +9,7 @@ class ScoreFeatureSelector:
         self.importances = []
         self.success_cols = []
 
-    def __call__(self, X, Y, threshold = 0.1):
+    def __call__(self, X, Y, threshold=0.1):
         X = pd.DataFrame(X)
         Y = pd.DataFrame(Y).iloc[:, 0]
         if len(list(set(list(Y)))) == 2:
@@ -27,5 +28,5 @@ class ScoreFeatureSelector:
                     self.success_cols.append(i)
             except:
                 continue
-                
+
         return self.success_cols
