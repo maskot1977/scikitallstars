@@ -45,11 +45,7 @@ from sklearn.metrics import (
     mean_absolute_error,
     mean_squared_error,
 )
-from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
-from sklearn.neural_network import MLPClassifier, MLPRegressor
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
-from sklearn.svm import SVC, SVR
+
 
 import scikitallstars.timeout_decorator as timeout_decorator
 from scikitallstars.estimators import Classifier, Regressor
