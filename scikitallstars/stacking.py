@@ -3,6 +3,7 @@ import optuna
 from sklearn.ensemble import StackingClassifier, StackingRegressor
 from sklearn.model_selection import train_test_split
 from scikitallstars.splitters import KMeansSplitter
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 
 class StackingObjective:
     def __init__(self, objective, X_train, y_train, test_size=0.1, verbose=True, train_random_state=None):
