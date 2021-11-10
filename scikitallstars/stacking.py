@@ -6,9 +6,11 @@ from scikitallstars.splitters import KMeansSplitter
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 
 class StackingObjective:
-    def __init__(self, objective, X_train, y_train, test_size=0.1, verbose=True, train_random_state=None):
+    def __init__(self, objective, X_train, y_train, x_valid=None, y_valid=None, test_size=0.1, verbose=True, train_random_state=None):
         self.x_train = X_train
         self.y_train = y_train
+        self.x_valid = x_valid
+        self.y_valid = y_valid
         self.verbose = verbose
         self.objective = objective
         self.best_score = None
@@ -69,11 +71,17 @@ class StackingObjective:
             return 0 - 530000
 
         if True:  # self.support is None:
-            x_train, x_test, y_train, y_test = train_test_split(
-                self.x_train, self.y_train, test_size=self.test_size, random_state=self.train_random_state
-            )
+            if self.x_valid is None:
+                x_train, x_valid, y_train, y_valid = train_test_split(
+                    self.x_train, self.y_train, test_size=self.test_size, random_state=self.train_random_state
+                )
+            else:
+                x_train = self.x_train
+                y_train = self.y_train
+                x_valid = self.x_valid
+                y_valid = self.y_valid
         else:
-            x_train, x_test, y_train, y_test = kmeans_split(
+            x_train, x_valid, y_train, y_valid = kmeans_split(
                 self.x_train.iloc[:, self.support], self.y_train, test_size=self.test_size
             )
         stacking_model1 = stacking(
@@ -81,7 +89,7 @@ class StackingObjective:
         )
         stacking_model1.support = self.objective.support
         stacking_model1.fit(x_train, y_train)
-        score = stacking_model1.score(x_test, y_test)
+        score = stacking_model1.score(x_valid, y_valid)
         if self.verbose:
             print("Trial ", self.n_trial)
             print(score)
