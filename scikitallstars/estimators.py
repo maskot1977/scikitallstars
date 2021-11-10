@@ -4,6 +4,24 @@ from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.svm import SVC, SVR
+from sklearn.cross_decomposition import PLSRegression
+from sklearn.decomposition import PCA
+from sklearn.discriminant_analysis import (
+    LinearDiscriminantAnalysis,
+    QuadraticDiscriminantAnalysis,
+)
+from sklearn.ensemble import (
+    AdaBoostClassifier,
+    AdaBoostRegressor,
+    ExtraTreesClassifier,
+    ExtraTreesRegressor,
+    GradientBoostingClassifier,
+    GradientBoostingRegressor,
+    RandomForestClassifier,
+    RandomForestRegressor,
+    StackingClassifier,
+    StackingRegressor,
+)
 
 
 class Classifier:
