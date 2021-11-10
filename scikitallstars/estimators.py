@@ -1,5 +1,5 @@
 from sklearn.base import BaseEstimator, TransformerMixin
-from scikitallstars.timeout import on_timeout
+from scikitallstars.timeout import on_timeout, handler_func
 
 
 class Classifier:
