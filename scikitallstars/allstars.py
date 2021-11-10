@@ -673,7 +673,7 @@ def fit(
         if verbose:
             print("X_train", X_train.shape)
 
-    objective = Objective(X_train, y_train, x_test=x_test, y_train=y_test, support=support)
+    objective = Objective(X_train, y_train, x_test=x_test, y_test=y_test, support=support)
     optuna.logging.set_verbosity(optuna.logging.WARN)
     study = optuna.create_study(direction="maximize")
 
