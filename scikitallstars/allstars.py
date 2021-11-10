@@ -26,8 +26,8 @@ class Objective:
         self,
         x_train,
         y_train,
-        x_test=None,
-        y_test=None,
+        x_valid=None,
+        y_valid=None,
         support=None,
         classifier_names=[
             "GradientBoosting",
@@ -60,9 +60,9 @@ class Objective:
         split_random_state=None
     ):
         self.x_train = x_train
-        self.x_test = x_test
+        self.x_valid = x_valid
         self.y_train = y_train
-        self.y_test = y_test
+        self.y_valid = y_valid
         self.support = support
         self.best_scores = {}
         self.best_params = {}
@@ -163,25 +163,25 @@ class Objective:
     @timeout_decorator.timeout(10)
     def __call__(self, trial):
         if self.support is None:
-            if self.y_test is None:
-                x_train, x_test, y_train, y_test = train_test_split(
+            if self.y_valid is None:
+                x_train, x_valid, y_train, y_valid = train_valid_split(
                     self.x_train, self.y_train, test_size=self.test_size
                 )
             else:
                 x_train = self.x_train
-                x_test = self.x_test
+                x_valid = self.x_valid
                 y_train = self.y_train
-                y_test = self.y_test
+                y_valid = self.y_valid
         else:
-            if self.y_test is None:
-                x_train, x_test, y_train, y_test = train_test_split(
+            if self.y_valid is None:
+                x_train, x_valid, y_train, y_valid = train_test_split(
                     self.x_train.iloc[:, self.support], self.y_train, test_size=self.test_size, random_state=self.split_random_state
                 )
             else:
                 x_train = self.x_train.iloc[:, self.support]
-                x_test = self.x_test.iloc[:, self.support]
+                x_valid = self.x_valid.iloc[:, self.support]
                 y_train = self.y_train
-                y_test = self.y_test
+                y_valid = self.y_valid
 
         params = self.generate_params(trial, x_train)
 
@@ -195,19 +195,19 @@ class Objective:
 
             if self.classification_metrics == "f1_score":
                 if self.support is None:
-                    score = metrics.f1_score(model.predict(x_test), y_test)
+                    score = metrics.f1_score(model.predict(x_valid), y_valid)
                     # score = metrics.f1_score(model.predict(self.x_train), self.y_train)
                 else:
                     # score = metrics.f1_score(model.predict(self.x_train.iloc[:, self.support]), self.y_train)
-                    # score = metrics.f1_score(model.predict(x_test.iloc[:, self.support]), y_test)
-                    score = metrics.f1_score(model.predict(x_test), y_test)
+                    # score = metrics.f1_score(model.predict(x_valid.iloc[:, self.support]), y_valid)
+                    score = metrics.f1_score(model.predict(x_valid), y_valid)
             else:
                 if self.support is None:
-                    score = model.model.score(x_test, y_test)
+                    score = model.model.score(x_valid, y_valid)
                     # score = model.model.score(self.x_train, self.y_train)
                 else:
                     # score = model.model.score(self.x_train.iloc[:, self.support], self.y_train)
-                    score = model.model.score(x_test, y_test)
+                    score = model.model.score(x_valid, y_valid)
 
             if params["model_name"] not in self.scores.keys():
                 self.scores[params["model_name"]] = []
@@ -232,10 +232,10 @@ class Objective:
 
             if self.support is None:
                 # score = model.model.score(self.x_train, self.y_train)
-                score = model.model.score(x_test, y_test)
+                score = model.model.score(x_valid, y_valid)
             else:
                 # score = model.model.score(self.x_train.iloc[:, self.support], self.y_train)
-                score = model.model.score(x_test, y_test)
+                score = model.model.score(x_valid, y_valid)
             if params["model_name"] not in self.scores.keys():
                 self.scores[params["model_name"]] = []
             self.scores[params["model_name"]].append(score)
@@ -628,8 +628,8 @@ class Objective:
 def fit(
     X_train,
     y_train,
-    x_test=None,
-    y_test=None,
+    x_valid=None,
+    y_valid=None,
     feature_selection=True,
     verbose=True,
     timeout=100,
@@ -655,7 +655,7 @@ def fit(
         if verbose:
             print("X_train", X_train.shape)
 
-    objective = Objective(X_train, y_train, x_test=x_test, y_test=y_test, support=support)
+    objective = Objective(X_train, y_train, x_valid=x_valid, y_valid=y_valid, support=support)
     optuna.logging.set_verbosity(optuna.logging.WARN)
     study = optuna.create_study(direction="maximize")
 
