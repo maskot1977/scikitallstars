@@ -2,6 +2,7 @@ import pandas as pd
 import optuna
 from sklearn.ensemble import StackingClassifier, StackingRegressor
 from sklearn.model_selection import train_test_split
+from scikitallstars.splitters import KMeansSplitter
 
 class StackingObjective:
     def __init__(self, objective, X_train, y_train, test_size=0.1, verbose=True, train_random_state=None):
@@ -25,6 +26,7 @@ class StackingObjective:
         self.train_random_state = train_random_state
 
     def __call__(self, trial):
+        kmeans_split = KMeansSplitter(representative=True)
         self.n_trial += 1
         estimators = []
         key = ""
@@ -66,11 +68,11 @@ class StackingObjective:
             return 0 - 530000
 
         if True:  # self.support is None:
-            x_train, x_test, y_train, y_test = train_test_split(
+            x_train, x_test, y_train, y_test = kmeans_split(
                 self.x_train, self.y_train, test_size=self.test_size, random_state=self.train_random_state
             )
         else:
-            x_train, x_test, y_train, y_test = train_test_split(
+            x_train, x_test, y_train, y_test = kmeans_split(
                 self.x_train.iloc[:, self.support], self.y_train, test_size=self.test_size
             )
         stacking_model1 = stacking(
