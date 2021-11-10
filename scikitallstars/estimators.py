@@ -30,6 +30,17 @@ from sklearn.linear_model import (
     Ridge,
     RidgeClassifier,
 )
+from sklearn.metrics import (
+    auc,
+    classification_report,
+    confusion_matrix,
+    f1_score,
+    precision_recall_curve,
+    r2_score,
+    roc_curve,
+    mean_absolute_error,
+    mean_squared_error,
+)
 
 
 class Classifier:
