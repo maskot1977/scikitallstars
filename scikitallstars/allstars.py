@@ -887,6 +887,8 @@ def random_forest_feature_selector(
 def fit(
     X_train,
     y_train,
+    x_test=None,
+    y_test=None
     feature_selection=True,
     verbose=True,
     timeout=100,
@@ -912,7 +914,7 @@ def fit(
         if verbose:
             print("X_train", X_train.shape)
 
-    objective = Objective(X_train, y_train, support=support)
+    objective = Objective(X_train, y_train, x_train=x_train, y_train=y_train, support=support)
     optuna.logging.set_verbosity(optuna.logging.WARN)
     study = optuna.create_study(direction="maximize")
 
