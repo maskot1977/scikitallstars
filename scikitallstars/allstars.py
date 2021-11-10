@@ -164,7 +164,7 @@ class Objective:
     def __call__(self, trial):
         if self.support is None:
             if self.y_valid is None:
-                x_train, x_valid, y_train, y_valid = train_valid_split(
+                x_train, x_valid, y_train, y_valid = train_test_split(
                     self.x_train, self.y_train, test_size=self.test_size
                 )
             else:
