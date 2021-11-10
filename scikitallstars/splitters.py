@@ -30,9 +30,6 @@ class SplitTester:
         self.verbose = verbose
         self.feature_importances = {}
         self.feature_names = []
-        self.dist_train_train = []
-        self.dist_train_test = []
-        self.dist_test_test = []
         self.scores = {}
         self.X_train = None
         self.X_test = None
@@ -58,14 +55,6 @@ class SplitTester:
             X_train, X_test, Y_train, Y_test = splitter(
                 X, Y, random_state=random_state, test_size=self.test_size
             )
-            for d in cos_sim_dist(X_train.values, X_train.values):
-                self.dist_train_train.append([random_state, d])
-
-            for d in cos_sim_dist(X_train.values, X_test.values):
-                self.dist_train_test.append([random_state, d])
-
-            for d in cos_sim_dist(X_test.values, X_test.values):
-                self.dist_test_test.append([random_state, d])
 
             for _ in range(self.n_trials):
                 Y_train = np.ravel(pd.DataFrame(Y_train).values)
