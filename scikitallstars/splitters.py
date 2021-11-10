@@ -131,7 +131,7 @@ class KMeansSplitter:
     def split_ids(self, X):
         X = pd.DataFrame(X)
 
-        n_clusters = int(X.shape[0] * self.test_size)
+        n_clusters = 20 #int(len(X.columns) * self.test_size)
         cids = KMeans(
             n_clusters=n_clusters, random_state=self.random_state
         ).fit_predict(X)
