@@ -1,3 +1,4 @@
+import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from scikitallstars.timeout import on_timeout, handler_func
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
