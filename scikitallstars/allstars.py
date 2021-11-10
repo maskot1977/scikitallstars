@@ -640,7 +640,7 @@ def fit(
     if type(y_train) is not pd.core.series.Series:
         y_train = pd.DataFrame(y_train)[0]
     if feature_selection:
-        support = random_forest_feature_selector(X_train, y_train)
+        support = random_forest_feature_selector(X_train, y_train, x_valid=x_valid, y_valid=y_valid)
         X_train_selected = X_train.iloc[:, support]
         if verbose:
             print(
@@ -694,9 +694,9 @@ def fit(
 
 
 def random_forest_feature_selector(
-    X_train, y_train, timeout=30, n_trials=20, show_progress_bar=False
+    X_train, y_train, x_valid=None, y_valid=None, timeout=50, n_trials=100, show_progress_bar=False
 ):
-    objective = Objective(X_train, y_train)
+    objective = Objective(X_train, y_train, x_valid=x_valid, y_valid=y_valid)
     objective.set_model_names(["RandomForest"])
 
     optuna.logging.set_verbosity(optuna.logging.WARN)
