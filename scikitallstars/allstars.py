@@ -31,7 +31,7 @@ from sklearn.metrics import (
 
 
 import scikitallstars.timeout_decorator as timeout_decorator
-from scikitallstars.estimators import Classifier, Regressor
+from scikitallstars.estimators import Classifier, Regressor, random_forest_feature_selector
 from scikitallstars.timeout import on_timeout, handler_func
 from sklearn.model_selection import train_test_split
 
