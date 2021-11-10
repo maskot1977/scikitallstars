@@ -1,5 +1,8 @@
 from scikitallstars.timeout import on_timeout
 
+def handler_func(msg):
+    print(msg)
+
 class Classifier:
     def __init__(self, params, debug=False):
         self.params = params
