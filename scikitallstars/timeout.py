@@ -20,3 +20,6 @@ def on_timeout(limit, handler, hint=None):
         return wraps(function)(__wrapper)
 
     return __decorator
+
+def handler_func(msg):
+    print(msg)
