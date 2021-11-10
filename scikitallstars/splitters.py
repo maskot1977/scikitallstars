@@ -25,6 +25,7 @@ class SplitTester:
         self.classifier = RandomForestClassifier(n_jobs=-1)
         self.best_seed = None
         self.best_score = None
+        self.best_model = None
         self.history = []
         self.verbose = verbose
         self.feature_importances = {}
@@ -88,6 +89,7 @@ class SplitTester:
                     self.X_test = X_test
                     self.Y_train = Y_train
                     self.Y_test = Y_test
+                    self.best_model = self.model
 
         return self.best_seed
 
