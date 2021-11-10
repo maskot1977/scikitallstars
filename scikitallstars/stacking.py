@@ -67,6 +67,7 @@ class StackingObjective:
         if len(estimators) == 0:
             return 0 - 530000
 
+        display(self.x_train)
         if True:  # self.support is None:
             x_train, x_test, y_train, y_test = kmeans_split(
                 self.x_train, self.y_train, test_size=self.test_size, random_state=self.train_random_state
