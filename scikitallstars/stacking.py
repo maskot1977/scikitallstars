@@ -22,7 +22,7 @@ class StackingObjective:
         self.n_trial = 0
         self.support = objective.support
         self.is_regressor = objective.is_regressor
-        self.test_size = test_size,
+        self.test_size = test_size
         self.train_random_state = train_random_state
 
     def __call__(self, trial):
