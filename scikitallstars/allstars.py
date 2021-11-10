@@ -6,7 +6,6 @@ import numpy as np
 import optuna
 import pandas as pd
 from sklearn import metrics
-from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import (
