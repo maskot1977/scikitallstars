@@ -1,3 +1,4 @@
+from sklearn.base import BaseEstimator, TransformerMixin
 from scikitallstars.timeout import on_timeout
 
 def handler_func(msg):
