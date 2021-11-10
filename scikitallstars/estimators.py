@@ -22,6 +22,13 @@ from sklearn.ensemble import (
     StackingClassifier,
     StackingRegressor,
 )
+from sklearn.linear_model import (
+    Lasso,
+    LinearRegression,
+    LogisticRegression,
+    Ridge,
+    RidgeClassifier,
+)
 
 
 class Classifier:
