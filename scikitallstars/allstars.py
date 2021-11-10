@@ -53,7 +53,7 @@ from sklearn.svm import SVC, SVR
 
 import scikitallstars.timeout_decorator as timeout_decorator
 from scikitallstars.estimators import Classifier, Regressor
-from scikitallstars.timeout import on_timeout
+from scikitallstars.timeout import on_timeout, handler_func
 
 
 
