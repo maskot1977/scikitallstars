@@ -700,7 +700,7 @@ def fit(
     X_train,
     y_train,
     x_test=None,
-    y_test=None
+    y_test=None,
     feature_selection=True,
     verbose=True,
     timeout=100,
