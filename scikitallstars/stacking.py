@@ -29,7 +29,6 @@ class StackingObjective:
         self.train_random_state = train_random_state
 
     def __call__(self, trial):
-        kmeans_split = KMeansSplitter(representative=True)
         self.n_trial += 1
         estimators = []
         key = ""
@@ -72,7 +71,8 @@ class StackingObjective:
 
         if True:  # self.support is None:
             if self.x_valid is None:
-                x_train, x_valid, y_train, y_valid = train_test_split(
+                kmeans_split = KMeansSplitter(representative=True)
+                x_train, x_valid, y_train, y_valid = kmeans_split(
                     self.x_train, self.y_train, test_size=self.test_size, random_state=self.train_random_state
                 )
             else:
@@ -91,8 +91,7 @@ class StackingObjective:
         stacking_model1.fit(x_train, y_train)
         score = stacking_model1.score(x_valid, y_valid)
         if self.verbose:
-            print("Trial ", self.n_trial)
-            print(score)
+            print("Trial ", self.n_trial, score)
             print(stacking_model1.final_estimator_)
 
         if self.best_score is None:
