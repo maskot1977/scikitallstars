@@ -53,7 +53,7 @@ from sklearn.svm import SVC, SVR
 
 import scikitallstars.timeout_decorator as timeout_decorator
 from scikitallstars.estimators import Classifier, Regressor
-
+from scikitallstars.timeout import on_timeout
 
 
 
@@ -288,7 +288,7 @@ class Objective:
 
         return score
 
-    @on_timeout(limit=10, handler=handler_func, hint=u"model_fit")
+    @on_timeout(limit=600, handler=handler_func, hint=u"model_fit")
     def model_fit(self, model, x_train, y_train):
         return timeit.timeit(lambda: model.fit(x_train, y_train), number=1)
 
