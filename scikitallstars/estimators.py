@@ -186,3 +186,12 @@ class Regressor:
     def score(self, x, y, support=None):
         return self._fit_and_predict_core(x, y, support=support, score=True)
 
+class NullScaler(BaseEstimator, TransformerMixin):
+    def __init__(self):
+        pass
+
+    def fit(self, x, y=None):
+        return self
+
+    def transform(self, x, y=None):
+        return x 
