@@ -8,19 +8,8 @@ import pandas as pd
 from sklearn import metrics
 
 
-# from umap import UMAP
 from sklearn.feature_selection import SelectFromModel
-from sklearn.metrics import (
-    auc,
-    classification_report,
-    confusion_matrix,
-    f1_score,
-    precision_recall_curve,
-    r2_score,
-    roc_curve,
-    mean_absolute_error,
-    mean_squared_error,
-)
+
 
 
 import scikitallstars.timeout_decorator as timeout_decorator
