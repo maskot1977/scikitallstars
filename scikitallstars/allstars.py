@@ -711,3 +711,28 @@ def fit(
     return objective
 
 
+def random_forest_feature_selector(
+    X_train, y_train, timeout=30, n_trials=20, show_progress_bar=False
+):
+    objective = Objective(X_train, y_train)
+    objective.set_model_names(["RandomForest"])
+
+    optuna.logging.set_verbosity(optuna.logging.WARN)
+    study = optuna.create_study(direction="maximize")
+    study.optimize(
+        objective,
+        timeout=timeout,
+        n_trials=n_trials,
+        show_progress_bar=show_progress_bar,
+    )
+    support = np.where(
+        objective.best_model.model.feature_importances_ == 0, False, True
+    )
+
+    if sum([1 if x else 0 for x in support]) == len(support):
+        selector = SelectFromModel(estimator=objective.best_model.model).fit(
+            X_train, y_train
+        )
+        support = selector.get_support()
+
+    return support
