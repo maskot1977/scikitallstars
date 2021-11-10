@@ -19,9 +19,7 @@ from sklearn.ensemble import (
     GradientBoostingClassifier,
     GradientBoostingRegressor,
     RandomForestClassifier,
-    RandomForestRegressor,
-    StackingClassifier,
-    StackingRegressor,
+    RandomForestRegressor
 )
 from sklearn.linear_model import (
     Lasso,
