@@ -10,13 +10,6 @@ from sklearn import metrics
 
 # from umap import UMAP
 from sklearn.feature_selection import SelectFromModel
-from sklearn.linear_model import (
-    Lasso,
-    LinearRegression,
-    LogisticRegression,
-    Ridge,
-    RidgeClassifier,
-)
 from sklearn.metrics import (
     auc,
     classification_report,
