@@ -75,7 +75,7 @@ class Classifier:
 
         return None
 
-    @on_timeout(limit=60, handler=handler_func, hint=u"classifier.fit")
+    @on_timeout(limit=600, handler=handler_func, hint=u"classifier.fit")
     def fit(self, x, y, support=None):
         self._fit_and_predict_core(x, y, fitting=True, support=support)
         return self
