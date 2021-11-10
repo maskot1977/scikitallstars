@@ -56,8 +56,7 @@ import scikitallstars.timeout_decorator as timeout_decorator
 from scikitallstars.estimators import Classifier, Regressor
 
 
-def handler_func(msg):
-    print(msg)
+
 
 
 class Objective:
