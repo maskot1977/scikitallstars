@@ -118,7 +118,7 @@ def get_best_stacking(
     X_train,
     y_train,
     x_valid=None,
-    y_valid=None
+    y_valid=None,
     verbose=True,
     timeout=1000,
     n_trials=50,
