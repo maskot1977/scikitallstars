@@ -453,9 +453,9 @@ class Objective:
                 model_params["n_estimators"] = trial.suggest_int(
                     "rf_n_estimators", self.rf_n_estimators[0], self.rf_n_estimators[1]
                 )
-                model_params["criterion"] = trial.suggest_categorical(
-                    "rf_criterion", ["mse", "mae"]
-                )
+                # model_params["criterion"] = trial.suggest_categorical(
+                #    "rf_criterion", ["mse", "mae"]
+                # )
                 model_params["max_depth"] = trial.suggest_int(
                     "rf_max_depth", self.rf_max_depth[0], self.rf_max_depth[1]
                 )
