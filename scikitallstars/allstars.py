@@ -432,9 +432,9 @@ class Objective:
                 model_params["n_estimators"] = trial.suggest_int(
                     "et_n_estimators", self.et_n_estimators[0], self.et_n_estimators[1]
                 )
-                model_params["criterion"] = trial.suggest_categorical(
-                    "et_criterion", ["mse", "mae"]
-                )
+                # model_params["criterion"] = trial.suggest_categorical(
+                #    "et_criterion", ["mse", "mae"]
+                # )
                 model_params["max_depth"] = trial.suggest_int(
                     "et_max_depth", self.et_max_depth[0], self.et_max_depth[1]
                 )
@@ -547,9 +547,9 @@ class Objective:
                     "ridge_alpha", self.ridge_alpha[0], self.ridge_alpha[1]
                 )
                 model_params["max_iter"] = self.ridge_max_iter
-                model_params["normalize"] = trial.suggest_categorical(
-                    "ridge_normalize", self.ridge_normalize
-                )
+                # model_params["normalize"] = trial.suggest_categorical(
+                #    "ridge_normalize", self.ridge_normalize
+                #)
                 model_params["solver"] = trial.suggest_categorical(
                     "ridge_solver", self.ridge_solver
                 )
@@ -562,9 +562,9 @@ class Objective:
                 model_params["warm_start"] = trial.suggest_categorical(
                     "lasso_warm_start", self.lasso_warm_start
                 )
-                model_params["normalize"] = trial.suggest_categorical(
-                    "lasso_normalize", self.lasso_normalize
-                )
+                # model_params["normalize"] = trial.suggest_categorical(
+                #    "lasso_normalize", self.lasso_normalize
+                #)
                 model_params["selection"] = trial.suggest_categorical(
                     "lasso_selection", self.lasso_selection
                 )
@@ -596,9 +596,9 @@ class Objective:
                     "linear_regression_fit_intercept",
                     self.linear_regression_fit_intercept,
                 )
-                model_params["normalize"] = trial.suggest_categorical(
-                    "linear_regression_normalize", self.linear_regression_normalize
-                )
+                # model_params["normalize"] = trial.suggest_categorical(
+                #    "linear_regression_normalize", self.linear_regression_normalize
+                #)
 
             else:
                 raise RuntimeError("unspport regressor", params["model_name"])
