@@ -10,7 +10,7 @@ def best_scores(allstars_model):
     values = allstars_model.best_scores.values()
     plt.figure(figsize=(6, int(len(keys) / 3)))
     plt.title("Best scores")
-    plt.barh(keys, values)
+    plt.barh(reversed(keys), reversed(values))
     plt.grid()
     plt.show()
 
