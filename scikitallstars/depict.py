@@ -10,7 +10,7 @@ def best_scores(allstars_model):
     values = list(allstars_model.best_scores.values())
     plt.figure(figsize=(6, int(len(keys) / 3)))
     plt.title("Best scores")
-    plt.barh(reversed(keys), reversed(values))
+    plt.barh([k for k in reversed(keys)], [v for v in reversed(values)])
     plt.grid()
     plt.show()
 
@@ -74,8 +74,8 @@ def feature_importances(allstars_model):
 def model_importances(stacking_model):
     plt.title("Model importances in stacking")
     plt.barh(
-        reversed(list(stacking_model.best_model.named_estimators_.keys())),
-        reversed(stacking_model.best_model.final_estimator_.feature_importances_),
+        [k for k in reversed(list(stacking_model.best_model.named_estimators_.keys()))],
+        [v for v in reversed(stacking_model.best_model.final_estimator_.feature_importances_)],
     )
     plt.grid()
     plt.show()
