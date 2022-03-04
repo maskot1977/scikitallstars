@@ -74,8 +74,8 @@ def feature_importances(allstars_model):
 def model_importances(stacking_model):
     plt.title("Model importances in stacking")
     plt.barh(
-        list(stacking_model.best_model.named_estimators_.keys()),
-        stacking_model.best_model.final_estimator_.feature_importances_,
+        reversed(list(stacking_model.best_model.named_estimators_.keys())),
+        reversed(stacking_model.best_model.final_estimator_.feature_importances_),
     )
     plt.grid()
     plt.show()
