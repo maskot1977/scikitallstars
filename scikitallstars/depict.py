@@ -7,7 +7,7 @@ from sklearn.metrics import (auc, confusion_matrix, precision_recall_curve,
 
 def best_scores(allstars_model):
     keys = list(allstars_model.best_scores.keys())
-    values = allstars_model.best_scores.values()
+    values = list(allstars_model.best_scores.values())
     plt.figure(figsize=(6, int(len(keys) / 3)))
     plt.title("Best scores")
     plt.barh(reversed(keys), reversed(values))
