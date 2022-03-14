@@ -1,5 +1,6 @@
 import numpy as np
-
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
 
 def remove_low_variance_features(df, threshold=0.0):
     ok_id = []
@@ -26,9 +27,6 @@ def remove_high_correlation_features(df, threshold=0.95):
                         selected_or_not[j] = False
 
     return df.iloc[:, [i for i, array in enumerate(corrcoef) if selected_or_not[i]]]
-
-import pandas as pd
-from sklearn.ensemble import RandomForestRegressor
 
 
 class TableCleaner:
