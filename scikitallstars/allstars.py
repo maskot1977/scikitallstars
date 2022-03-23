@@ -97,7 +97,7 @@ class Objective:
 
         self.knn_n_neighbors = [2, 10]
         self.knn_weights = ["uniform", "distance"]
-        self.knn_algorithm = ["auto", "ball_tree", "kd_tree", "brute"]
+        self.knn_algorithm = ["auto"] #, "ball_tree", "kd_tree", "brute"]
         self.knn_leaf_size = [20, 40]
 
         self.lr_C = [1e-5, 1e5]
@@ -108,7 +108,7 @@ class Objective:
         self.mlp_n_layers = [1, 10]
         self.mlp_n_neurons = [4, 64]
         self.mlp_warm_start = [True, False]
-        self.mlp_activation = ["identity", "logistic", "tanh", "relu"]
+        self.mlp_activation = ["relu"] #, "identity", "logistic", "tanh"]
 
         self.pls_max_iter = 530000
         self.pls_scale = [True, False]
@@ -123,19 +123,19 @@ class Objective:
 
         self.ridge_alpha = [1e-5, 1e5]
         self.ridge_max_iter = 530000
-        self.ridge_solver = [
-            "auto",
-            "svd",
-            "cholesky",
-            "lsqr",
-            "sparse_cg",
-            "sag",
-            "saga",
-        ]
+        self.ridge_solver = ["auto"]
+        #    "auto",
+        #    "svd",
+        #    "cholesky",
+        #    "lsqr",
+        #    "sparse_cg",
+        #    "sag",
+        #    "saga",
+        #]
         self.ridge_normalize = [True, False]
 
         self.rf_max_depth = [2, 32]
-        self.rf_max_features = ["auto", "sqrt", "log2"]
+        self.rf_max_features = ["auto"] #, "sqrt", "log2"]
         self.rf_n_estimators = [100, 200]
         self.rf_warm_start = [True, False]
 
@@ -439,7 +439,7 @@ class Objective:
                     "et_max_depth", self.et_max_depth[0], self.et_max_depth[1]
                 )
                 model_params["max_features"] = trial.suggest_categorical(
-                    "et_max_features", ["auto", "sqrt", "log2"]
+                    "et_max_features", ["auto"] #, "sqrt", "log2"]
                 )
                 model_params["bootstrap"] = True
                 model_params["oob_score"] = trial.suggest_categorical(
@@ -522,7 +522,7 @@ class Objective:
                 )
                 if model_params["kernel"] == "rbf":
                     model_params["gamma"] = trial.suggest_categorical(
-                        "svc_gamma", ["auto", "scale"]
+                        "svc_gamma", ["auto"] #, "scale"]
                     )
                 else:
                     model_params["gamma"] = "auto"
