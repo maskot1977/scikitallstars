@@ -694,7 +694,8 @@ def fit(
 
 
 def random_forest_feature_selector(
-    X_train, y_train, x_valid=None, y_valid=None, timeout=50, n_trials=100, show_progress_bar=False
+    X_train, y_train, x_valid=None, y_valid=None, timeout=50, n_trials=100, show_progress_bar=False,
+    return_importance = False,
 ):
     objective = Objective(X_train, y_train, x_valid=x_valid, y_valid=y_valid)
     objective.set_model_names(["RandomForest"])
@@ -717,4 +718,7 @@ def random_forest_feature_selector(
         )
         support = selector.get_support()
 
-    return support
+    if return_importance:
+        return support, objective.best_model.model.feature_importances_
+    else:
+        return support
